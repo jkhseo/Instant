@@ -4,4 +4,16 @@
     <string name="customer">Customer</string>
     <string name="vendor">Vendor</string>
     <string name="admin">Admin</string>
+    <string name="title_activity_user_home">Instant</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_maps">Hello Maps</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -4,11 +4,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.ViewGroup;
 
-public class AdminActivity extends AppCompatActivity {
+public class user_home_map extends user_template {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_admin);
+        ViewGroup navDrawerView = findViewById(R.id.drawer_layout);
+        getLayoutInflater().inflate(R.layout.activity_user_home_map,navDrawerView,true);
     }
 }

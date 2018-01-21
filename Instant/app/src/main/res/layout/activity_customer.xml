@@ -6,15 +6,23 @@
     android:layout_height="match_parent"
     tools:context="food.instant.instant.CustomerActivity">
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Customer"
-        app:layout_constraintEnd_toEndOf="parent"
+    <Button
+        android:id="@+id/mapButton"
+        android:layout_width="128dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginTop="84dp"
+        android:text="Restaurants in your Area"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/searchButton"
+        android:layout_width="128dp"
+        android:layout_height="68dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginTop="84dp"
+        android:text="Search For Restaurants"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </android.support.constraint.ConstraintLayout>
