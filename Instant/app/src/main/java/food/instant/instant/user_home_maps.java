@@ -1,12 +1,23 @@
 package food.instant.instant;
 
+
+
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 
 /**
@@ -17,7 +28,8 @@ import android.view.ViewGroup;
  * Use the {@link user_home_maps#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class user_home_maps extends Fragment {
+public class user_home_maps extends Fragment implements OnMapReadyCallback {
+    private GoogleMap res_map;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -58,22 +70,32 @@ public class user_home_maps extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-    }
 
+    }
+    @Override
+    public void onMapReady(GoogleMap map){
+        res_map = map;
+        LatLng ames = new LatLng(42.0308,93.6319);
+        map.addMarker(new MarkerOptions().position(ames));
+        res_map.moveCamera(CameraUpdateFactory.newLatLng(ames));
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_home_maps, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+        FragmentManager fManager = (FragmentManager) getChildFragmentManager();
+        View mapsView = inflater.inflate(R.layout.fragment_user_home_maps, container, false);
+        SupportMapFragment resMapFrag = (SupportMapFragment) fManager.findFragmentById(R.id.user_home_maps);
+        if(resMapFrag == null){
+            resMapFrag = new SupportMapFragment();
+            FragmentTransaction transaction = fManager.beginTransaction();
+            transaction.add(R.id.user_home_maps,resMapFrag);
+            transaction.commit();
+            fManager.executePendingTransactions();
         }
+        resMapFrag.getMapAsync(this);
+        return mapsView;
     }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);

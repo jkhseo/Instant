@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 
 
 /**
@@ -64,7 +66,22 @@ public class user_home extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_home, container, false);
+        View mainView = inflater.inflate(R.layout.fragment_user_home, container, false);
+        Button searchButton = mainView.findViewById(R.id.search_button);
+        Button mapButton = mainView.findViewById(R.id.map_button);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        mapButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((user_template)getActivity()).swapFragments(new user_home_maps());
+            }
+        });
+        return mainView;
     }
 
     // TODO: Rename method, update argument and hook method into UI event

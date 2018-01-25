@@ -1,13 +1,8 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/user_home_maps"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="food.instant.instant.user_home_maps">
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_maps" />
-
-</FrameLayout>
+    tools:context="food.instant.instant.user_home_maps"
+    tools:ignore="Orientation"></LinearLayout>
