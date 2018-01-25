@@ -104,9 +104,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="TextView"
-                android:textColor="#fd5b15"
-                tools:text="Forgot your password?" />
+                android:text="Forgot your password?"
+                android:textColor="#fd5b15" />
 
             <TextView
                 android:id="@+id/tvSignUp"
@@ -114,9 +113,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="TextView"
-                android:textColor="#fd5b15"
-                tools:text="Sign Up Now" />
+                android:text="Sign Up Now"
+                android:textColor="#fd5b15" />
 
         </LinearLayout>
     </LinearLayout>
