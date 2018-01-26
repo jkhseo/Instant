@@ -16,10 +16,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewUserActivity" />
+        <activity
+            android:name=".NewUserActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".VendorActivity" />
         <activity android:name=".AdminActivity" />
-        <activity android:name=".CustomerActivity"></activity>
+        <activity android:name=".CustomerActivity"/>
     </application>
 
 </manifest>

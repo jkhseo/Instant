@@ -38,7 +38,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:background="#00000000"
-                app:srcCompat="@mipmap/arrow_back_white" />
+                app:srcCompat="@mipmap/exit" />
         </LinearLayout>
 
         <LinearLayout
