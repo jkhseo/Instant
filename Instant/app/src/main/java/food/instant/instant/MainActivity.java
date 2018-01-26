@@ -1,6 +1,8 @@
 package food.instant.instant;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +27,20 @@ public class MainActivity extends AppCompatActivity {
         mToggle.syncState();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        NavigationView mNavigationView = findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId())
+                {
+                    case(R.id.nav_login):
+                        Intent loginIntent = new Intent(MainActivity.this, NewUserActivity.class);
+                        MainActivity.this.startActivity(loginIntent);
+                }
+                return true;
+            }
+        });
     }
 
     @Override
@@ -40,8 +56,7 @@ public class MainActivity extends AppCompatActivity {
     /*Opens the new user activity*/
     public void startNewUserActivity(View view)
     {
-        Intent myIntent = new Intent(MainActivity.this, NewUserActivity.class);
-        MainActivity.this.startActivity(myIntent);
+
     }
 
     /*Opens the Vendor activity*/
