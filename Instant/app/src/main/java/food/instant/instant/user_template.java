@@ -1,15 +1,9 @@
 package food.instant.instant;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,16 +12,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.FrameLayout;
 
 public class user_template extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, user_home.OnFragmentInteractionListener, user_home_maps.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, user_home.OnFragmentInteractionListener, user_home_maps.OnFragmentInteractionListener,user_home_search.OnFragmentInteractionListener,user_home_orders.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_home);
+        setContentView(R.layout.activity_user_template);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -87,29 +79,22 @@ public class user_template extends AppCompatActivity
         // Handle navigation view item clicks here.
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
         int id = item.getItemId();
         Intent intent;
-        if (id == R.id.nav_home) {
-            intent = new Intent(this,CustomerActivity.class);
-            startActivity(intent);
+        String tag = getSupportFragmentManager().findFragmentById(R.id.content_frame).getTag();
+        if (id == R.id.nav_home ) {
+            swapFragments(new user_home());
         } else if (id == R.id.nav_orders) {
-            intent = new Intent(this,user_home_orders.class);
-            startActivity(intent);
+            swapFragments(new user_home_orders());
         } else if (id == R.id.nav_search) {
-            intent = new Intent(this,user_home_search.class);
-            startActivity(intent);
-        }else if (id == R.id.nav_map) {
-            transaction.add(R.id.content_frame,new user_home_maps());
-            //intent = new Intent(this,user_home_map.class);
-            //startActivity(intent);
+            swapFragments(new user_home_search());
+        }else if (id == R.id.nav_map ) {
+            swapFragments(new user_home_maps());
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_logout) {
 
         }
-        transaction.commit();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

@@ -2,22 +2,31 @@ package food.instant.instant;
 
 
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+//import com.google.android.gms.location.internal.FusedLocationProviderResult;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 
 /**
@@ -28,8 +37,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * Use the {@link user_home_maps#newInstance} factory method to
  * create an instance of this fragment.
  */
+
 public class user_home_maps extends Fragment implements OnMapReadyCallback {
     private GoogleMap res_map;
+    private FusedLocationProviderClient flc;
+    int MY_PERMISSIONS_REQUEST_LOCATION = 42;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -72,12 +84,31 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback {
         }
 
     }
+    public void checkPermissions(){
+        if(ContextCompat.checkSelfPermission(getContext(),Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String permissions[],int[] grantResults){
+        if(requestCode == MY_PERMISSIONS_REQUEST_LOCATION){
+            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+            }
+            else {
+
+            }
+        }
+    }
     @Override
     public void onMapReady(GoogleMap map){
         res_map = map;
-        LatLng ames = new LatLng(42.0308,93.6319);
-        map.addMarker(new MarkerOptions().position(ames));
-        res_map.moveCamera(CameraUpdateFactory.newLatLng(ames));
+        res_map.getUiSettings().setZoomGesturesEnabled(true);
+        res_map.getUiSettings().setZoomControlsEnabled(true);
+        //checkPermissions();
+        //res_map.setMyLocationEnabled(true);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -94,6 +125,22 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback {
             fManager.executePendingTransactions();
         }
         resMapFrag.getMapAsync(this);
+       /* flc = LocationServices.getFusedLocationProviderClient(this);
+        flc.getLastLocation()
+                .addOnSuccessListener(this,new OnSuccessListener<Location>(){
+                    @Override
+                    void onSuccess(Location location){
+                        LatLng startupLocation;
+                        if(location == null)
+                            startupLocation = new LatLng(42.026238,-93.648434);
+                        else
+                            startupLocation = new LatLng(location.getLatitude(),location.getLongitude());
+                        res_map.addMarker(new MarkerOptions().position(startupLocation));
+                        res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
+                    }
+            });*/
+
+
         return mapsView;
     }
     @Override
