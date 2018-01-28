@@ -3,6 +3,7 @@ package food.instant.instant;
 
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -16,6 +17,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -26,7 +28,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.concurrent.Executor;
 
 
 /**
@@ -38,9 +43,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
  * create an instance of this fragment.
  */
 
-public class user_home_maps extends Fragment implements OnMapReadyCallback {
+public class user_home_maps extends Fragment implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnCameraMoveStartedListener, GoogleMap.OnCameraIdleListener {
     private GoogleMap res_map;
     private FusedLocationProviderClient flc;
+    private boolean locationEnabled;
+    private LatLng onMoveCenter;
+    private float onMoveZoom;
     int MY_PERMISSIONS_REQUEST_LOCATION = 42;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -84,31 +92,46 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback {
         }
 
     }
-    public void checkPermissions(){
-        if(ContextCompat.checkSelfPermission(getContext(),Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
-        }
-
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[],int[] grantResults){
-        if(requestCode == MY_PERMISSIONS_REQUEST_LOCATION){
-            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-
-            }
-            else {
-
-            }
-        }
-    }
     @Override
     public void onMapReady(GoogleMap map){
         res_map = map;
         res_map.getUiSettings().setZoomGesturesEnabled(true);
         res_map.getUiSettings().setZoomControlsEnabled(true);
-        //checkPermissions();
-        //res_map.setMyLocationEnabled(true);
+        if(ContextCompat.checkSelfPermission(getContext(),Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
+        }
+        else{
+            locationEnabled=true;
+        }
+        if(locationEnabled) {
+            res_map.setOnMyLocationButtonClickListener(this);
+            res_map.setMyLocationEnabled(true);
+            flc = LocationServices.getFusedLocationProviderClient(getActivity());
+            flc.getLastLocation()
+                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            LatLng startupLocation;
+                            if (location != null) {
+                                startupLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
+                                res_map.moveCamera(CameraUpdateFactory.zoomTo(15));
+                            }
+                            else{
+                                startupLocation = new LatLng(39.979832,-95.562702);
+                                res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
+
+                            }
+                        }
+                    });
+        }
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String permissions[],int[] grantResults){
+        if(requestCode == MY_PERMISSIONS_REQUEST_LOCATION){
+            locationEnabled = (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED);
+
+        }
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -125,22 +148,6 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback {
             fManager.executePendingTransactions();
         }
         resMapFrag.getMapAsync(this);
-       /* flc = LocationServices.getFusedLocationProviderClient(this);
-        flc.getLastLocation()
-                .addOnSuccessListener(this,new OnSuccessListener<Location>(){
-                    @Override
-                    void onSuccess(Location location){
-                        LatLng startupLocation;
-                        if(location == null)
-                            startupLocation = new LatLng(42.026238,-93.648434);
-                        else
-                            startupLocation = new LatLng(location.getLatitude(),location.getLongitude());
-                        res_map.addMarker(new MarkerOptions().position(startupLocation));
-                        res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
-                    }
-            });*/
-
-
         return mapsView;
     }
     @Override
@@ -153,11 +160,50 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+    @Override
+    public void onCameraMoveStarted(int reason){
+        if(reason == GoogleMap.OnCameraMoveStartedListener.REASON_GESTURE || reason == GoogleMap.OnCameraMoveStartedListener.REASON_API_ANIMATION){
+            onMoveCenter = res_map.getCameraPosition().target;
+            onMoveZoom = res_map.getCameraPosition().zoom;
+        }
+    }
+    @Override
+    public void onCameraIdle(){
+        boolean cameraMoved = (onMoveCenter.longitude!=res_map.getCameraPosition().target.longitude) || (onMoveCenter.latitude!=res_map.getCameraPosition().target.longitude);
+        boolean cameraZoomed = onMoveZoom != res_map.getCameraPosition().zoom;
+            if(res_map.getCameraPosition().zoom>10&&(cameraMoved || cameraZoomed)){
 
+            }
+    }
+
+    public void findAreaRestaurants(){
+        double minLat,minLong,maxLat,maxLong,minLong2,maxLong2;
+        VisibleRegion visibleScreen = res_map.getProjection().getVisibleRegion();
+        minLat = visibleScreen.latLngBounds.southwest.latitude;
+        maxLat = visibleScreen.latLngBounds.northeast.latitude;
+        if(visibleScreen.latLngBounds.southwest.longitude<=visibleScreen.latLngBounds.northeast.longitude){
+            minLong = visibleScreen.latLngBounds.southwest.longitude;
+            maxLong = visibleScreen.latLngBounds.northeast.longitude;
+            minLong2 = 0;
+            maxLong2 = 0;
+        }
+        else{
+            minLong = visibleScreen.latLngBounds.southwest.longitude;
+            maxLong = 180;
+            minLong2 = -180;
+            maxLong2 = visibleScreen.latLngBounds.northeast.longitude;
+        }
+        //query in range of lat and lng coordinates
+    }
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public boolean onMyLocationButtonClick() {
+        return false;
     }
 
     /**

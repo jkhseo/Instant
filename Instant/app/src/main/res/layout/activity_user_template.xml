@@ -8,9 +8,17 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
     <FrameLayout
+        android:id="@+id/content_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/content_frame"/>
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/button7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Search this Area" />
+    </FrameLayout>
+
     <include
         layout="@layout/app_bar_user_home"
         android:layout_width="match_parent"
@@ -23,7 +31,7 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_user_home"
-        app:menu="@menu/activity_user_home_drawer" >
+        app:menu="@menu/activity_user_home_drawer">
 
     </android.support.design.widget.NavigationView>
 
