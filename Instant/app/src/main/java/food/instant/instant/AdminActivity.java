@@ -1,102 +1,63 @@
 package food.instant.instant;
 
-
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
 public class AdminActivity extends AppCompatActivity {
-    EditText Name, Pass , updateold, updatenew, delete;
+    EditText Food, Rest , Quanity;
     myDbAdapter helper;
+
+
+    /*Opens the View Order activity*/
+    public void viewOrder(View view)
+    {
+        Intent myIntent = new Intent(AdminActivity.this, ViewOrder.class);
+        AdminActivity.this.startActivity(myIntent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
-        Name= (EditText) findViewById(R.id.editName);
-        Pass= (EditText) findViewById(R.id.editPass);
-        updateold= (EditText) findViewById(R.id.editText3);
-        updatenew= (EditText) findViewById(R.id.editText5);
-        delete = (EditText) findViewById(R.id.editText6);
+        Food= (EditText) findViewById(R.id.editFood);
+        Rest= (EditText) findViewById(R.id.editRestaurant);
+        Quanity= (EditText) findViewById(R.id.editQuanity);
+
 
         helper = new myDbAdapter(this);
     }
-    public void addUser(View view)
+    public void addOrder(View view)
     {
-        String t1 = Name.getText().toString();
-        String t2 = Pass.getText().toString();
+        String t1 = Food.getText().toString();
+        String t2 = Rest.getText().toString();
+        String t3 = Quanity.getText().toString();
         if(t1.isEmpty() || t2.isEmpty())
         {
-            Message.message(getApplicationContext(),"Enter Both Name and Password");
+            Message.message(getApplicationContext(),"Enter All Fields");
         }
         else
         {
-            long id = helper.insertData(t1,t2);
+            long id = helper.insertData(t1,t2, t3);
             if(id<=0)
             {
                 Message.message(getApplicationContext(),"Insertion Unsuccessful");
-                Name.setText("");
-                Pass.setText("");
+                Food.setText("");
+                Rest.setText("");
+                Quanity.setText("");
             } else
             {
                 Message.message(getApplicationContext(),"Insertion Successful");
-                Name.setText("");
-                Pass.setText("");
+                Food.setText("");
+                Rest.setText("");
+                Quanity.setText("");
             }
         }
     }
 
-    public void viewdata(View view)
-    {
-        String data = helper.getData();
-        Message.message(this,data);
-    }
 
-    public void update( View view)
-    {
-        String u1 = updateold.getText().toString();
-        String u2 = updatenew.getText().toString();
-        if(u1.isEmpty() || u2.isEmpty())
-        {
-            Message.message(getApplicationContext(),"Enter Data");
-        }
-        else
-        {
-            int a= helper.updateName( u1, u2);
-            if(a<=0)
-            {
-                Message.message(getApplicationContext(),"Unsuccessful");
-                updateold.setText("");
-                updatenew.setText("");
-            } else {
-                Message.message(getApplicationContext(),"Updated");
-                updateold.setText("");
-                updatenew.setText("");
-            }
-        }
 
-    }
-    public void delete( View view)
-    {
-        String uname = delete.getText().toString();
-        if(uname.isEmpty())
-        {
-            Message.message(getApplicationContext(),"Enter Data");
-        }
-        else{
-            int a= helper.delete(uname);
-            if(a<=0)
-            {
-                Message.message(getApplicationContext(),"Unsuccessful");
-                delete.setText("");
-            }
-            else
-            {
-                Message.message(this, "DELETED");
-                delete.setText("");
-            }
-        }
-    }
 }
