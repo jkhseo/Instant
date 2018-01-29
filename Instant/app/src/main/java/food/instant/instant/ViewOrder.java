@@ -6,11 +6,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class ViewOrder extends AppCompatActivity {
 
-    myDbAdapter helper;
+    OrderDataBase helper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -20,13 +23,20 @@ public class ViewOrder extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        helper = new myDbAdapter(this);
+        helper = new OrderDataBase(this);
 
-        String data = helper.getData();
 
-        final TextView order = (TextView) findViewById(R.id.order);
-        order.setText(data);
 
+        //grabs list from database
+        ArrayList<Order> list = helper.getOrderData();
+
+
+        //instantiate custom adapter
+        OrderFormatter adapter = new OrderFormatter(list, this);
+
+        //handle listview and assign adapter
+        ListView lView = (ListView)findViewById(R.id.list);
+        lView.setAdapter(adapter);
 
     }
 

@@ -8,7 +8,7 @@ import android.widget.EditText;
 
 public class AdminActivity extends AppCompatActivity {
     EditText Food, Rest , Quanity;
-    myDbAdapter helper;
+    OrderDataBase helper;
 
 
     /*Opens the View Order activity*/
@@ -28,7 +28,7 @@ public class AdminActivity extends AppCompatActivity {
         Quanity= (EditText) findViewById(R.id.editQuanity);
 
 
-        helper = new myDbAdapter(this);
+        helper = new OrderDataBase(this);
     }
     public void addOrder(View view)
     {

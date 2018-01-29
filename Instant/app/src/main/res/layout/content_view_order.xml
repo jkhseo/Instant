@@ -22,19 +22,15 @@
         android:layout_alignParentEnd="true"
         android:gravity="center" />
 
-    <TextView
-        android:id="@+id/order"
-        android:layout_width="411dp"
-        android:layout_height="31dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/textView3"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:hint=""
-        android:text=""
-        android:textSize="18sp"
-        android:textStyle="bold|italic"
-/>
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id = "@+id/list"
+        android:layout_below="@+id/textView3">
+    </ListView>
+
+
+
+
 
 </android.support.constraint.ConstraintLayout>

@@ -10,10 +10,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
 
-public class myDbAdapter {
+
+public class OrderDataBase {
     myDbHelper myhelper;
-    public myDbAdapter(Context context)
+    public OrderDataBase(Context context)
     {
         myhelper = new myDbHelper(context);
     }
@@ -27,6 +29,29 @@ public class myDbAdapter {
         contentValues.put(myDbHelper.QUANITY, quanity);
         long id = dbb.insert(myDbHelper.TABLE_NAME, null , contentValues);
         return id;
+    }
+
+    public ArrayList<Order> getOrderData()
+    {
+
+        ArrayList<Order> orders = new ArrayList<Order>();
+
+        SQLiteDatabase db = myhelper.getWritableDatabase();
+        String[] columns = {myDbHelper.UID,myDbHelper.FOOD,myDbHelper.RESTAURANT,myDbHelper.QUANITY};
+        Cursor cursor =db.query(myDbHelper.TABLE_NAME,columns,null,null,null,null,null);
+        StringBuffer buffer= new StringBuffer();
+
+        while (cursor.moveToNext())
+        {
+            int cid =cursor.getInt(cursor.getColumnIndex(myDbHelper.UID));
+            String food =cursor.getString(cursor.getColumnIndex(myDbHelper.FOOD));
+            String  restaurant =cursor.getString(cursor.getColumnIndex(myDbHelper.RESTAURANT));
+            String  quanity =cursor.getString(cursor.getColumnIndex(myDbHelper.QUANITY));
+            Order temp = new Order(restaurant, food, quanity);
+            orders.add(temp);
+
+        }
+        return orders;
     }
 
     public String getData()
