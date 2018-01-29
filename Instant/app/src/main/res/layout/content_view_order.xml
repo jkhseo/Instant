@@ -8,4 +8,33 @@
     tools:context="food.instant.instant.ViewOrder"
     tools:showIn="@layout/activity_view_order">
 
+
+    <TextView
+        android:text="Order"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="1dp"
+        android:id="@+id/textView3"
+        android:textStyle="bold|italic"
+        android:textSize="50sp"
+        android:layout_below="@+id/editFood"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/order"
+        android:layout_width="411dp"
+        android:layout_height="31dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/textView3"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:hint=""
+        android:text=""
+        android:textSize="18sp"
+        android:textStyle="bold|italic"
+/>
+
 </android.support.constraint.ConstraintLayout>
