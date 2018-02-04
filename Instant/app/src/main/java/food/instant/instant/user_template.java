@@ -14,7 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class user_template extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, user_home.OnFragmentInteractionListener, user_home_maps.OnFragmentInteractionListener,user_home_search.OnFragmentInteractionListener,user_home_orders.OnFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, user_home.OnFragmentInteractionListener, user_home_maps.OnFragmentInteractionListener,user_home_search.OnFragmentInteractionListener,user_home_orders.OnFragmentInteractionListener, user_home_restaurant.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +51,10 @@ public class user_template extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
+    @Override
+    protected void onStart(){
+        super.onStart();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
