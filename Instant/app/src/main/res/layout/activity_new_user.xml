@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/imageButton4"
+            android:id="@+id/ibClose"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignLeft="@+id/linearLayout"
@@ -63,6 +63,7 @@
                 android:ems="10"
                 android:hint="Username / Email Address"
                 android:inputType="textEmailAddress"
+                android:textColor="@android:color/black"
                 android:textColorHint="@android:color/darker_gray"
                 android:textColorLink="@android:color/black" />
 
@@ -73,6 +74,7 @@
                 android:ems="10"
                 android:hint="Password"
                 android:inputType="textPassword"
+                android:textColor="@android:color/black"
                 android:textColorHint="@android:color/darker_gray"
                 android:textColorLink="@android:color/black" />
         </LinearLayout>

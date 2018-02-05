@@ -13,10 +13,6 @@
         android:title="Settings"
         android:icon="@mipmap/settings"/>
     <item
-        android:id="@+id/nav_login"
-        android:title="Login"
-        android:icon="@mipmap/login"/>
-    <item
         android:id="@+id/nav_adminVendor"
         android:title="Vendor/Admin"
         android:icon="@mipmap/vendor" />
@@ -24,4 +20,8 @@
         android:id="@+id/nav_logout"
         android:title="Logout"
         android:icon="@mipmap/logout"/>
+    <item
+        android:id="@+id/nav_login"
+        android:title="Login"
+        android:icon="@mipmap/login"/>
 </menu>
