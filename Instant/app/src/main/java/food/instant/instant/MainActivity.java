@@ -52,15 +52,18 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                boolean close = true;
                 switch (item.getItemId())
                 {
                     case(R.id.nav_login):
                         Intent loginIntent = new Intent(MainActivity.this, NewUserActivity.class);
                         MainActivity.this.startActivity(loginIntent);
+                        close = false;
                         break;
                     case(R.id.nav_logout):
                         SaveSharedPreference.clearUserName(MainActivity.this);
                         checkUi(mNavigationView, MainActivity.this);
+                        close = false;
                         break;
                     case(R.id.nav_vendor_admin):
                         swapFragments(new VendorAdminFragment());
@@ -76,7 +79,9 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                         break;
 
                 }
-                mDrawerLayout.closeDrawers();
+                if(close) {
+                    mDrawerLayout.closeDrawers();
+                }
                 return true;
             }
         });
@@ -135,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
             mNavigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
             mNavigationView.getMenu().findItem(R.id.nav_account).setVisible(false);
             mNavigationView.getMenu().findItem(R.id.nav_settings).setVisible(false);
+            mNavigationView.getMenu().findItem(R.id.nav_orders).setVisible(false);
             mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
             welcomeMsg.setText("Welcome");
         }
@@ -144,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
             mNavigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
             mNavigationView.getMenu().findItem(R.id.nav_account).setVisible(true);
             mNavigationView.getMenu().findItem(R.id.nav_settings).setVisible(true);
+            mNavigationView.getMenu().findItem(R.id.nav_orders).setVisible(true);
             mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
             welcomeMsg.setText("Welcome, " + SaveSharedPreference.getUserName(cxt));
         }

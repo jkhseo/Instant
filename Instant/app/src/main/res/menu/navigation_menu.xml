@@ -5,26 +5,6 @@
         android:title="Home"
         android:icon="@mipmap/home" />
     <item
-        android:id="@+id/nav_account"
-        android:title="My Account"
-        android:icon="@mipmap/account"/>
-    <item
-        android:id="@+id/nav_settings"
-        android:title="Settings"
-        android:icon="@mipmap/settings"/>
-    <item
-        android:id="@+id/nav_vendor_admin"
-        android:title="Vendor/Admin"
-        android:icon="@mipmap/vendor" />
-    <item
-        android:id="@+id/nav_logout"
-        android:title="Logout"
-        android:icon="@mipmap/logout"/>
-    <item
-        android:id="@+id/nav_login"
-        android:title="Login"
-        android:icon="@mipmap/login"/>
-    <item
         android:id="@+id/nav_orders"
         android:icon="@drawable/notepad"
         android:title="Orders" />
@@ -36,4 +16,24 @@
         android:id="@+id/nav_map"
         android:icon="@drawable/map"
         android:title="Map" />
+    <item
+        android:id="@+id/nav_settings"
+        android:title="Settings"
+        android:icon="@mipmap/settings"/>
+    <item
+        android:id="@+id/nav_vendor_admin"
+        android:title="Vendor/Admin"
+        android:icon="@mipmap/vendor" />
+    <item
+        android:id="@+id/nav_account"
+        android:title="My Account"
+        android:icon="@mipmap/account"/>
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Logout"
+        android:icon="@mipmap/logout"/>
+    <item
+        android:id="@+id/nav_login"
+        android:title="Login"
+        android:icon="@mipmap/login"/>
 </menu>
