@@ -1,5 +1,7 @@
 package food.instant.instant;
 
+import android.support.v4.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -30,6 +32,13 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
 
+        //This loads the starting fragment
+        android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+        transaction.add(R.id.content_frame, new VendorAdminFragment());
+        transaction.commit();
+        //Starting Fragment loaded
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final NavigationView mNavigationView = findViewById(R.id.nav_view);
@@ -40,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+
                 switch (item.getItemId())
                 {
                     case(R.id.nav_login):
@@ -49,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
                     case(R.id.nav_logout):
                         SaveSharedPreference.clearUserName(MainActivity.this);
                         checkUi(mNavigationView, MainActivity.this);
+                        break;
+                    case(R.id.nav_vendor_admin):
+                        swapFragments(new VendorAdminFragment());
                         break;
                 }
                 return true;
@@ -121,5 +135,13 @@ public class MainActivity extends AppCompatActivity {
             mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
             welcomeMsg.setText("Welcome, " + SaveSharedPreference.getUserName(cxt));
         }
+    }
+
+    public void swapFragments(Fragment obj)
+    {
+        android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+        transaction.replace(R.id.content_frame, obj);
+        transaction.commit();
     }
 }

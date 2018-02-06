@@ -13,7 +13,7 @@
         android:title="Settings"
         android:icon="@mipmap/settings"/>
     <item
-        android:id="@+id/nav_adminVendor"
+        android:id="@+id/nav_vendor_admin"
         android:title="Vendor/Admin"
         android:icon="@mipmap/vendor" />
     <item
