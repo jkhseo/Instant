@@ -11,28 +11,11 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
-public class CustomerActivity extends user_template {
+public class CustomerActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ViewGroup navDrawerView = findViewById(R.id.drawer_layout);
-        getLayoutInflater().inflate(R.layout.activity_customer,navDrawerView,true);
-        Button searchButton = findViewById(R.id.searchButton);
-        Button mapButton = findViewById(R.id.mapButton);
-        searchButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CustomerActivity.this,user_home_search.class);
-                startActivity(intent);
-            }
-        });
-        mapButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CustomerActivity.this,user_home_search.class);
-                startActivity(intent);
-            }
-        });
+        setContentView(R.layout.activity_customer);
 
     }
 

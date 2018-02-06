@@ -204,7 +204,7 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
                         @Override
                         public void onClick(View view) {
                             popupWindow.dismiss();
-                            ((user_template)getActivity()).swapFragments(new user_home_restaurant(test));
+                            ((MainActivity)getActivity()).swapFragments(new user_home_restaurant(test));
                         }
                     });
 

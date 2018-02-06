@@ -24,4 +24,16 @@
         android:id="@+id/nav_login"
         android:title="Login"
         android:icon="@mipmap/login"/>
+    <item
+        android:id="@+id/nav_orders"
+        android:icon="@drawable/notepad"
+        android:title="Orders" />
+    <item
+        android:id="@+id/nav_search"
+        android:icon="@drawable/searchicon"
+        android:title="Search" />
+    <item
+        android:id="@+id/nav_map"
+        android:icon="@drawable/map"
+        android:title="Map" />
 </menu>

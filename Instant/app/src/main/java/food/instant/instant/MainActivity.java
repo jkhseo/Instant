@@ -1,5 +1,6 @@
 package food.instant.instant;
 
+import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
@@ -15,7 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener {
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
@@ -39,7 +40,9 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
         //Starting Fragment loaded
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         final NavigationView mNavigationView = findViewById(R.id.nav_view);
 
@@ -49,8 +52,6 @@ public class MainActivity extends AppCompatActivity {
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-
                 switch (item.getItemId())
                 {
                     case(R.id.nav_login):
@@ -64,7 +65,18 @@ public class MainActivity extends AppCompatActivity {
                     case(R.id.nav_vendor_admin):
                         swapFragments(new VendorAdminFragment());
                         break;
+                    case(R.id.nav_map):
+                        swapFragments(new user_home_maps());
+                        break;
+                    case(R.id.nav_search):
+                        swapFragments(new user_home_search());
+                        break;
+                    case(R.id.nav_orders):
+                        swapFragments(new user_home_orders());
+                        break;
+
                 }
+                mDrawerLayout.closeDrawers();
                 return true;
             }
         });
@@ -110,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
     /*Opens the Customer activity*/
     public void startCustomerActivity(View view)
     {
-        Intent myIntent = new Intent(MainActivity.this, user_template.class);
+        Intent myIntent = new Intent(MainActivity.this, CustomerActivity.class);
         MainActivity.this.startActivity(myIntent);
     }
 
@@ -143,5 +155,10 @@ public class MainActivity extends AppCompatActivity {
         android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
         transaction.replace(R.id.content_frame, obj);
         transaction.commit();
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 }

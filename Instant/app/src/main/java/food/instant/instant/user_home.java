@@ -78,7 +78,7 @@ public class user_home extends Fragment {
         mapButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((user_template)getActivity()).swapFragments(new user_home_maps());
+                ((MainActivity)getActivity()).swapFragments(new user_home_maps());
             }
         });
         return mainView;
