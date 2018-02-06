@@ -12,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -76,10 +78,11 @@ public class user_home_restaurant extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_home_restaurant, container, false);
         Button directions = view.findViewById(R.id.directions);
+        directions.setText(restaurant.getAddress());
         directions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                ((user_template)getActivity()).swapFragments(new user_home_maps(new LatLng(restaurant.getLatitude(),restaurant.getLongitude())));
             }
         });
         TextView temp = view.findViewById(R.id.restaurant_name);

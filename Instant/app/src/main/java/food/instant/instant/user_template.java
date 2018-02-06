@@ -35,6 +35,7 @@ public class user_template extends AppCompatActivity
         android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
         transaction.add(R.id.content_frame,new user_home());
         transaction.commit();
+        //new HTTPGET().execute();
     }
     public void swapFragments(Fragment obj){
         android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
