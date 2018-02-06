@@ -76,28 +76,32 @@ public class NewUserActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    OkHttpClient client = new OkHttpClient();
-                    Request request = new Request.Builder().url("http://www.vogella.com/index.html").build();
 
-                    client.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Request request, IOException e) {
-                            e.printStackTrace();
-                        }
-
-                        @Override
-                        public void onResponse(Response response) throws IOException {
-                            //prints the response to Logcat
-                            Log.d(TAG, response.toString());
-                        }
-                    });
-
-                    /*Log.d(TAG, "Username: " + username);
+                    Log.d(TAG, "Username: " + username);
                     Log.d(TAG, "Password: " + password);
 
                     SaveSharedPreference.setUserName(c, username);
-                    finish();*/
+                    finish();
                 }
+            }
+        });
+    }
+
+    public void doHttp()
+    {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url("http://www.vogella.com/index.html").build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                //prints the response to Logcat
+                Log.d(TAG, response.toString());
             }
         });
     }
