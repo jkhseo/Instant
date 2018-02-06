@@ -110,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
     /*Opens the Customer activity*/
     public void startCustomerActivity(View view)
     {
-        Intent myIntent = new Intent(MainActivity.this, CustomerActivity.class);
+        Intent myIntent = new Intent(MainActivity.this, user_template.class);
         MainActivity.this.startActivity(myIntent);
     }
 
