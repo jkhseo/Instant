@@ -16,6 +16,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
+
+import java.io.IOException;
+import java.net.URI;
+
+import static food.instant.instant.HttpRequests.HttpGET;
+
+
 public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener {
 
     private DrawerLayout mDrawerLayout;
@@ -32,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
 
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-
+        HttpGET("http://10.36.19.78:8080/greeting");
         //This loads the starting fragment
         android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
