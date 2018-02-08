@@ -1,6 +1,7 @@
 package food.instant.instant;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.okhttp.Callback;
@@ -37,7 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
         c = this;
 
-        setContentView(R.layout.activity_new_user);
+        setContentView(R.layout.activity_login);
 
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
@@ -91,6 +93,15 @@ public class LoginActivity extends AppCompatActivity {
                     }
                     finish();
                 }
+            }
+        });
+
+        TextView forgotPassword = findViewById(R.id.tvForgotPassword);
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(c, ForgotPassword.class);
+                startActivity(intent);
             }
         });
     }
