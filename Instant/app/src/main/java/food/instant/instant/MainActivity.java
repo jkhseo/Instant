@@ -10,11 +10,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener {
+
+    private Context c;
 
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
@@ -23,6 +26,9 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        c = this;
+
         setContentView(R.layout.activity_main);
 
         mDrawerLayout = findViewById(R.id.drawerLayout);
@@ -32,10 +38,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         mToggle.syncState();
 
         //This loads the starting fragment
-        android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
-        android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(R.id.content_frame, new user_home());
-        transaction.commit();
+        chooseStartingFragment(c);
         //Starting Fragment loaded
 
         if(getSupportActionBar() != null) {
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         final NavigationView mNavigationView = findViewById(R.id.nav_view);
 
         //helper method to hide login/logout buttons
-        chooseNavDrawer(mNavigationView, MainActivity.this);
+        chooseNavDrawer(mNavigationView, c);
 
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -54,13 +57,13 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                 switch (item.getItemId())
                 {
                     case(R.id.nav_login):
-                        Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-                        MainActivity.this.startActivity(loginIntent);
+                        Intent loginIntent = new Intent(c, LoginActivity.class);
+                        c.startActivity(loginIntent);
                         close = false;
                         break;
                     case(R.id.nav_logout):
-                        SaveSharedPreference.logout(MainActivity.this);
-                        chooseNavDrawer(mNavigationView, MainActivity.this);
+                        SaveSharedPreference.logout(c);
+                        chooseNavDrawer(mNavigationView, c);
                         close = false;
                         break;
                     case(R.id.nav_map):
@@ -74,7 +77,26 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                         break;
                     case(R.id.nav_account):
                         break;
-
+                    case(R.id.nav_home_admin):
+                        swapFragments(new admin_home());
+                        break;
+                    case(R.id.nav_vendor_analytics):
+                        swapFragments(new vendor_analytics());
+                        break;
+                    case(R.id.nav_vendor_edit_menu):
+                        swapFragments(new vendor_edit_menu());
+                        break;
+                    case(R.id.nav_home_vendor):
+                        swapFragments(new vendor_home());
+                        break;
+                    case(R.id.nav_vendor_orders):
+                        swapFragments(new vendor_orders());
+                        break;
+                    case(R.id.nav_vendor_restaurant_details):
+                        swapFragments(new vendor_restaurant_details());
+                        break;
+                    default:
+                        Log.d(TAG, "#########Default case hit on the navigation drawer switch!#########");
                 }
                 if(close) {
                     mDrawerLayout.closeDrawers();
@@ -88,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
     protected void onResume(){
         super.onResume();
         final NavigationView mNavigationView = findViewById(R.id.nav_view);
-        chooseNavDrawer(mNavigationView, MainActivity.this);
+        chooseNavDrawer(mNavigationView, c);
     }
 
     @Override
@@ -99,6 +121,29 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void chooseStartingFragment(Context cxt)
+    {
+        android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+        android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
+
+        //if a vendor is logged in
+        if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("vendor"))
+        {
+            transaction.add(R.id.content_frame, new vendor_home());
+        }
+        //if an admin is logged in
+        else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("admin"))
+        {
+            transaction.add(R.id.content_frame, new admin_home());
+        }
+        //else user is logged out or a customer is logged in
+        else
+        {
+            transaction.add(R.id.content_frame, new user_home());
+        }
+        transaction.commit();
     }
 
     private void chooseNavDrawer(NavigationView mNavigationView, Context cxt)
