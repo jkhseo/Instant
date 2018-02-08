@@ -80,7 +80,15 @@ public class NewUserActivity extends AppCompatActivity {
                     Log.d(TAG, "Username: " + username);
                     Log.d(TAG, "Password: " + password);
 
-                    SaveSharedPreference.setUserName(c, username);
+                    if(username.equals("vendor")) {
+                        SaveSharedPreference.login(c, username, "vendor");
+                    }
+                    else if(username.equals("admin")) {
+                        SaveSharedPreference.login(c, username, "admin");
+                    }
+                    else {
+                        SaveSharedPreference.login(c, username, "customer");
+                    }
                     finish();
                 }
             }

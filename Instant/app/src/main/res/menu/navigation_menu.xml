@@ -17,13 +17,13 @@
         android:icon="@drawable/map"
         android:title="Map" />
     <item
-        android:id="@+id/nav_settings"
-        android:title="Settings"
-        android:icon="@mipmap/settings"/>
+        android:id="@+id/nav_vendor"
+        android:title="Vendor Tools"
+        android:icon="@mipmap/vendor_tools" />
     <item
-        android:id="@+id/nav_vendor_admin"
-        android:title="Vendor/Admin"
-        android:icon="@mipmap/vendor" />
+        android:id="@+id/nav_admin"
+        android:title="Admin Tools"
+        android:icon="@mipmap/admin_tools" />
     <item
         android:id="@+id/nav_account"
         android:title="My Account"

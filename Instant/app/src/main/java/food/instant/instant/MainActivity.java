@@ -61,11 +61,11 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                         close = false;
                         break;
                     case(R.id.nav_logout):
-                        SaveSharedPreference.clearUserName(MainActivity.this);
+                        SaveSharedPreference.logout(MainActivity.this);
                         checkUi(mNavigationView, MainActivity.this);
                         close = false;
                         break;
-                    case(R.id.nav_vendor_admin):
+                    case(R.id.nav_vendor):
                         swapFragments(new VendorAdminFragment());
                         break;
                     case(R.id.nav_map):
@@ -76,6 +76,8 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                         break;
                     case(R.id.nav_orders):
                         swapFragments(new user_home_orders());
+                        break;
+                    case(R.id.nav_account):
                         break;
 
                 }
@@ -104,12 +106,6 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         return super.onOptionsItemSelected(item);
     }
 
-    /*Opens the new user activity*/
-    public void startNewUserActivity(View view)
-    {
-
-    }
-
     /*Opens the Vendor activity*/
     public void startVendorActivity(View view)
     {
@@ -134,26 +130,74 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
     private void checkUi(NavigationView mNavigationView, Context cxt)
     {
         TextView welcomeMsg = mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message);
-        //if user is logged out
-        if(SaveSharedPreference.getUserName(cxt).length() == 0)
+        //if customer is logged in
+        if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("customer"))
         {
-            mNavigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
-            mNavigationView.getMenu().findItem(R.id.nav_account).setVisible(false);
-            mNavigationView.getMenu().findItem(R.id.nav_settings).setVisible(false);
-            mNavigationView.getMenu().findItem(R.id.nav_orders).setVisible(false);
-            mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
-            welcomeMsg.setText("Welcome");
+            loginDefault(mNavigationView, cxt);
         }
-        //else user is logged in
+        //if a vendor is logged in
+        else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("vendor"))
+        {
+            loginDefault(mNavigationView, cxt);
+            mNavigationView.getMenu().findItem(R.id.nav_vendor).setVisible(true);
+            mNavigationView.getMenu().findItem(R.id.nav_vendor).setEnabled(true);
+        }
+        //if an admin is logged in
+        else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("admin"))
+        {
+            loginDefault(mNavigationView, cxt);
+            mNavigationView.getMenu().findItem(R.id.nav_admin).setVisible(true);
+            mNavigationView.getMenu().findItem(R.id.nav_admin).setEnabled(true);
+        }
+        //else user is logged out
         else
         {
-            mNavigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
-            mNavigationView.getMenu().findItem(R.id.nav_account).setVisible(true);
-            mNavigationView.getMenu().findItem(R.id.nav_settings).setVisible(true);
-            mNavigationView.getMenu().findItem(R.id.nav_orders).setVisible(true);
-            mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
-            welcomeMsg.setText("Welcome, " + SaveSharedPreference.getUserName(cxt));
+            logoutDefault(mNavigationView);
         }
+    }
+
+    public void loginDefault(NavigationView mNavigationView, Context cxt)
+    {
+        mNavigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
+        mNavigationView.getMenu().findItem(R.id.nav_logout).setEnabled(true);
+
+        mNavigationView.getMenu().findItem(R.id.nav_account).setVisible(true);
+        mNavigationView.getMenu().findItem(R.id.nav_account).setEnabled(true);
+
+        mNavigationView.getMenu().findItem(R.id.nav_orders).setVisible(true);
+        mNavigationView.getMenu().findItem(R.id.nav_orders).setEnabled(true);
+
+        mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
+        mNavigationView.getMenu().findItem(R.id.nav_login).setEnabled(false);
+
+        mNavigationView.getMenu().findItem(R.id.nav_vendor).setVisible(false);
+        mNavigationView.getMenu().findItem(R.id.nav_vendor).setEnabled(false);
+
+        mNavigationView.getMenu().findItem(R.id.nav_admin).setVisible(false);
+        mNavigationView.getMenu().findItem(R.id.nav_admin).setEnabled(false);
+        ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome, " + SaveSharedPreference.getUserName(cxt));
+    }
+
+    public void logoutDefault(NavigationView mNavigationView)
+    {
+        mNavigationView.getMenu().findItem(R.id.nav_logout).setVisible(false);
+        mNavigationView.getMenu().findItem(R.id.nav_logout).setEnabled(false);
+
+        mNavigationView.getMenu().findItem(R.id.nav_account).setVisible(false);
+        mNavigationView.getMenu().findItem(R.id.nav_account).setEnabled(false);
+
+        mNavigationView.getMenu().findItem(R.id.nav_orders).setVisible(false);
+        mNavigationView.getMenu().findItem(R.id.nav_orders).setEnabled(false);
+
+        mNavigationView.getMenu().findItem(R.id.nav_vendor).setVisible(false);
+        mNavigationView.getMenu().findItem(R.id.nav_vendor).setEnabled(false);
+
+        mNavigationView.getMenu().findItem(R.id.nav_admin).setVisible(false);
+        mNavigationView.getMenu().findItem(R.id.nav_admin).setEnabled(false);
+
+        mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
+        mNavigationView.getMenu().findItem(R.id.nav_login).setEnabled(true);
+        ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome");
     }
 
     public void swapFragments(Fragment obj)
