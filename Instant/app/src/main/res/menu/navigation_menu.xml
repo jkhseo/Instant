@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/nav_home"
+        android:id="@+id/nav_home_user"
         android:title="Home"
         android:icon="@mipmap/home" />
     <item
-        android:id="@+id/nav_orders"
+        android:id="@+id/nav_home_vendor"
+        android:title="Vendor Home"
+        android:icon="@mipmap/home" />
+    <item
+        android:id="@+id/nav_home_admin"
+        android:title="Admin Home"
+        android:icon="@mipmap/home" />
+    <item
+        android:id="@+id/nav_orders_user"
         android:icon="@drawable/notepad"
         android:title="Orders" />
     <item
@@ -17,13 +25,21 @@
         android:icon="@drawable/map"
         android:title="Map" />
     <item
-        android:id="@+id/nav_vendor"
-        android:title="Vendor Tools"
-        android:icon="@mipmap/vendor_tools" />
+        android:id="@+id/nav_vendor_restaurant_details"
+        android:title="Restaurant Details"
+        android:icon="@mipmap/restaurant" />
     <item
-        android:id="@+id/nav_admin"
-        android:title="Admin Tools"
-        android:icon="@mipmap/admin_tools" />
+        android:id="@+id/nav_vendor_edit_menu"
+        android:title="Edit Menu"
+        android:icon="@mipmap/menu" />
+    <item
+        android:id="@+id/nav_vendor_orders"
+        android:title="Orders"
+        android:icon="@mipmap/orders" />
+    <item
+        android:id="@+id/nav_vendor_analytics"
+        android:title="Analytics"
+        android:icon="@mipmap/analytics" />
     <item
         android:id="@+id/nav_account"
         android:title="My Account"

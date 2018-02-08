@@ -24,18 +24,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".NewUserActivity"
+            android:name=".LoginActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".VendorActivity" />
-        <activity android:name=".AdminActivity" />
-        <activity android:name=".CustomerActivity" />
-
-        <!--What is this activity right here, and why is it red-->
-        <activity
-            android:name=".user_template"
-            android:label="@string/title_activity_user_home"
-            android:theme="@style/AppTheme" />
-
 
     </application>
 

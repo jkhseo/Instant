@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/background_light"
-    tools:context="food.instant.instant.NewUserActivity">
+    tools:context="food.instant.instant.LoginActivity">
 
     <LinearLayout
         android:id="@+id/topBar"

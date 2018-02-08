@@ -18,9 +18,9 @@ import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
-public class NewUserActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
-    private static final String TAG = "NewUserActivity";
+    private static final String TAG = "LoginActivity";
 
     private Context c;
 
