@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import static food.instant.instant.HttpRequests.HttpGET;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -87,6 +89,8 @@ public class user_home_restaurant extends Fragment {
         });
         TextView temp = view.findViewById(R.id.restaurant_name);
         temp.setText(restaurant.getName());
+        //HttpGET("getRestaurantMenu");
+
         return view;
 
     }

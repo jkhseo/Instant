@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import static food.instant.instant.HttpRequests.HttpGET;
+import static food.instant.instant.HttpRequests.HttpPostRestaurant;
 
 
 public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener {
@@ -42,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
 
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-        HttpGET("http://10.36.19.78:8080/greeting");
+       // HttpPostRestaurant("http://proj-309-sd-4.cs.iastate.edu/demo/addRestaurant","");
+        //HttpGET("getRestaurants");
         //This loads the starting fragment
         android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();

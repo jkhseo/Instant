@@ -13,6 +13,9 @@ import android.graphics.Point;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -50,12 +53,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+
+import static food.instant.instant.HttpRequests.HttpGET;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -253,6 +259,27 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
                     + " must implement OnFragmentInteractionListener");
         }
     }
+    private static class MapHandler extends Handler {
+        private final WeakReference<user_home_maps> mapFragment;
+        public MapHandler(user_home_maps mapFragment){
+            this.mapFragment = new WeakReference<user_home_maps>(mapFragment);
+        }
+        @Override
+        public void handleMessage(Message msg){
+            user_home_maps map = mapFragment.get();
+            if(map != null){
+                JSONArray response = null;
+                try {
+                    response = ((JSONObject)msg.obj).getJSONArray("Restaurants");
+                    for(int i=0;i<response.length();i++){
+                        System.out.println(((JSONObject)response.get(i)).get("Rest_Name"));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
     public void findAreaRestaurants(){
         double minLat,minLong,maxLat,maxLong,minLong2,maxLong2;
         VisibleRegion visibleScreen = res_map.getProjection().getVisibleRegion();
@@ -270,11 +297,8 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
             minLong2 = -180;
             maxLong2 = visibleScreen.latLngBounds.northeast.longitude;
         }
-        String query;
-        if(minLong2==0 && maxLong2==0)
-            query = "SELECT * FROM db309sd4.Restaurant WHERE (Rest_Coordinate_X,Rest_Coordinate_Y) BETWEEN ("+minLat+"," +minLong+") AND ("+maxLat+","+maxLong+");";
-        else
-            query = "";
+        MapHandler handler = new MapHandler(this);
+        HttpGET("getRestaurants",handler);
 
         ArrayList<Restaurant> testArray = new ArrayList<Restaurant>();
         Restaurant test = new Restaurant(8,"Rancho Grande",42.063463,-94.868466,"323 N Main St, Carroll, IA 51401",5);
@@ -319,6 +343,53 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
                 }
             }
         }
+    }
+    public void updateMap(JSONObject response){
+
+        ArrayList<Restaurant> testArray = new ArrayList<Restaurant>();
+        Restaurant test = new Restaurant(8,"Rancho Grande",42.063463,-94.868466,"323 N Main St, Carroll, IA 51401",5);
+        testArray.add(test);
+        ArrayList<Restaurant> queryResults = testArray;
+        //ArrayList<Restaurant> queryResults = HTTPGET.HTTPGetRestaurants(query);
+        if(queryResults!=null){
+            for(int i=0;i<queryResults.size();i++){
+                if(!markerSet.contains(new LatLng(queryResults.get(i).getLatitude(),queryResults.get(i).getLongitude()))) {
+                    final Restaurant temp = queryResults.get(i);
+                    markerSet.add(new LatLng(temp.getLatitude(),temp.getLongitude()));
+                    res_map.addMarker(new MarkerOptions().position(new LatLng(temp.getLatitude(),temp.getLongitude())));
+                    res_map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                        @Override
+                        public boolean onMarkerClick(Marker marker) {
+
+                            View popup = LayoutInflater.from(getActivity()).inflate(R.layout.popupwindow,null);
+                            final PopupWindow popupWindow = new PopupWindow(popup, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
+                            Point markerPos = res_map.getProjection().toScreenLocation(marker.getPosition());
+                            popupWindow.showAtLocation(popup, Gravity.CENTER,0,0);
+                            ImageButton directions = popup.findViewById(R.id.directionsButton);
+                            directions.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    popupWindow.dismiss();
+                                    getDirections(temp);
+                                }
+                            });
+                            Button restaurant = popup.findViewById(R.id.restaurantButton);
+                            restaurant.setText(temp.getName());
+                            restaurant.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    popupWindow.dismiss();
+                                    ((MainActivity)getActivity()).swapFragments(new user_home_restaurant(temp));
+                                }
+                            });
+
+                            return false;
+                        }
+                    });
+                }
+            }
+        }
+
     }
     @Override
     public void onDetach() {

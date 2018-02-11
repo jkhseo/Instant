@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="food.instant.instant">
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,25 +14,24 @@
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDrvQ_A2kpSvu_smP-TnzMLvoCQFoZx5_0"
-            />
+            android:value="AIzaSyDrvQ_A2kpSvu_smP-TnzMLvoCQFoZx5_0" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.SEARCH"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable"/>
         </activity>
         <activity
             android:name=".NewUserActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".VendorActivity" />
         <activity android:name=".AdminActivity" />
-        <activity android:name=".CustomerActivity"/>
-        <activity
-            android:name=".user_template"
-            android:label="@string/title_activity_user_home"
-            android:theme="@style/AppTheme" />
+        <activity android:name=".CustomerActivity" />
+
     </application>
 
 </manifest>
