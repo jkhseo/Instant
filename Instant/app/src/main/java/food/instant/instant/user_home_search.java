@@ -103,13 +103,13 @@ public class user_home_search extends Fragment {
                     String Rest_Name,Rest_Address;
                     double Rest_Coordinate_X, Rest_Coordinate_Y;
                     for(int i=0;i<resArray.length;i++){
-                       Rest_ID =  1;//(int)((JSONObject)response.get(i)).get("Rest_ID");
-                       Rest_Name = (String)((JSONObject)response.get(i)).get("Rest_Name");
-                       Rest_Address = "";//(String)((JSONObject)response.get(i)).get("Rest_Address");
-                       Rest_Coordinate_X = 1;//(double)((JSONObject)response.get(i)).get("Rest_Coordinate_X");
-                       Rest_Coordinate_Y = 1;//(double)((JSONObject)response.get(i)).get("Rest_Coordinate_Y");
-                       Rest_Rating = 1;//(int)((JSONObject)response.get(i)).get("Rest_Rating");
-                       resArray[i] = new Restaurant(Rest_ID,Rest_Name,Rest_Coordinate_X,Rest_Coordinate_Y,Rest_Address,Rest_Rating);
+                        Rest_ID =  1;//(int)((JSONObject)response.get(i)).get("Rest_ID");
+                        Rest_Name = (String)((JSONObject)response.get(i)).get("Rest_Name");
+                        Rest_Address = "";//(String)((JSONObject)response.get(i)).get("Rest_Address");
+                        Rest_Coordinate_X = 1;//(double)((JSONObject)response.get(i)).get("Rest_Coordinate_X");
+                        Rest_Coordinate_Y = 1;//(double)((JSONObject)response.get(i)).get("Rest_Coordinate_Y");
+                        Rest_Rating = 1;//(int)((JSONObject)response.get(i)).get("Rest_Rating");
+                        resArray[i] = new Restaurant(Rest_ID,Rest_Name,Rest_Coordinate_X,Rest_Coordinate_Y,Rest_Address,Rest_Rating);
                     }
                     search.updateListView(resArray);
                 } catch (JSONException e) {

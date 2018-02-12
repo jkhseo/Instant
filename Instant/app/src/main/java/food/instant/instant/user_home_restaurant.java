@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.Layout;
 import android.view.LayoutInflater;
@@ -13,6 +15,15 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static food.instant.instant.HttpRequests.HttpGET;
 
@@ -31,7 +42,37 @@ public class user_home_restaurant extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private Restaurant restaurant;
-
+    private static class RestaurantHandler extends Handler {
+        /***************************************************************************************
+         *    Title: Stack Overflow Answer to Question about static handlers
+         *    Author: Tomasz Niedabylski
+         *    Date: July 10, 2012
+         *    Availability: https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
+         ***************************************************************************************/
+        private final WeakReference<user_home_restaurant> restaurantFragment;
+        public RestaurantHandler(user_home_restaurant restaurantFragment) {
+            this.restaurantFragment = new WeakReference<user_home_restaurant>(restaurantFragment);
+        }
+        /*** End Code***/
+        @Override
+        public void handleMessage(Message msg) {
+            user_home_restaurant restaurant = restaurantFragment.get();
+            if (restaurant != null) {
+                JSONArray response = null;
+                try {
+                    response = ((JSONObject) msg.obj).getJSONArray("Food");
+                    ArrayList<Food[]> foodByCategory = new ArrayList<Food[]>();
+                    HashMap<Integer,String> categoryIndicies = new HashMap<Integer,String>();
+                    for(int i=0;i<response.length();i++){
+                        ((JSONObject)response.get(i)).get("Food_Tags_Main");
+                    }
+                    restaurant.updateMenuList();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -73,7 +114,9 @@ public class user_home_restaurant extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+    public void updateMenuList(){
 
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,8 +130,21 @@ public class user_home_restaurant extends Fragment {
                 ((MainActivity)getActivity()).swapFragments(new user_home_maps(new LatLng(restaurant.getLatitude(),restaurant.getLongitude())));
             }
         });
-        TextView temp = view.findViewById(R.id.restaurant_name);
-        temp.setText(restaurant.getName());
+        TextView name = view.findViewById(R.id.restaurant_name);
+        name.setText(restaurant.getName());
+        TextView description = view.findViewById(R.id.description);
+        description.setText("This is a description of this restaurant");
+        TextView operatingHours = view.findViewById(R.id.restaurant_hours);
+        operatingHours.setText("Operating Hours\n" +
+                                "\t"+ "Monday"+"\n"+
+                                "\t"+"Tuesday"+ "\n"+
+                                "\t"+"Wednesday"+"\n"+
+                                "\t"+"Thursday"+"\n"+
+                                "\t"+"Friday"+"\n"+
+                                "\t"+"Saturday"+"\n"+
+                                "\t"+"Sunday"+"\n");
+
+
         //HttpGET("getRestaurantMenu");
 
         return view;
