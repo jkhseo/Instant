@@ -14,11 +14,19 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
+
+import java.io.IOException;
+import java.net.URI;
+
+import static food.instant.instant.HttpRequests.HttpGET;
+import static food.instant.instant.HttpRequests.HttpPostRestaurant;
 
 public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener {
 
     private Context c;
-
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private static String TAG = "MainActivity";
@@ -36,7 +44,8 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
 
         mDrawerLayout.addDrawerListener(mToggle);
         mToggle.syncState();
-
+       // HttpPostRestaurant("http://proj-309-sd-4.cs.iastate.edu/demo/addRestaurant","");
+        //HttpGET("getRestaurants");
         //This loads the starting fragment
         chooseStartingFragment(c);
         //Starting Fragment loaded
