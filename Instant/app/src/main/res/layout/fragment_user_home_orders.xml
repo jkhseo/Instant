@@ -6,9 +6,39 @@
     tools:context="food.instant.instant.user_home_orders">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical"></LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/bAddOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add Order" />
+
+        <Button
+            android:id="@+id/bViewOrders"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="View Orders" />
+
+        <Button
+            android:id="@+id/bUpdateOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Update Order" />
+
+        <Button
+            android:id="@+id/bDeleteOrder"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete Order" />
+    </LinearLayout>
 </FrameLayout>

@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
 /**
@@ -15,7 +16,8 @@ import android.view.ViewGroup;
  * {@link user_home_orders.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class user_home_orders extends Fragment {
+public class user_home_orders extends Fragment{
+    private Button bAddOrder, bViewOrders, bUpdateOrder, bDeleteOrder;
 
     private OnFragmentInteractionListener mListener;
 
@@ -23,12 +25,19 @@ public class user_home_orders extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_user_home_orders, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_user_home_orders, container, false);
+
+        bAddOrder = view.findViewById(R.id.bAddOrder);
+        bViewOrders = view.findViewById(R.id.bViewOrders);
+        bUpdateOrder = view.findViewById(R.id.bUpdateOrder);
+        bDeleteOrder = view.findViewById(R.id.bDeleteOrder);
+
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
