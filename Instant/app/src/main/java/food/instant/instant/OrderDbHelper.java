@@ -2,6 +2,7 @@ package food.instant.instant;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -51,5 +52,16 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         database.insert(OrderContract.OrderEntry.TABLE_NAME, null, contentValues);
         Log.d(TAG, "One row inserted");
 
+    }
+
+    public Cursor readOrders(SQLiteDatabase database)
+    {
+        String[] projections = {OrderContract.OrderEntry.ORDER_ID, OrderContract.OrderEntry.FOOD_NAME,
+                OrderContract.OrderEntry.EMAIL};
+
+        Cursor cursor = database.query(OrderContract.OrderEntry.TABLE_NAME,
+                projections, null, null, null, null, null);
+
+        return cursor;
     }
 }

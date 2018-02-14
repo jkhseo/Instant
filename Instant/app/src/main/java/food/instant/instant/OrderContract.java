@@ -11,8 +11,8 @@ public class OrderContract {
     {
         public static final String TABLE_NAME = "order_info";
         public static final String ORDER_ID = "order_id";
-        public static final String FOOD_NAME = "food_selection";
-        public static final String EMAIL = "User email";
+        public static final String FOOD_NAME = "food_name";
+        public static final String EMAIL = "user_email";
 
     }
 }
