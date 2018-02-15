@@ -3,6 +3,8 @@ package food.instant.instant;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +20,14 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.lang.ref.WeakReference;
+
+import static food.instant.instant.HttpRequests.HttpGET;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -78,9 +87,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else
                 {
-
-                    Log.d(TAG, "Username: " + username);
-                    Log.d(TAG, "Password: " + password);
+                    final LoginHandler handler = new LoginHandler(LoginActivity.this);
+                    HttpGET("getPassword",handler);
 
                     if(username.equals("vendor")) {
                         SaveSharedPreference.login(c, username, "vendor");
@@ -106,34 +114,26 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void doHttp()
-    {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder().url("http://www.vogella.com/index.html").build();
-
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Request request, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                //prints the response to Logcat
+    private static class LoginHandler extends Handler {
+        /***************************************************************************************
+         *    Title: Stack Overflow Answer to Question about static handlers
+         *    Author: Tomasz Niedabylski
+         *    Date: July 10, 2012
+         *    Availability: https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
+         ***************************************************************************************/
+        private final WeakReference<LoginActivity> loginActivity;
+        public LoginHandler(LoginActivity loginActivity) {
+            this.loginActivity = new WeakReference<LoginActivity>(loginActivity);
+        }
+        /*** End Code***/
+        @Override
+        public void handleMessage(Message msg) {
+            LoginActivity login = loginActivity.get();
+            if (login != null) {
+                JSONObject response = null;
+                response = (JSONObject) msg.obj;
                 Log.d(TAG, response.toString());
             }
-        });
-    }
-
-    //this is so that the UI doesnt get hung up during the http request, and instead the task gets done in the background
-    public class Networking extends AsyncTask
-    {
-        public static final int NETWORK_STATE_REGISTER = 1;
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            Log.d(TAG, "doInBackground");
-
-            return null;
         }
     }
 

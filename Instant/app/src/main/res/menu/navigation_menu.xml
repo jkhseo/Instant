@@ -17,6 +17,14 @@
         android:icon="@drawable/notepad"
         android:title="Orders" />
     <item
+        android:id="@+id/nav_add_order"
+        android:icon="@drawable/notepad"
+        android:title="Add Order" />
+    <item
+        android:id="@+id/nav_view_orders"
+        android:icon="@drawable/notepad"
+        android:title="View Orders" />
+    <item
         android:id="@+id/nav_search"
         android:icon="@drawable/searchicon"
         android:title="Search" />
