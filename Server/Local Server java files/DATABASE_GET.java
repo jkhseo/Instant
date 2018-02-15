@@ -57,7 +57,7 @@ public class DATABASE_GET
 	           e.printStackTrace();
 	      }
 		 
-		  return json.toString();
+		  return " {\"All_Restaurant\":" + json.toString() +  "}";
 
 
 	}
@@ -85,7 +85,7 @@ public class DATABASE_GET
 	      {
 	           e.printStackTrace();
 	      }
-		  return json.toString();
+		  return " {\"Get_Password\":" + json.toString() + "}";
 
 
 	}
@@ -99,7 +99,7 @@ public class DATABASE_GET
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
 	           
-	            String query = "SELECT Rest_Name, Rest_Coordinate_Lat, Rest_Coordinate_Long FROM db309sd4.Restaurant WHERE Rest_Coordinate_Lat > " + min_Lat + " AND Rest_Coordinate_Lat < " + max_Lat + " AND Rest_Coordinate_Long > " + min_Long + " AND Rest_Coordinate_Long < " + max_Long;
+	            String query = "SELECT * FROM db309sd4.Restaurant WHERE Rest_Coordinate_Lat > " + min_Lat + " AND Rest_Coordinate_Lat < " + max_Lat + " AND Rest_Coordinate_Long > " + min_Long + " AND Rest_Coordinate_Long < " + max_Long;
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
 	            ResultSet rs = stmt.executeQuery(query);
@@ -111,7 +111,7 @@ public class DATABASE_GET
 	      {
 	           e.printStackTrace();
 	      }
-		  return json.toString();
+		  return " {\"Restaurant_In_View\":" + json.toString() + "}";
 
 
 	}
@@ -158,7 +158,7 @@ public class DATABASE_GET
 	      {
 	           e.printStackTrace();
 	      }
-		  return json.toString();
+		  return " {\"Nearest_Restaurants\":" + json.toString() + "}";
 
 	}
 	
