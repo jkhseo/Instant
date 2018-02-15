@@ -88,7 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                 else
                 {
                     final LoginHandler handler = new LoginHandler(LoginActivity.this);
-                    HttpGET("getPassword",handler);
+
+                    HttpGET("getPassword?User_Email=" + username, handler);
 
                     if(username.equals("vendor")) {
                         SaveSharedPreference.login(c, username, "vendor");
@@ -109,6 +110,15 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(c, ForgotPassword.class);
+                startActivity(intent);
+            }
+        });
+
+        TextView signUp = findViewById(R.id.tvSignUp);
+        signUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(c, SignUp.class);
                 startActivity(intent);
             }
         });
