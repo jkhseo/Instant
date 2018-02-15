@@ -10,35 +10,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"></LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <Button
-            android:id="@+id/bAddOrder"
+        <ListView
+            android:id="@+id/lv_orders_list"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Order" />
-
-        <Button
-            android:id="@+id/bViewOrders"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="View Orders" />
-
-        <Button
-            android:id="@+id/bUpdateOrder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Update Order" />
-
-        <Button
-            android:id="@+id/bDeleteOrder"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Delete Order" />
+            android:layout_height="match_parent" />
     </LinearLayout>
 </FrameLayout>
