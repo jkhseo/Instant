@@ -63,13 +63,13 @@ public class MainController {
 	    return "{ \"Success\" : \"False\"}";
 	}
 	
-	@PostMapping(path="/addUser") // Map ONLY GET Requests
-	public @ResponseBody String addNewUser(@RequestParam String  User_ID, @RequestParam String  User_Type, @RequestParam String  First_Name,  @RequestParam String  Last_Name, @RequestParam String  User_Address,@RequestParam String  User_Birthday, @RequestParam String  User_Email, @RequestParam String  User_Password)
+	@GetMapping(path="/addUser") // Map ONLY Post Requests
+	public @ResponseBody String addNewUser( @RequestParam String  User_Type, @RequestParam String  First_Name,  @RequestParam String  Last_Name, @RequestParam String  User_Address,@RequestParam String  User_Birthday, @RequestParam String  User_Email, @RequestParam String  User_Password)
 	{ 
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
 		
-	    boolean added = DATABASE_POST.Add_User(  User_ID,   User_Type,   First_Name,    Last_Name,   User_Address,  User_Birthday,   User_Email,   User_Password);
+	    boolean added = DATABASE_POST.Add_User( User_Type,   First_Name,    Last_Name,   User_Address,  User_Birthday,   User_Email,   User_Password);
 		
 	    if(added)
 	    		return "{ \"Success\" : \"True\"}";
@@ -78,13 +78,13 @@ public class MainController {
 	
 	
 	@PostMapping(path="/addRestaurant") // Map ONLY GET Requests
-	public @ResponseBody String addNewRestaurants (@RequestParam String Rest_ID, @RequestParam String Rest_Name,
+	public @ResponseBody String addNewRestaurants ( @RequestParam String Rest_Name,
 			@RequestParam String Rest_Address, @RequestParam String Rest_Coordinate_X, @RequestParam String Rest_Coordinate_Y, @RequestParam String Rest_Rating) 
 	{
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
 		
-		boolean added = DATABASE_POST.Add_Restaurant(Rest_ID, Rest_Name, Rest_Coordinate_X, Rest_Coordinate_Y, Rest_Address, Rest_Rating);
+		boolean added = DATABASE_POST.Add_Restaurant(Rest_Name, Rest_Coordinate_X, Rest_Coordinate_Y, Rest_Address, Rest_Rating);
 	    if(added)
     			return "{ \"Success\" : \"True\"}";
 	    return "{ \"Success\" : \"False\"}";
@@ -98,10 +98,17 @@ public class MainController {
 	}
 	
 	@GetMapping(path="/getFuzzySearchRestaurants")
-	public @ResponseBody String getAllRestaurants(String restaurantName) 
+	public @ResponseBody String getFuzzySearch(String restaurantName) 
 	{
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.fuzzySearchRestaurant(restaurantName);
+	}
+	
+	@GetMapping(path="/getSearchRestaurants")
+	public @ResponseBody String getSearch(String Keywords) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.searchRestaurant_KeyWords(Keywords);
 	}
 	
 

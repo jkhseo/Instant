@@ -26,7 +26,8 @@ public class DATABASE_GET
 	        throws Exception {
 	    JSONArray jsonArray = new JSONArray();
 
-	    while (resultSet.next()) {
+	    while (resultSet.next()) 
+	   {
 	        int total_rows = resultSet.getMetaData().getColumnCount();
 	        JSONObject obj = new JSONObject();
 	        for (int i = 0; i < total_rows; i++) {
@@ -173,13 +174,13 @@ public class DATABASE_GET
 		        
 		        
 	            stringStart = stringStart.toLowerCase();
-	            String query = "SELECT * from Restaurant WHERE (lower(Rest_Name) LIKE '" + stringStart + "%') order by REST_NAME DESC";
+	            String query = "SELECT * from Restaurant WHERE (lower(Rest_Name) LIKE '" + stringStart + "%') order by REST_NAME ";
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
 	            ResultSet rs = stmt.executeQuery(query);
 	            
-	            result += "{ \"Restaurants\" : [ ";
+	            result += "{ \"Fuzzy_Search_Results\" : [ ";
 	            int count = 0;
 	            while(rs.next() && count < FUZZY_SEARCH_RESULTS_MAX)
 	            {
@@ -204,7 +205,7 @@ public class DATABASE_GET
 	
 		//Method to Search for Restaurant
 		//Written by Adam de Gala. 
-		public static String searchRestaurant_KeyWords(String[] keyWords)
+		public static String searchRestaurant_KeyWords(String searching_Keywords)
 		{
 			 String result = "";
 			 try
@@ -212,7 +213,7 @@ public class DATABASE_GET
 			        Class.forName("com.mysql.jdbc.Driver");
 			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
 		           
-		            String query = "SELECT * From Restaurants ";
+		            String query = "SELECT * From Restaurant ";
 		           
 		            System.out.println(query);
 		            Statement stmt=con.createStatement();
@@ -234,12 +235,18 @@ public class DATABASE_GET
 		            		// (\\s+) - 1 or more spaces
 		            		// (,+\\s*) - 1 or more comma, followed by 0 or more spaces
 		            		// (_+\\s*) - 1 or more underscore, followed by 0 or more space. 
-		            		String Keywords[] = keywordString.split("\\s+|,+\\s*|_+\\s*");
+		            		String Keywords[] = {};
+		            		if(keywordString != null && keywordString.length() > 0)
+		            			Keywords = keywordString.split("\\s+|,+\\s*|_+\\s*");
 		            		tuples.add(new Restaurant(name, id, cuisine_main, cuisine_secondary, Keywords));
 		            	
 		            }
 		            Restaurant_Search_Utils searcher = new Restaurant_Search_Utils(tuples);
-		            result = searcher.Search(keyWords);
+		            
+		            //Follows the same rules as above for Regex.
+		            String[] searching_Keywords_Array = searching_Keywords.split("\\s+|,+\\s*|_+\\s*");
+		            
+		            result = searcher.Search(searching_Keywords_Array);
 
 		            con.close();
 		          

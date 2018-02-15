@@ -88,21 +88,23 @@ public class DATABASE_POST
 	
 	
 	//Adds a User to the database. 
-	public static boolean Add_User(String User_ID, String User_Type, String First_Name,  String Last_Name, String User_Address,String User_Birthday, String User_Email, String User_Password)
+	public static boolean Add_User( String User_Type, String First_Name,  String Last_Name, String User_Address,String User_Birthday, String User_Email, String User_Password)
 	{ 
 		 try
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
 	           
-	            String query = "INSERT INTO User ";
+		        
+
+
+	            String query = "INSERT INTO User ( User_Type ,  First_Name ,  Last_Name ,  User_Address ,  User_Birthdate ,  User_Email  ,  User_Password )";
 	            query += " VALUES ( ";
-	            query += "'" + User_ID + "', ";
 	            query += "'" + User_Type + "', ";
 	            query += "'" + First_Name + "', ";
 	            query += "'" + Last_Name + "', ";
 	            query += "'" + User_Address + "', ";
-	            query += "'" + User_Birthday + "', ";
+	            query += "'" + User_Birthday  + "',";
 	            query += "'" + User_Email + "', ";
 	            query += "'" + User_Password + "'); ";
 	            
@@ -124,7 +126,7 @@ public class DATABASE_POST
 	
 	//Adds a Restaurant to the database
 	//Written by Adam de Gala. Feel free to yell at me. 
-	public static boolean Add_Restaurant(String Rest_ID, String Rest_Name, String Rest_Coordinate_X,  String Rest_Coordinate_Y, String Rest_Address,String Rest_Rating)
+	public static boolean Add_Restaurant(String Rest_Name, String Rest_Coordinate_X,  String Rest_Coordinate_Y, String Rest_Address,String Rest_Rating)
 	{ 
 		 try
 		 {  		
@@ -133,7 +135,6 @@ public class DATABASE_POST
 	           
 	            String query = "INSERT INTO Restaurant ";
 	            query += " VALUES ( ";
-	            query += "'" + Rest_ID + "', ";
 	            query += "'" + Scrubber(Rest_Name) + "', ";
 	            query += "'" + Rest_Coordinate_X + "', ";
 	            query += "'" + Rest_Coordinate_Y + "', ";
