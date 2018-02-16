@@ -93,6 +93,12 @@ public class SignUp extends AppCompatActivity {
                     Toast.makeText(c, "Passwords do not match!", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                else if(!checkDateFormat(birthday))
+                {
+                    Toast.makeText(c, "Bad date format!", Toast.LENGTH_SHORT).show();
+                    etBirthday.setText("");
+                    return;
+                }
                 else
                 {
                     final SignUpHandler handler = new SignUpHandler(SignUp.this);
@@ -101,10 +107,38 @@ public class SignUp extends AppCompatActivity {
                             "&Last_Name=" + lastName + "&User_Address=" + address + "&User_Birthday=" + birthday +
                             "&User_Email=" + email + "&User_Password=" + password;
                     HttpGET(request , handler);
+                    Toast.makeText(c, "Registration successful", Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
         });
+    }
+
+    private static boolean checkDateFormat(String date) {
+        if (date.length() != 10) {
+            return false;
+        } else if(!(Character.isDigit(date.charAt(0)) && Character.isDigit(date.charAt(1)) && Character.isDigit(date.charAt(2)) &&
+                Character.isDigit(date.charAt(3)) && date.charAt(4) == '-'))
+        {
+            return false;
+        }
+        else if(!(Character.isDigit(date.charAt(5)) && Character.isDigit(date.charAt(6)) && date.charAt(7) == '-'))
+        {
+            return false;
+        }
+        else if(!(Integer.parseInt(date.substring(5, 7)) <= 12 && Integer.parseInt(date.substring(5, 7)) > 0))
+        {
+            return false;
+        }
+        else if(!(Character.isDigit(date.charAt(8)) && Character.isDigit(date.charAt(9))))
+        {
+            return false;
+        }
+        else if(!(Integer.parseInt(date.substring(8, 10)) <= 31 && Integer.parseInt(date.substring(8, 10)) > 0))
+        {
+            return false;
+        }
+        return true;
     }
 
     private static class SignUpHandler extends Handler {
@@ -125,6 +159,7 @@ public class SignUp extends AppCompatActivity {
             if (signup != null) {
                 JSONObject response = null;
                 response = (JSONObject) msg.obj;
+                Log.d(TAG, "Request made.........................");
                 Log.d(TAG, response.toString());
             }
         }

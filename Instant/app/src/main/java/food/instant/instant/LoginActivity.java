@@ -33,10 +33,12 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
 
-    private Context c;
+    private static Context c;
 
     private EditText etUsername;
     private EditText etPassword;
+    private static String username;
+    private String password;
 
     private Button bLogin;
 
@@ -67,8 +69,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.d(TAG, "Login button was hit!");
 
-                String username = etUsername.getText() + "";
-                String password = etPassword.getText() + "";
+                username = etUsername.getText() + "";
+                password = etPassword.getText() + "";
 
                 if(username.length() == 0 && password.length() != 0)
                 {
@@ -87,20 +89,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    final LoginHandler handler = new LoginHandler(LoginActivity.this);
-
+                    final LoginHandler handler = new LoginHandler(LoginActivity.this, password);
                     HttpGET("getPassword?User_Email=" + username, handler);
-
-                    if(username.equals("vendor")) {
-                        SaveSharedPreference.login(c, username, "vendor");
-                    }
-                    else if(username.equals("admin")) {
-                        SaveSharedPreference.login(c, username, "admin");
-                    }
-                    else {
-                        SaveSharedPreference.login(c, username, "customer");
-                    }
-                    finish();
                 }
             }
         });
@@ -124,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private static class LoginHandler extends Handler {
+    private class LoginHandler extends Handler {
         /***************************************************************************************
          *    Title: Stack Overflow Answer to Question about static handlers
          *    Author: Tomasz Niedabylski
@@ -132,17 +122,43 @@ public class LoginActivity extends AppCompatActivity {
          *    Availability: https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
          ***************************************************************************************/
         private final WeakReference<LoginActivity> loginActivity;
-        public LoginHandler(LoginActivity loginActivity) {
+        private String password;
+        public LoginHandler(LoginActivity loginActivity, String pass) {
             this.loginActivity = new WeakReference<LoginActivity>(loginActivity);
+            this.password = pass;
         }
         /*** End Code***/
         @Override
         public void handleMessage(Message msg) {
             LoginActivity login = loginActivity.get();
             if (login != null) {
-                JSONObject response = null;
-                response = (JSONObject) msg.obj;
-                Log.d(TAG, response.toString());
+                JSONArray response = null;
+                String gottenPass = "";
+
+                //Get the stupid json and store the password in the String
+                try {
+                response = ((JSONObject) msg.obj).getJSONArray("Get_Password");
+                    gottenPass = (String)((JSONObject)response.get(0)).get("User_Password");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                //check if login credentials were correct
+                if(gottenPass.equals(password))
+                {
+                    SaveSharedPreference.login(c, username, "customer");
+                    Log.d(TAG, "////////   Logged in!   //////");
+                    Toast.makeText(c, "Logged in!", Toast.LENGTH_SHORT).show();
+                    LoginActivity.this.finish();
+                    return;
+                }
+                else
+                {
+                    Toast.makeText(c, "Invalid username/password", Toast.LENGTH_SHORT).show();
+                    etUsername.setText("");
+                    etPassword.setText("");
+                }
+                //Log.d(TAG, response.toString());
             }
         }
     }
