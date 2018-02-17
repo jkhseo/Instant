@@ -47,6 +47,7 @@ public class HttpRequests {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                handler.sendMessage(msg);
             }
         });
     }
@@ -71,7 +72,7 @@ public class HttpRequests {
                        responseObject = new JSONObject(temp);
                        if (responseObject.length() == 0)
                            msg.what = GlobalConstants.EMPTY_JSON;
-                       if (responseObject.has("Restaurants"))
+                       if (responseObject.has("Restaurant_Search_Results"))
                            msg.what = GlobalConstants.RESTAURANT_SEARCH_CODE;
                        if (responseObject.has("Fuzzy_Search_Results"))
                            msg.what = GlobalConstants.FUZZY_SEARCH_CODE;

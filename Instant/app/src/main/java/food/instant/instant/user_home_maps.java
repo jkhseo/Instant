@@ -61,6 +61,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
+import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 import static food.instant.instant.GlobalConstants.MY_PERMISSIONS_REQUEST_LOCATION;
 import static food.instant.instant.HttpRequests.HttpGET;
 
@@ -76,9 +77,9 @@ import static food.instant.instant.HttpRequests.HttpGET;
 public class user_home_maps extends Fragment implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener {
     private GoogleMap res_map;
     private View mapsView;
-    private FusedLocationProviderClient flc;
+    //private FusedLocationProviderClient flc;
     private ArrayList<LatLng> markerSet;
-    private boolean locationEnabled;
+    private Location currentLocation;
     private LatLng onMoveCenter;
     private float onMoveZoom;
     // TODO: Rename parameter arguments, choose names that match
@@ -127,50 +128,65 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
         }
 
     }
+    @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode,String permissions[],int[] grantResults){
         if(requestCode == MY_PERMISSIONS_REQUEST_LOCATION){
-            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                FusedLocationProviderClient flc = flc = LocationServices.getFusedLocationProviderClient(getActivity());
+                flc.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        currentLocation = location;
+                        locationSetup();
+                    }
+                });
+            }
+            else{
+                currentLocation=null;
                 locationSetup();
+            }
         }
     }
     @SuppressLint("MissingPermission")
     public void locationSetup(){
-        res_map.setOnMyLocationButtonClickListener(this);
-        res_map.setMyLocationEnabled(true);
-        flc = LocationServices.getFusedLocationProviderClient(getActivity());
-        flc.getLastLocation()
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        LatLng startupLocation;
-                        if(onMoveCenter !=null){
-                            startupLocation = onMoveCenter;
-                            res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
-                            res_map.moveCamera(CameraUpdateFactory.zoomTo(15));
-                        }
-                        else if (location != null) {
-                            startupLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                            res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
-                            res_map.moveCamera(CameraUpdateFactory.zoomTo(15));
-                        }
-                        else{
-                            startupLocation = new LatLng(39.979832,-95.562702);
-                            res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
-
-                        }
-                    }
-                });
-        findAreaRestaurants();
+        LatLng startupLocation;
+        if(currentLocation!=null){
+            res_map.setOnMyLocationButtonClickListener(this);
+            res_map.setMyLocationEnabled(true);
+            if(onMoveCenter !=null){
+                startupLocation = onMoveCenter;
+                res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
+                res_map.moveCamera(CameraUpdateFactory.zoomTo(15));
+            }
+            else{
+                startupLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+                res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
+                res_map.moveCamera(CameraUpdateFactory.zoomTo(15));
+            }
+        }
+        else {
+            startupLocation = new LatLng(39.979832, -95.562702);
+            res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
+        }
     }
+
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap map){
         res_map = map;
-        if(ContextCompat.checkSelfPermission(getContext(),Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
+        if (checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
         }
         else{
-            locationSetup();
+            FusedLocationProviderClient flc = flc = LocationServices.getFusedLocationProviderClient(getActivity());
+            flc.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    currentLocation = location;
+                    locationSetup();
+                }
+            });
         }
         res_map.getUiSettings().setZoomGesturesEnabled(true);
         res_map.getUiSettings().setZoomControlsEnabled(true);
@@ -196,12 +212,14 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
                 }
             }
         }));
+        findAreaRestaurants();
     }
 
     public void getDirections(Restaurant restaurant){
         Intent mapsIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/dir/?api=1&destination="+restaurant.getLatitude()+"%2C"+restaurant.getLongitude()));
         startActivity(mapsIntent);
     }
+    @SuppressLint("MissingPermission")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -240,17 +258,18 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
             if(map != null && msg.what != GlobalConstants.EMPTY_JSON){
                 JSONArray response = null;
                 try {
-                    response = ((JSONObject)msg.obj).getJSONArray("Restaurants");
+                    response = ((JSONObject)msg.obj).getJSONArray("Restaurant_In_View");
                     double latitude,longitude;
                     ArrayList<Restaurant> resultList = new ArrayList<Restaurant>();
-                    String name, address;
-                    int Rest_Id,rating;
+                    String name, address,rating;
                     Restaurant temp;
                     for(int i=0;i<response.length();i++){
-                        latitude = (double)((JSONObject)response.get(i)).get("Rest_Coordinate_lat");
-                        longitude = (double)((JSONObject)response.get(i)).get("Rest_Coordinate_long");
+                        latitude = (double)((JSONObject)response.get(i)).get("Rest_Coordinate_Lat");
+                        longitude = (double)((JSONObject)response.get(i)).get("Rest_Coordinate_Long");
+                        address = (String)((JSONObject)response.get(i)).get("Rest_Address");
                         name = (String)((JSONObject)response.get(i)).get("Rest_Name");
-                        temp = new Restaurant(0,name,latitude,longitude,"address",5);
+                        rating = ((String)((JSONObject)response.get(i)).get("Rest_Rating"));
+                        temp = new Restaurant(name,latitude,longitude,address,Double.parseDouble(rating));
                         resultList.add(temp);
                         map.addRestaurantPins(resultList);
                     }
@@ -261,16 +280,15 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
         }
     }
     public void addRestaurantPins(ArrayList<Restaurant> resultList) {
-        Restaurant test = new Restaurant(8, "Rancho Grande", 42.063463, -94.868466, "323 N Main St, Carroll, IA 51401", 5);
-        resultList.add(test);
         for (int i = 0; i < resultList.size(); i++) {
             if (!markerSet.contains(new LatLng(resultList.get(i).getLatitude(), resultList.get(i).getLongitude()))) {
-                final Restaurant temp = resultList.get(i);
+                Restaurant temp = resultList.get(i);
                 markerSet.add(new LatLng(temp.getLatitude(), temp.getLongitude()));
-                res_map.addMarker(new MarkerOptions().position(new LatLng(temp.getLatitude(), temp.getLongitude())));
+                Marker marker = res_map.addMarker(new MarkerOptions().position(new LatLng(temp.getLatitude(), temp.getLongitude())));
+                marker.setTag(temp);
                 res_map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
-                    public boolean onMarkerClick(Marker marker) {
+                    public boolean onMarkerClick(final Marker marker) {
                         View popup = LayoutInflater.from(getActivity()).inflate(R.layout.popupwindow, null);
                         final PopupWindow popupWindow = new PopupWindow(popup, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, true);
                         Point markerPos = res_map.getProjection().toScreenLocation(marker.getPosition());
@@ -280,16 +298,16 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
                             @Override
                             public void onClick(View view) {
                                 popupWindow.dismiss();
-                                getDirections(temp);
+                                getDirections(((Restaurant)marker.getTag()));
                             }
                         });
                         Button restaurant = popup.findViewById(R.id.restaurantButton);
-                        restaurant.setText(temp.getName());
+                        restaurant.setText(((Restaurant)marker.getTag()).getName());
                         restaurant.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 popupWindow.dismiss();
-                                ((MainActivity) getActivity()).swapFragments(new user_home_restaurant(temp));
+                                ((MainActivity) getActivity()).swapFragments(new user_home_restaurant(((Restaurant)marker.getTag())));
                             }
                         });
 
@@ -317,53 +335,6 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
         }
         MapHandler handler = new MapHandler(this);
         HttpGET("getRestaurantsInView?max_Lat="+maxLat+"&max_Long="+maxLong+"&min_Lat="+minLat+"&min_Long="+minLong, handler);
-    }
-    public void updateMap(JSONObject response){
-
-        ArrayList<Restaurant> testArray = new ArrayList<Restaurant>();
-        Restaurant test = new Restaurant(8,"Rancho Grande",42.063463,-94.868466,"323 N Main St, Carroll, IA 51401",5);
-        testArray.add(test);
-        ArrayList<Restaurant> queryResults = testArray;
-        //ArrayList<Restaurant> queryResults = HTTPGET.HTTPGetRestaurants(query);
-        if(queryResults!=null){
-            for(int i=0;i<queryResults.size();i++){
-                if(!markerSet.contains(new LatLng(queryResults.get(i).getLatitude(),queryResults.get(i).getLongitude()))) {
-                    final Restaurant temp = queryResults.get(i);
-                    markerSet.add(new LatLng(temp.getLatitude(),temp.getLongitude()));
-                    res_map.addMarker(new MarkerOptions().position(new LatLng(temp.getLatitude(),temp.getLongitude())));
-                    res_map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                        @Override
-                        public boolean onMarkerClick(Marker marker) {
-
-                            View popup = LayoutInflater.from(getActivity()).inflate(R.layout.popupwindow,null);
-                            final PopupWindow popupWindow = new PopupWindow(popup, ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT,true);
-                            Point markerPos = res_map.getProjection().toScreenLocation(marker.getPosition());
-                            popupWindow.showAtLocation(popup, Gravity.CENTER,0,0);
-                            ImageButton directions = popup.findViewById(R.id.directionsButton);
-                            directions.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    popupWindow.dismiss();
-                                    getDirections(temp);
-                                }
-                            });
-                            Button restaurant = popup.findViewById(R.id.restaurantButton);
-                            restaurant.setText(temp.getName());
-                            restaurant.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    popupWindow.dismiss();
-                                    ((MainActivity)getActivity()).swapFragments(new user_home_restaurant(temp));
-                                }
-                            });
-
-                            return false;
-                        }
-                    });
-                }
-            }
-        }
-
     }
     @Override
     public void onDetach() {

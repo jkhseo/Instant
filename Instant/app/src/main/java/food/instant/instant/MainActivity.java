@@ -313,12 +313,13 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
     {
         android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
         android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.content_frame, obj);
-        transaction.commit();
+        transaction.replace(R.id.content_frame, obj)
+                    .addToBackStack(null)
+                    .commit();
     }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
-
+        {}
     }
 }

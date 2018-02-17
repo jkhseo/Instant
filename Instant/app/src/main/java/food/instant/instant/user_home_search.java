@@ -1,6 +1,7 @@
 package food.instant.instant;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import static android.support.v4.content.PermissionChecker.checkSelfPermission;
 import static food.instant.instant.GlobalConstants.MY_PERMISSIONS_REQUEST_LOCATION;
 import static food.instant.instant.HttpRequests.GoogleMapsGET;
 import static food.instant.instant.HttpRequests.HttpGET;
@@ -72,6 +74,7 @@ public class user_home_search extends Fragment {
 
     public user_home_search() {
         // Required empty public constructor
+        searchResults = new ArrayList<RestaurantSearchHelper>();
     }
 
     /**
@@ -123,7 +126,7 @@ public class user_home_search extends Fragment {
                 JSONArray response = null;
                 try {
                     if (msg.what == GlobalConstants.RESTAURANT_SEARCH_CODE) {
-                        response = ((JSONObject) msg.obj).getJSONArray("Restaurants");
+                        response = ((JSONObject) msg.obj).getJSONArray("Restaurant_Search_Results");
                         int Rest_ID, Rest_Rating, rank;
                         String Rest_Name, Rest_Address;
                         double Rest_Coordinate_X, Rest_Coordinate_Y;
@@ -135,8 +138,11 @@ public class user_home_search extends Fragment {
                             Rest_Coordinate_Y = 1;//(double)((JSONObject)response.get(i)).get("Rest_Coordinate_Y");
                             Rest_Rating = 1;//(int)((JSONObject)response.get(i)).get("Rest_Rating");
                             rank = (int) ((JSONObject) response.get(i)).get("Rank");
-                            search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant(Rest_ID, Rest_Name, Rest_Coordinate_X, Rest_Coordinate_Y, Rest_Address, Rest_Rating),rank));
+                            search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant(Rest_Name, Rest_Coordinate_X, Rest_Coordinate_Y, Rest_Address, Rest_Rating),rank));
                         }
+                        search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant("test1", 42.033852, -93.642905,"testaddress", 5),6));
+                        search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant("test2", 42.030292, -93.645935,"testaddress", 5),7));
+                        search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant("home", 42.070558, -94.855913,"homeaddress", 5),8));
                         search.getDistances();
                     } else if (msg.what == GlobalConstants.FUZZY_SEARCH_CODE) {
                         String[] fuzzyResults = new String[5];
@@ -148,11 +154,10 @@ public class user_home_search extends Fragment {
                         search.updateAutoComplete(fuzzyResults);
                     }else if(msg.what == GlobalConstants.GOOGLE_MAPS_DISTANCES){
                         JSONArray elements = ((JSONObject)msg.obj).getJSONArray("rows").getJSONObject(0).getJSONArray("elements");
-                        Double[] distances = new Double[elements.length()];
-                        for(int i=0;i<distances.length;i++){
-                            distances[i]= ((double)((JSONObject)((JSONObject)elements.get(i)).get("distance")).get("value"))*0.000621371;
+                        for(int i=0;i<elements.length();i++){
+                            search.searchResults.get(i).getRestaurant().setDistance(((Integer)((JSONObject)((JSONObject)elements.get(i)).get("distance")).get("value"))*0.000621371);
                         }
-                        search.sortSearchResults(distances);
+                        search.sortSearchResults();
                     }
 
                 } catch (JSONException e) {
@@ -170,19 +175,15 @@ public class user_home_search extends Fragment {
             restaurant = res;
             this.rank = rank;
         }
-
         public int getRank() {
             return rank;
         }
-
         public void setRank(int rank) {
             this.rank = rank;
         }
-
         public Restaurant getRestaurant() {
             return restaurant;
         }
-
         public void setRestaurant(Restaurant restaurant) {
             this.restaurant = restaurant;
         }
@@ -193,48 +194,59 @@ public class user_home_search extends Fragment {
             return o2.rank - o1.rank;
         }
     }
+    @SuppressLint("MissingPermission")
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String permissions[],int[] grantResults){
+        if(requestCode == MY_PERMISSIONS_REQUEST_LOCATION){
+            if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                FusedLocationProviderClient flc = flc = LocationServices.getFusedLocationProviderClient(getActivity());
+                flc.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        currentLocation= location;
+                    }
+                });
+            }
+            else{
+                currentLocation=null;
+            }
+        }
+
+    }
+    @SuppressLint("MissingPermission")
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getDistances(){
-        FusedLocationProviderClient flc = flc = LocationServices.getFusedLocationProviderClient(getActivity());
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
-        }
-        flc.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                currentLocation= location;
-            }
-        });
         if(currentLocation!=null) {
             String url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" + currentLocation.getLatitude() + "," + currentLocation.getLongitude()+"&destinations=";
             for(int i=0;i<searchResults.size();i++){
-                url+=searchResults.get(i).getRestaurant().getLatitude()+","+searchResults.get(i).getRestaurant().getLongitude()+"|";
+                url+=searchResults.get(i).getRestaurant().getLatitude()+","+searchResults.get(i).getRestaurant().getLongitude();
+                if(i!=(searchResults.size()-1))
+                    url+="|";
             }
             GoogleMapsGET(url,handler);
         }
         else{
-            sortSearchResults(null);
+            sortSearchResults();
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public void sortSearchResults(Double[] distances) {
-        if(distances!=null){
-            for(int i=0;i<distances.length;i++){
-                if(distances[i]<5)
+    public void sortSearchResults() {
+            for(int i=0;i<searchResults.size();i++){
+                if(searchResults.get(i).getRestaurant().getDistance()<5)
                     searchResults.get(i).setRank(searchResults.get(i).getRank()+4);
-                else if(distances[i]<10)
+                else if(searchResults.get(i).getRestaurant().getDistance()<10)
                     searchResults.get(i).setRank(searchResults.get(i).getRank()+3);
-                else if(distances[i]<15)
+                else if(searchResults.get(i).getRestaurant().getDistance()<15)
                     searchResults.get(i).setRank(searchResults.get(i).getRank()+2);
-                else if(distances[i]<25)
+                else if(searchResults.get(i).getRestaurant().getDistance()<25)
                     searchResults.get(i).setRank(searchResults.get(i).getRank()+1);
             }
-        }
         searchResults.sort(new SearchComparator());
         Restaurant[] resArray = new Restaurant[searchResults.size()];
         for(int i=0;i<resArray.length;i++){
             resArray[i] = searchResults.get(i).getRestaurant();
         }
+        searchResults.clear();
         updateListView(resArray);
     }
     /**
@@ -256,13 +268,14 @@ public class user_home_search extends Fragment {
         searchView.setSuggestionsAdapter(adapter);
         int thresholdID = getResources().getIdentifier("android:id/search_src_text",null,null);
         AutoCompleteTextView auto_complete = searchView.findViewById(thresholdID);
-        auto_complete.setThreshold(1);
+        if(searchView.getQuery().length()!=0) {
+            auto_complete.showDropDown();
+        }
         auto_complete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String clicked = ((MatrixCursor)adapterView.getItemAtPosition(i)).getString(1);
                 searchView.setQuery(clicked,true);
-
             }
         });
     }
@@ -274,6 +287,7 @@ public class user_home_search extends Fragment {
         ListView listView = getView().findViewById(R.id.listView);
         RestaurantAdapter listAdapter = new RestaurantAdapter(getContext(),resArray);
         listView.setAdapter(listAdapter);
+        loadingCircle.setVisibility(View.INVISIBLE);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -283,6 +297,7 @@ public class user_home_search extends Fragment {
         });
 
     }
+    @SuppressLint("MissingPermission")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -290,27 +305,45 @@ public class user_home_search extends Fragment {
         View view = inflater.inflate(R.layout.fragment_user_home_search, container, false);
 
         SearchView searchView = view.findViewById(R.id.searchView);
+        loadingCircle = view.findViewById(R.id.progressBar);
+        loadingCircle.setVisibility(View.INVISIBLE);
         searchView.setIconified(false);
         handler = new SearchHandler(this);
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"_id","Restaurant"});
+        AutoCompleteAdapter adapter = new AutoCompleteAdapter(getContext(),matrixCursor,false);
+        searchView.setSuggestionsAdapter(adapter);
+        int thresholdID = getResources().getIdentifier("android:id/search_src_text",null,null);
+        AutoCompleteTextView auto_complete = searchView.findViewById(thresholdID);
+        auto_complete.setThreshold(1);
+        searchView.setQueryHint("Search for a Restaurant");
+        if (checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
+        }
+        else{
+            FusedLocationProviderClient flc = flc = LocationServices.getFusedLocationProviderClient(getActivity());
+            flc.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    currentLocation = location;
+                }
+            });
+        }
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                HttpGET("getRestaurants",handler);
+                s = s.replaceAll(" ","+");
+                HttpGET("getSearchRestaurants?Keywords="+s,handler);
                 ListView listView = getView().findViewById(R.id.listView);
                 SimpleCursorAdapter adapter;
-                loadingCircle = new ProgressBar(getContext());
-                loadingCircle.setLayoutParams(new ActionBar.LayoutParams(ActionBar.LayoutParams.WRAP_CONTENT, ActionBar.LayoutParams.WRAP_CONTENT, Gravity.CENTER));
                 loadingCircle.setIndeterminate(true);
-                listView.setEmptyView(loadingCircle);
-                ViewGroup content = (ViewGroup)getView().findViewById(R.id.user_home_search);
-                content.addView(loadingCircle);
+                loadingCircle.setVisibility(View.VISIBLE);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                updateAutoComplete(new String[]{"name","name1","name2","name3"});
-                //HttpGET("getFuzzySearchRestaurants?restaurantName="+s,handler);
+                //updateAutoComplete(new String[]{"name","name1","name2","name3"});
+                HttpGET("getFuzzySearchRestaurants?restaurantName="+s,handler);
                 return false;
             }
         });
