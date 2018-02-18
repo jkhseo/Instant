@@ -173,11 +173,13 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("vendor"))
         {
             loginVendor(mNavigationView, cxt);
+            swapFragments(new vendor_home());
         }
         //if an admin is logged in
         else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("admin"))
         {
             loginAdmin(mNavigationView, cxt);
+            swapFragments(new admin_home());
         }
         //else user is logged out
         else

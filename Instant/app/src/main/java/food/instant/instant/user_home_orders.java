@@ -17,7 +17,6 @@ import android.widget.Button;
  * to handle interaction events.
  */
 public class user_home_orders extends Fragment{
-    private Button bAddOrder, bViewOrders, bUpdateOrder, bDeleteOrder;
 
     private OnFragmentInteractionListener mListener;
 
@@ -31,11 +30,6 @@ public class user_home_orders extends Fragment{
         // Inflate the layout for this fragment
 
         View view = inflater.inflate(R.layout.fragment_user_home_orders, container, false);
-
-        bAddOrder = view.findViewById(R.id.bAddOrder);
-        bViewOrders = view.findViewById(R.id.bViewOrders);
-        bUpdateOrder = view.findViewById(R.id.bUpdateOrder);
-        bDeleteOrder = view.findViewById(R.id.bDeleteOrder);
 
         return view;
     }
