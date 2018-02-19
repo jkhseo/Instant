@@ -148,6 +148,11 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
             }
         }
     }
+
+    /**
+     * Sets up the starting location at the user's current location if location services has been enabled
+     * if location is not available it centers on Ames, Iowa all of the way zoomed out
+     */
     @SuppressLint("MissingPermission")
     public void locationSetup(){
         LatLng startupLocation;
@@ -169,8 +174,13 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
             startupLocation = new LatLng(39.979832, -95.562702);
             res_map.moveCamera(CameraUpdateFactory.newLatLng(startupLocation));
         }
+        findAreaRestaurants();
     }
 
+    /**
+     * Sets up initial settings for google maps
+     * @param map
+     */
     @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap map){
@@ -262,14 +272,16 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
                     double latitude,longitude;
                     ArrayList<Restaurant> resultList = new ArrayList<Restaurant>();
                     String name, address,rating;
+                    int Rest_ID;
                     Restaurant temp;
                     for(int i=0;i<response.length();i++){
+                        Rest_ID = (int)((JSONObject)response.get(i)).get("Rest_ID");
                         latitude = (double)((JSONObject)response.get(i)).get("Rest_Coordinate_Lat");
                         longitude = (double)((JSONObject)response.get(i)).get("Rest_Coordinate_Long");
                         address = (String)((JSONObject)response.get(i)).get("Rest_Address");
                         name = (String)((JSONObject)response.get(i)).get("Rest_Name");
                         rating = ((String)((JSONObject)response.get(i)).get("Rest_Rating"));
-                        temp = new Restaurant(name,latitude,longitude,address,Double.parseDouble(rating));
+                        temp = new Restaurant(Rest_ID,name,latitude,longitude,address,Double.parseDouble(rating));
                         resultList.add(temp);
                         map.addRestaurantPins(resultList);
                     }

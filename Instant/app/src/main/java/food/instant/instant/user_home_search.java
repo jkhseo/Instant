@@ -37,6 +37,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -131,19 +132,21 @@ public class user_home_search extends Fragment {
                         String Rest_Name, Rest_Address;
                         double Rest_Coordinate_X, Rest_Coordinate_Y;
                         for (int i = 0; i < response.length(); i++) {
-                            Rest_ID = 1;//(int)((JSONObject)response.get(i)).get("Rest_ID");
+                            Rest_ID =  Integer.parseInt((String)((JSONObject)response.get(i)).get("Rest_ID"));
                             Rest_Name = (String) ((JSONObject) response.get(i)).get("Rest_Name");
-                            Rest_Address = "";//(String)((JSONObject)response.get(i)).get("Rest_Address");
-                            Rest_Coordinate_X = 1;//(double)((JSONObject)response.get(i)).get("Rest_Coordinate_X");
-                            Rest_Coordinate_Y = 1;//(double)((JSONObject)response.get(i)).get("Rest_Coordinate_Y");
+                            Rest_Address = (String)((JSONObject)response.get(i)).get("Rest_Address");
+                            Rest_Coordinate_X = Double.parseDouble((String)((JSONObject)response.get(i)).get("Rest_Coordinate_Lat"));
+                            Rest_Coordinate_Y = Double.parseDouble((String)((JSONObject)response.get(i)).get("Rest_Coordinate_Long"));
                             Rest_Rating = 1;//(int)((JSONObject)response.get(i)).get("Rest_Rating");
-                            rank = (int) ((JSONObject) response.get(i)).get("Rank");
-                            search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant(Rest_Name, Rest_Coordinate_X, Rest_Coordinate_Y, Rest_Address, Rest_Rating),rank));
+                            rank = Integer.parseInt((String)((JSONObject) response.get(i)).get("Rank"));
+                            search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant(Rest_ID,Rest_Name, Rest_Coordinate_X, Rest_Coordinate_Y, Rest_Address, Rest_Rating),rank));
                         }
-                        search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant("test1", 42.033852, -93.642905,"testaddress", 5),6));
-                        search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant("test2", 42.030292, -93.645935,"testaddress", 5),7));
-                        search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant("home", 42.070558, -94.855913,"homeaddress", 5),8));
-                        search.getDistances();
+                        if(search.searchResults.size()==0){
+                            search.noResults();
+                        }
+                        else {
+                            search.getDistances();
+                        }
                     } else if (msg.what == GlobalConstants.FUZZY_SEARCH_CODE) {
                         String[] fuzzyResults = new String[5];
                         response = ((JSONObject) msg.obj).getJSONArray("Fuzzy_Search_Results");
@@ -194,6 +197,21 @@ public class user_home_search extends Fragment {
             return o2.rank - o1.rank;
         }
     }
+    public void noResults(){
+        TextView view = getView().findViewById(R.id.no_results);
+        ListView listView = getView().findViewById(R.id.listView);
+        listView.setVisibility(View.INVISIBLE);
+        view.setVisibility(view.VISIBLE);
+        loadingCircle.setVisibility(View.INVISIBLE);
+
+    }
+    /**
+     * Overrided method that waits for the result of requested location machine, if permission is granted
+     * the current location is assigned
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @SuppressLint("MissingPermission")
     @Override
     public void onRequestPermissionsResult(int requestCode,String permissions[],int[] grantResults){
@@ -213,6 +231,11 @@ public class user_home_search extends Fragment {
         }
 
     }
+
+    /**
+     * If location permission has been granted, this method query's the google database to get the distances
+     * for all of the results of the search, and then calls a method to sort the results
+     */
     @SuppressLint("MissingPermission")
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getDistances(){
@@ -229,6 +252,10 @@ public class user_home_search extends Fragment {
             sortSearchResults();
         }
     }
+
+    /**
+     * Sorts the search results based on distance and relevance
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void sortSearchResults() {
             for(int i=0;i<searchResults.size();i++){
@@ -268,7 +295,7 @@ public class user_home_search extends Fragment {
         searchView.setSuggestionsAdapter(adapter);
         int thresholdID = getResources().getIdentifier("android:id/search_src_text",null,null);
         AutoCompleteTextView auto_complete = searchView.findViewById(thresholdID);
-        if(searchView.getQuery().length()!=0) {
+        if(searchView.getQuery().length()!=0 && fuzzyResults.length!=0) {
             auto_complete.showDropDown();
         }
         auto_complete.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -279,12 +306,25 @@ public class user_home_search extends Fragment {
             }
         });
     }
+
+    /**
+     * Updates the list with sorted search results from the database query
+     * @param resArray
+     */
     public void updateListView(Restaurant[] resArray) {
+        TextView noResults = getView().findViewById(R.id.no_results);
+        if(noResults.getVisibility()==0){
+            noResults.setVisibility(View.INVISIBLE);
+        }
         String[] resName = new String[resArray.length];
         for(int i=0;i<resName.length;i++){
             resName[i] = resArray[i].getName();
         }
         ListView listView = getView().findViewById(R.id.listView);
+        listView.setVisibility(View.VISIBLE);
+        int thresholdID = getResources().getIdentifier("android:id/search_src_text",null,null);
+        AutoCompleteTextView auto_complete = (getView().findViewById(R.id.searchView)).findViewById(thresholdID);
+        auto_complete.dismissDropDown();
         RestaurantAdapter listAdapter = new RestaurantAdapter(getContext(),resArray);
         listView.setAdapter(listAdapter);
         loadingCircle.setVisibility(View.INVISIBLE);
@@ -309,6 +349,8 @@ public class user_home_search extends Fragment {
         loadingCircle.setVisibility(View.INVISIBLE);
         searchView.setIconified(false);
         handler = new SearchHandler(this);
+        TextView noResults = view.findViewById(R.id.no_results);
+        noResults.setVisibility(View.INVISIBLE);
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{"_id","Restaurant"});
         AutoCompleteAdapter adapter = new AutoCompleteAdapter(getContext(),matrixCursor,false);
         searchView.setSuggestionsAdapter(adapter);
