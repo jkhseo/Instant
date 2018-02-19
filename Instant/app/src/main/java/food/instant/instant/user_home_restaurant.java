@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -60,13 +61,45 @@ public class user_home_restaurant extends Fragment {
             if (restaurant != null) {
                 JSONArray response = null;
                 try {
-                    response = ((JSONObject) msg.obj).getJSONArray("Food");
-                    ArrayList<Food[]> foodByCategory = new ArrayList<Food[]>();
-                    HashMap<Integer,String> categoryIndicies = new HashMap<Integer,String>();
+                    response = ((JSONObject) msg.obj).getJSONArray("All_Restaurant");
+                    ArrayList<ArrayList<Food>> foodByCategory = new ArrayList<ArrayList<Food>>();
+                    HashMap<String,Integer> categories = new HashMap<String,Integer>();
+                    int counter=0;
+                    ArrayList<Food> temp = new ArrayList<>();
+                    temp.add(new Food(1,"Burger",9.99,"This is a burger.",0,"Burgers","Burgers"));
+                    temp.add(new Food(1,"Fries",2.99,"These are fries.",0,"Fries","Fries"));
+                    temp.add(new Food(1,"Shake",3.99,"This is a shake.",0,"Shake","Shake"));
+                    foodByCategory.add(temp);
+                    foodByCategory.add(temp);
+                    foodByCategory.add(temp);
+                    String[] cat = {"category1","category2","category3"};
+
+                    /*int Rest_ID,Menu_ID;
+                    String Food_Name,Food_Desc,Food_Tags_Main,Food_Tags_Secondary;
+                    double Food_Price;
+                    Food temp;
+
                     for(int i=0;i<response.length();i++){
-                        ((JSONObject)response.get(i)).get("Food_Tags_Main");
-                    }
-                    restaurant.updateMenuList();
+                        Food_Tags_Main = (String) ((JSONObject)response.get(i)).get("Food_Tags_Main");
+                        Food_Tags_Secondary = (String) ((JSONObject)response.get(i)).get("Food_Tags_Secondary");
+                        Food_Name = (String) ((JSONObject)response.get(i)).get("Food_Name");
+                        Food_Desc = (String) ((JSONObject)response.get(i)).get("Food_Desc");
+                        Food_Price = (double)((JSONObject)response.get(i)).get("Food_Price");
+                        Rest_ID = (int)((JSONObject)response.get(i)).get("Rest_ID");
+                        Menu_ID = (int)((JSONObject)response.get(i)).get("Menu_ID");
+                        temp = new Food(Rest_ID,Food_Name,Food_Price,Food_Desc,Menu_ID,Food_Tags_Main,Food_Tags_Secondary);
+                        if(!categories.containsValue(Food_Tags_Main)){
+                            categories.put(Food_Tags_Main,counter);
+                            counter++;
+                            foodByCategory.add(new ArrayList<Food>());
+                            foodByCategory.get(counter).add(temp);
+                        }
+                        else{
+                            foodByCategory.get(categories.get(Food_Tags_Main)).add(temp);
+                        }
+                    }*/
+                    restaurant.updateMenuList(foodByCategory,cat);
+                    //restaurant.updateMenuList(foodByCategory,(String[])categories.keySet().toArray());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -114,7 +147,10 @@ public class user_home_restaurant extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-    public void updateMenuList(){
+    public void updateMenuList(ArrayList<ArrayList<Food>> foodByCategory, String[] Categories){
+        ExpandableListView menu = getView().findViewById(R.id.menuList);
+        ExpandableMenuAdapter adapter = new ExpandableMenuAdapter(getContext(),foodByCategory,Categories);
+        menu.setAdapter(adapter);
 
     }
     @Override
@@ -143,9 +179,9 @@ public class user_home_restaurant extends Fragment {
                                 "\t"+"Friday"+"\n"+
                                 "\t"+"Saturday"+"\n"+
                                 "\t"+"Sunday"+"\n");
+        RestaurantHandler handler = new RestaurantHandler(this);
 
-
-        //HttpGET("getRestaurantMenu");
+        HttpGET("getRestaurants",handler);
 
         return view;
 

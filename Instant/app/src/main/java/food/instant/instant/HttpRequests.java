@@ -28,8 +28,32 @@ import java.io.IOException;
  */
 
 public class HttpRequests {
+    public static void GoogleMapsGET(String url, final Handler handler){
+        OkHttpClient client = new OkHttpClient();
+        com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(com.squareup.okhttp.Request request, IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                Message msg = handler.obtainMessage();
+                msg.what = GlobalConstants.GOOGLE_MAPS_DISTANCES;
+                try {
+                    JSONObject responseObject = new JSONObject(response.body().string());
+                    msg.obj = responseObject;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                handler.sendMessage(msg);
+            }
+        });
+    }
     public static void HttpGET(String path, final Handler handler) {
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
+        String localurl = "http://10.26.155.133:8080/demo/"+path;
         OkHttpClient client = new OkHttpClient();
         com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
@@ -42,12 +66,20 @@ public class HttpRequests {
             public void onResponse(Response response) throws IOException {
                JSONObject responseObject = null;
                try {
-
-                   responseObject = new JSONObject(response.body().string());
-                   Message msg = handler.obtainMessage();
-                   msg.what = 99;
-                   msg.obj = responseObject;
-                   handler.sendMessage(msg);
+                   String temp = response.body().string();
+                   if(temp!="") {
+                       Message msg = handler.obtainMessage();
+                       responseObject = new JSONObject(temp);
+                       if (responseObject.length() == 0)
+                           msg.what = GlobalConstants.EMPTY_JSON;
+                       if (responseObject.has("Restaurant_Search_Results"))
+                           msg.what = GlobalConstants.RESTAURANT_SEARCH_CODE;
+                       if (responseObject.has("Fuzzy_Search_Results"))
+                           msg.what = GlobalConstants.FUZZY_SEARCH_CODE;
+                       //restaurantsearchresults
+                       msg.obj = responseObject;
+                       handler.sendMessage(msg);
+                   }
 
                 } catch (JSONException e) {
                   e.printStackTrace();
@@ -60,14 +92,6 @@ public class HttpRequests {
         //success tag, true or false value
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody postRequest = RequestBody.create(JSON,json);
-        /*RequestBody postRequest = new FormEncodingBuilder()
-                .add("Rest_ID","9")
-                .add("Rest_Name","Wendys")
-                .add("Rest_Address","123")
-                .add("Rest_Coordinate_X","1.2")
-                .add("Rest_Coordinate_Y","1")
-                .add("Rest_Rating","4")
-                .build();*/
         com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).post(postRequest).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
