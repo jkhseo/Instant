@@ -146,7 +146,16 @@ public class LoginActivity extends AppCompatActivity {
                 //check if login credentials were correct
                 if(gottenPass.equals(password))
                 {
-                    SaveSharedPreference.login(c, username, "customer");
+                    if(username.equals("admin")) {
+                        SaveSharedPreference.login(c, username, "admin");
+                    }
+                    else if(username.equals("vendor"))
+                    {
+                        SaveSharedPreference.login(c, username, "vendor");
+                    }
+                    else {
+                        SaveSharedPreference.login(c, username, "customer");
+                    }
                     Log.d(TAG, "////////   Logged in!   //////");
                     Toast.makeText(c, "Logged in!", Toast.LENGTH_SHORT).show();
                     LoginActivity.this.finish();

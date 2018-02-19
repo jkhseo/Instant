@@ -315,6 +315,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         mNavigationView.getMenu().findItem(R.id.nav_login).setEnabled(true);
 
         ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome");
+        swapFragments(new user_home());
     }
 
     public void swapFragments(Fragment obj)
