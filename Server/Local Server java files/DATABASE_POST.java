@@ -14,15 +14,120 @@ public class DATABASE_POST
 	//Scrubs the string for any invalid characters
 	private static String Scrubber(String str)
 	{
-		System.out.println(str);
+		//System.out.println(str);
 		str.replaceAll("'", "\\\'");
-		System.out.println(str);
+		//System.out.println(str);
 		return str;
 	}
 	
+			//Adds an order to the database. 
+			public static boolean Add_Order(String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Complied)
+			{ 
+				 try
+				 {  		
+				        Class.forName("com.mysql.jdbc.Driver");
+				        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+			           
+			            String query = "INSERT INTO Food ";
+			            query += " VALUES ( ";
+			            query += "'" + Rest_ID + "', ";
+			            query += "'" + User_ID + "', ";
+			            query += "'" + Food + "', ";
+			            query += "'" + Order_Data_Submitted + "', ";
+			            query += "'" + Order_Data_Complied + "'); ";
+			            
+			           
+			            System.out.println(query);
+			            Statement stmt=con.createStatement();
+			            stmt.executeUpdate(query);
+			       
+			            con.close();
+			            return true;
+			        }
+			      catch(Exception e)
+			      {
+			           e.printStackTrace();
+			           return false;
+			      }
+
+			}
+	
+		//Adds a Food to the base. 
+		public static boolean Add_Food(String Rest_ID, String Food_Name, String Food_Price,  String Food_Desc, String Menu_ID,String Food_Tags_Main, String Food_Tags_Secondary)
+		{ 
+			 try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		           
+		            String query = "INSERT INTO Food ";
+		            query += " VALUES ( ";
+		            query += "'" + Rest_ID + "', ";
+		            query += "'" + Food_Name + "', ";
+		            query += "'" + Food_Price + "', ";
+		            query += "'" + Food_Desc + "', ";
+		            query += "'" + Menu_ID + "', ";
+		            query += "'" + Food_Tags_Main + "', ";
+		            query += "'" + Food_Tags_Secondary + "'); ";
+		            
+		           
+		            System.out.println(query);
+		            Statement stmt=con.createStatement();
+		            stmt.executeUpdate(query);
+		            
+		            con.commit();
+		            con.close();
+		            return true;
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		           return false;
+		      }
+
+		}
 	
 	
-	public static boolean Add_Restaurant(String Rest_ID, String Rest_Name, String Rest_Coordinate_X,  String Rest_Coordinate_Y, String Rest_Address,String Rest_Rating)
+	//Adds a User to the database. 
+	public static boolean Add_User( String User_Type, String First_Name,  String Last_Name, String User_Address,String User_Birthday, String User_Email, String User_Password)
+	{ 
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	           
+		        
+
+
+	            String query = "INSERT INTO User ( User_Type ,  First_Name ,  Last_Name ,  User_Address ,  User_Birthdate ,  User_Email  ,  User_Password )";
+	            query += " VALUES ( ";
+	            query += "'" + User_Type + "', ";
+	            query += "'" + First_Name + "', ";
+	            query += "'" + Last_Name + "', ";
+	            query += "'" + User_Address + "', ";
+	            query += "'" + User_Birthday  + "',";
+	            query += "'" + User_Email + "', ";
+	            query += "'" + User_Password + "'); ";
+	            
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	            stmt.executeUpdate(query);
+	       
+	            con.close();
+	            return true;
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	           return false;
+	      }
+
+	}
+	
+	//Adds a Restaurant to the database
+	//Written by Adam de Gala. Feel free to yell at me. 
+	public static boolean Add_Restaurant(String Rest_Name, String Rest_Coordinate_X,  String Rest_Coordinate_Y, String Rest_Address,String Rest_Rating)
 	{ 
 		 try
 		 {  		
@@ -31,7 +136,6 @@ public class DATABASE_POST
 	           
 	            String query = "INSERT INTO Restaurant ";
 	            query += " VALUES ( ";
-	            query += "'" + Rest_ID + "', ";
 	            query += "'" + Scrubber(Rest_Name) + "', ";
 	            query += "'" + Rest_Coordinate_X + "', ";
 	            query += "'" + Rest_Coordinate_Y + "', ";
@@ -52,7 +156,6 @@ public class DATABASE_POST
 	           e.printStackTrace();
 	           return false;
 	      }
-
 
 	}
 }
