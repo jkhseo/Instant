@@ -54,6 +54,20 @@ public class MainController {
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getRestaurantsInView(max_Lat, max_Long, min_Lat, min_Long);
 	}
+	@GetMapping(path="/getFuzzySearchRestaurants")
+	public @ResponseBody String getFuzzySearch(@RequestParam String restaurantName) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.fuzzySearchRestaurant(restaurantName);
+	}
+	
+	@GetMapping(path="/getSearchRestaurants")
+	public @ResponseBody String getSearch(@RequestParam String Keywords) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.searchRestaurant_KeyWords(Keywords);
+	}
 	
 
 }
+
