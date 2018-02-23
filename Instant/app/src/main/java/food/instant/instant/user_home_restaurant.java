@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -22,6 +23,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.security.acl.Group;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,20 +63,19 @@ public class user_home_restaurant extends Fragment {
             if (restaurant != null) {
                 JSONArray response = null;
                 try {
-                    response = ((JSONObject) msg.obj).getJSONArray("All_Restaurant");
+                    response = ((JSONObject) msg.obj).getJSONArray("All_User_Info");
                     ArrayList<ArrayList<Food>> foodByCategory = new ArrayList<ArrayList<Food>>();
                     HashMap<String,Integer> categories = new HashMap<String,Integer>();
                     int counter=0;
-                    ArrayList<Food> temp = new ArrayList<>();
+                   /* ArrayList<Food> temp = new ArrayList<>();
                     temp.add(new Food(1,"Burger",9.99,"This is a burger.",0,"Burgers","Burgers"));
                     temp.add(new Food(1,"Fries",2.99,"These are fries.",0,"Fries","Fries"));
                     temp.add(new Food(1,"Shake",3.99,"This is a shake.",0,"Shake","Shake"));
                     foodByCategory.add(temp);
                     foodByCategory.add(temp);
                     foodByCategory.add(temp);
-                    String[] cat = {"category1","category2","category3"};
-
-                    /*int Rest_ID,Menu_ID;
+                    String[] cat = {"category1","category2","category3"};*/
+                    int Rest_ID,Menu_ID;
                     String Food_Name,Food_Desc,Food_Tags_Main,Food_Tags_Secondary;
                     double Food_Price;
                     Food temp;
@@ -84,22 +85,22 @@ public class user_home_restaurant extends Fragment {
                         Food_Tags_Secondary = (String) ((JSONObject)response.get(i)).get("Food_Tags_Secondary");
                         Food_Name = (String) ((JSONObject)response.get(i)).get("Food_Name");
                         Food_Desc = (String) ((JSONObject)response.get(i)).get("Food_Desc");
-                        Food_Price = (double)((JSONObject)response.get(i)).get("Food_Price");
-                        Rest_ID = (int)((JSONObject)response.get(i)).get("Rest_ID");
-                        Menu_ID = (int)((JSONObject)response.get(i)).get("Menu_ID");
-                        temp = new Food(Rest_ID,Food_Name,Food_Price,Food_Desc,Menu_ID,Food_Tags_Main,Food_Tags_Secondary);
-                        if(!categories.containsValue(Food_Tags_Main)){
-                            categories.put(Food_Tags_Main,counter);
-                            counter++;
+                        Food_Price = Double.parseDouble((String)((JSONObject)response.get(i)).get("Food_Price"));
+                        Menu_ID = Integer.parseInt((String)((JSONObject)response.get(i)).get("Menu_ID"));
+                        temp = new Food(restaurant.restaurant.getRest_ID(),Food_Name,Food_Price,Food_Desc,Menu_ID,Food_Tags_Main,Food_Tags_Secondary);
+                        if(!categories.containsKey(Food_Tags_Main.trim())){
+                            categories.put(Food_Tags_Main.trim(),counter);
                             foodByCategory.add(new ArrayList<Food>());
                             foodByCategory.get(counter).add(temp);
+                            counter++;
                         }
                         else{
                             foodByCategory.get(categories.get(Food_Tags_Main)).add(temp);
                         }
-                    }*/
-                    restaurant.updateMenuList(foodByCategory,cat);
-                    //restaurant.updateMenuList(foodByCategory,(String[])categories.keySet().toArray());
+                    }
+                    //restaurant.updateMenuList(foodByCategory,cat);
+
+                    restaurant.updateMenuList(foodByCategory,categories.keySet().toArray(new String[categories.size()]));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -151,8 +152,49 @@ public class user_home_restaurant extends Fragment {
         ExpandableListView menu = getView().findViewById(R.id.menuList);
         ExpandableMenuAdapter adapter = new ExpandableMenuAdapter(getContext(),foodByCategory,Categories);
         menu.setAdapter(adapter);
+        updateViewHeight(menu,-1);
+        menu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView expandableListView, View view, int g, int c, long l) {
+                Food temp = (Food)expandableListView.getExpandableListAdapter().getChild(g,c);
+                ((MainActivity)getActivity()).swapFragments(new user_home_food(temp));
+                return false;
+            }
+        });
+        menu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView expandableListView, View view, int i, long l) {
+                updateViewHeight(expandableListView,i);
+                return false;
+            }
+        });
 
     }
+
+    private void updateViewHeight(ExpandableListView expandableListView, int groupNum) {
+        ExpandableMenuAdapter adapter = (ExpandableMenuAdapter) expandableListView.getExpandableListAdapter();
+        int totalHeight=0;
+        int groupSize = adapter.getGroupCount();
+        View view = null;
+        for(int i=0;i<groupSize;i++){
+            view = adapter.getGroupView(i,false,null,expandableListView);
+            view.measure(View.MeasureSpec.makeMeasureSpec(expandableListView.getWidth(),View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED);
+            totalHeight+=view.getMeasuredHeight();
+            if((expandableListView.isGroupExpanded(i)&& i!=groupNum)||(!expandableListView.isGroupExpanded(i)&&i==groupNum)){
+                for(int j=0;j<adapter.getChildrenCount(i);j++) {
+                    view = adapter.getChildView(i, j, false, null, expandableListView);
+                    view.measure(View.MeasureSpec.makeMeasureSpec(expandableListView.getWidth(), View.MeasureSpec.EXACTLY), View.MeasureSpec.UNSPECIFIED);
+                    totalHeight += view.getMeasuredHeight();
+                }
+            }
+        }
+
+        ViewGroup.LayoutParams params = expandableListView.getLayoutParams();
+        params.height = totalHeight+ expandableListView.getDividerHeight()*(adapter.getGroupCount()-1);
+        expandableListView.setLayoutParams(params);
+        expandableListView.requestLayout();
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -180,8 +222,7 @@ public class user_home_restaurant extends Fragment {
                                 "\t"+"Saturday"+"\n"+
                                 "\t"+"Sunday"+"\n");
         RestaurantHandler handler = new RestaurantHandler(this);
-
-        HttpGET("getRestaurants",handler);
+        HttpGET("getMenu?Restaurant_ID="+restaurant.getRest_ID(),handler);
 
         return view;
 

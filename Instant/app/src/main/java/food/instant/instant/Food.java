@@ -25,6 +25,15 @@ public class Food {
         this.Food_Tags_Secondary = Food_Tags_Secondary;
 
     }
+    public Food(Food oldFood){
+        this.Rest_ID = oldFood.Rest_ID;
+        this.Food_Name = oldFood.Food_Name;
+        this.Food_Price = oldFood.Food_Price;
+        this.Food_Desc = oldFood.Food_Desc;
+        this.Menu_Id = oldFood.Menu_Id;
+        this.Food_Tags_Main = oldFood.Food_Tags_Main;
+        this.Food_Tags_Secondary = oldFood.Food_Tags_Secondary;
+    }
     public int getRest_ID() {
         return Rest_ID;
     }
