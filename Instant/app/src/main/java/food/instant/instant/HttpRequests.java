@@ -76,6 +76,10 @@ public class HttpRequests {
                            msg.what = GlobalConstants.RESTAURANT_SEARCH_CODE;
                        if (responseObject.has("Fuzzy_Search_Results"))
                            msg.what = GlobalConstants.FUZZY_SEARCH_CODE;
+                       if(responseObject.has("Get_Password"))
+                           msg.what = GlobalConstants.PASSWORD;
+                       if(responseObject.has("All_User_Info"))
+                           msg.what = GlobalConstants.USERINFO;
                        //restaurantsearchresults
                        msg.obj = responseObject;
                        handler.sendMessage(msg);
