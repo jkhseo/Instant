@@ -21,7 +21,7 @@ public class DATABASE_POST
 	}
 	
 			//Adds an order to the database. 
-			public static boolean Add_Order(String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Complied)
+			public static boolean Add_Order(String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Completed, String Comments, String Quantity)
 			{ 
 				 try
 				 {  		
@@ -34,7 +34,9 @@ public class DATABASE_POST
 			            query += "'" + User_ID + "', ";
 			            query += "'" + Food + "', ";
 			            query += "'" + Order_Data_Submitted + "', ";
-			            query += "'" + Order_Data_Complied + "'); ";
+			            query += "'" + Order_Data_Submitted + "', ";
+			            query += "'" + Comments + "'";
+			            query += "'" + Quantity + "'); ";
 			            
 			           
 			            System.out.println(query);

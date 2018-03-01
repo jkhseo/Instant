@@ -182,14 +182,7 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-	           
-		        
 
-
-
-		        
-		        
-		        
 	            String query = "		        SELECT * FROM(SELECT z.Rest_Name,\n" + 
 	            		"		        p.distance_unit\n" + 
 	            		"		                 * DEGREES(ACOS(COS(RADIANS(p.latpoint))\n" + 
@@ -309,7 +302,7 @@ public class DATABASE_GET
 		            //Follows the same rules as above for Regex.
 		            String[] searching_Keywords_Array = searching_Keywords.split("\\s+|,+\\s*|_+\\s*");
 		            
-		            result = searcher.Search(searching_Keywords_Array);
+		            result = searcher.SearchSpellCheck(searching_Keywords_Array);
 
 		            con.close();
 		          

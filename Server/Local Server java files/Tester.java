@@ -24,9 +24,8 @@ public class Tester {
 //		restaurants.add(r3);
 //		
 //		
-//		String[] keywords = {"Chain"};
-//		Restaurant_Search_Utils rest = new Restaurant_Search_Utils(restaurants);
-//		System.out.println(rest.Search(keywords));
+		String[] keywords = {"Amerkan"};
+		System.out.println(DATABASE_GET.searchRestaurant_KeyWords("Amerkan"));
 		
 	}
 

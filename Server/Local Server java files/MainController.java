@@ -1,11 +1,12 @@
 package hello;
 
-import org.hibernate.boot.model.relational.Database;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -57,12 +58,22 @@ public class MainController {
 	}
 	
 	@PostMapping(path="/addOrder") // Map ONLY GET Requests
-	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food,  @RequestParam String Order_Data_Submitted, @RequestParam String Order_Data_Complied)
+	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity)
 		{ 
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
 		
-	    boolean added = DATABASE_POST.Add_Order(  Rest_ID,   User_ID,   Food,    Order_Data_Submitted,   Order_Data_Complied);
+		String[] FoodItems = Food.split(",+\\s*");
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+
+		boolean added = true;
+		for (String e : FoodItems)
+		{
+			if(!DATABASE_POST.Add_Order(  Rest_ID,   User_ID,  e, dtf.format(now), null, Comments, Quantity))
+			   added = false;
+		}
+	
 	    if(added)
 	    		return "{ \"Success\" : \"True\"}";
 	    return "{ \"Success\" : \"False\"}";
@@ -124,4 +135,3 @@ public class MainController {
 	
 
 }
-
