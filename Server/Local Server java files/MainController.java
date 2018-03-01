@@ -9,12 +9,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-
-
 @Controller    // This means that this class is a Controller
 @RequestMapping(path="/demo") // This means URL's start with /demo (after Application path)
 public class MainController {
 
+	
+	@GetMapping(path="/getRestaurants")
+	public @ResponseBody String getAllRestaurants() 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getAllRestaurant();
+	}
 	
 	@GetMapping(path="/getPassword")
 	public @ResponseBody String getPassword(@RequestParam String User_Email) 
@@ -22,6 +27,20 @@ public class MainController {
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getPassword(User_Email);
 	}
+	@GetMapping(path="/getAllUserInfo")
+	public @ResponseBody String getAllUserInfo(@RequestParam String User_Email) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getAllUserInfo(User_Email);
+	}
+	
+	@GetMapping(path="/getMenu")
+	public @ResponseBody String getMenu(@RequestParam String Restaurant_ID) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getMenu(Restaurant_ID);
+	}
+	
 	
 	@GetMapping(path="/getNearestRestaurants")
 	public @ResponseBody String getNearestRestaurants(@RequestParam float latitude, @RequestParam float longitude, @RequestParam 
@@ -36,7 +55,6 @@ public class MainController {
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getRestaurantsInView(max_Lat, max_Long, min_Lat, min_Long);
 	}
-
 	
 	@PostMapping(path="/addOrder") // Map ONLY GET Requests
 	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food,  @RequestParam String Order_Data_Submitted, @RequestParam String Order_Data_Complied)
@@ -90,22 +108,15 @@ public class MainController {
 	    return "{ \"Success\" : \"False\"}";
 	}
 	
-	@GetMapping(path="/getRestaurants")
-	public @ResponseBody String getAllRestaurants() 
-	{
-		// This returns a JSON or XML with the users
-		return DATABASE_GET.getAllRestaurant();
-	}
-	
 	@GetMapping(path="/getFuzzySearchRestaurants")
-	public @ResponseBody String getFuzzySearch(String restaurantName) 
+	public @ResponseBody String getFuzzySearch(@RequestParam String restaurantName) 
 	{
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.fuzzySearchRestaurant(restaurantName);
 	}
 	
 	@GetMapping(path="/getSearchRestaurants")
-	public @ResponseBody String getSearch(String Keywords) 
+	public @ResponseBody String getSearch(@RequestParam String Keywords) 
 	{
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.searchRestaurant_KeyWords(Keywords);
@@ -113,3 +124,4 @@ public class MainController {
 	
 
 }
+

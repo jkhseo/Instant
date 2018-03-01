@@ -74,7 +74,8 @@ public class DATABASE_POST
 		            System.out.println(query);
 		            Statement stmt=con.createStatement();
 		            stmt.executeUpdate(query);
-		       
+		            
+		            con.commit();
 		            con.close();
 		            return true;
 		        }
