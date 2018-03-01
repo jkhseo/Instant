@@ -8,6 +8,7 @@ import java.util.Arrays;
 
 public class Food {
     private int Rest_ID;
+    private int Food_ID;
     private String Food_Name;
     private double Food_Price;
     private String Food_Desc;
@@ -15,7 +16,8 @@ public class Food {
     private String Food_Tags_Main;
     private String Food_Tags_Secondary;
 
-    public Food(int Rest_ID, String Food_Name, double Food_Price, String Food_Desc, int Menu_ID, String Food_Tags_Main, String Food_Tags_Secondary){
+
+    public Food(int Rest_ID, String Food_Name, double Food_Price, String Food_Desc, int Menu_ID, String Food_Tags_Main, String Food_Tags_Secondary, int Food_ID){
         this.Rest_ID = Rest_ID;
         this.Food_Name = Food_Name;
         this.Food_Price = Food_Price;
@@ -23,7 +25,14 @@ public class Food {
         this.Menu_Id = Menu_ID;
         this.Food_Tags_Main = Food_Tags_Main;
         this.Food_Tags_Secondary = Food_Tags_Secondary;
+        this.Food_ID=Food_ID;
 
+    }
+    public Food(int Rest_ID,String Food_Name,double Food_Price,int Food_ID){
+        this.Rest_ID = Rest_ID;
+        this.Food_Name = Food_Name;
+        this.Food_Price = Food_Price;
+        this.Food_ID=Food_ID;
     }
     public Food(Food oldFood){
         this.Rest_ID = oldFood.Rest_ID;
@@ -33,6 +42,7 @@ public class Food {
         this.Menu_Id = oldFood.Menu_Id;
         this.Food_Tags_Main = oldFood.Food_Tags_Main;
         this.Food_Tags_Secondary = oldFood.Food_Tags_Secondary;
+        this.Food_ID = oldFood.Food_ID;
     }
     public int getRest_ID() {
         return Rest_ID;
@@ -88,5 +98,13 @@ public class Food {
 
     public void setFood_Tags_Secondary(String food_Tags_Secondary) {
         Food_Tags_Secondary = food_Tags_Secondary;
+    }
+
+    public int getFood_ID() {
+        return Food_ID;
+    }
+
+    public void setFood_ID(int food_ID) {
+        Food_ID = food_ID;
     }
 }

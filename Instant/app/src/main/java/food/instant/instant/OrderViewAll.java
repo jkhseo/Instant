@@ -47,10 +47,10 @@ public class OrderViewAll extends Fragment {
         String info = "";
         while(cursor.moveToNext())
         {
-            String id = Integer.toString(cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.ORDER_ID)));
+            /*String id = Integer.toString(cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.ORDER_ID)));
             String name = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_NAME));
             String email = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.EMAIL));
-            info = info + "\n\n" + "ID : " + id + "\n Name : " + name + "\n Email : " + email;
+            info = info + "\n\n" + "ID : " + id + "\n Name : " + name + "\n Email : " + email;*/
         }
 
         txtDisplay.setText(info);

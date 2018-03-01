@@ -75,19 +75,20 @@ public class user_home_restaurant extends Fragment {
                     foodByCategory.add(temp);
                     foodByCategory.add(temp);
                     String[] cat = {"category1","category2","category3"};*/
-                    int Rest_ID,Menu_ID;
+                    int Food_ID,Menu_ID;
                     String Food_Name,Food_Desc,Food_Tags_Main,Food_Tags_Secondary;
                     double Food_Price;
                     Food temp;
 
                     for(int i=0;i<response.length();i++){
+                        Food_ID = (Integer) ((JSONObject)response.get(i)).get("Food_ID");
                         Food_Tags_Main = (String) ((JSONObject)response.get(i)).get("Food_Tags_Main");
                         Food_Tags_Secondary = (String) ((JSONObject)response.get(i)).get("Food_Tags_Secondary");
                         Food_Name = (String) ((JSONObject)response.get(i)).get("Food_Name");
                         Food_Desc = (String) ((JSONObject)response.get(i)).get("Food_Desc");
                         Food_Price = Double.parseDouble((String)((JSONObject)response.get(i)).get("Food_Price"));
                         Menu_ID = Integer.parseInt((String)((JSONObject)response.get(i)).get("Menu_ID"));
-                        temp = new Food(restaurant.restaurant.getRest_ID(),Food_Name,Food_Price,Food_Desc,Menu_ID,Food_Tags_Main,Food_Tags_Secondary);
+                        temp = new Food(restaurant.restaurant.getRest_ID(),Food_Name,Food_Price,Food_Desc,Menu_ID,Food_Tags_Main,Food_Tags_Secondary,Food_ID);
                         if(!categories.containsKey(Food_Tags_Main.trim())){
                             categories.put(Food_Tags_Main.trim(),counter);
                             foodByCategory.add(new ArrayList<Food>());
@@ -157,7 +158,7 @@ public class user_home_restaurant extends Fragment {
             @Override
             public boolean onChildClick(ExpandableListView expandableListView, View view, int g, int c, long l) {
                 Food temp = (Food)expandableListView.getExpandableListAdapter().getChild(g,c);
-                ((MainActivity)getActivity()).swapFragments(new user_home_food(temp));
+                ((MainActivity)getActivity()).swapFragments(new user_home_food(temp,restaurant.getName()));
                 return false;
             }
         });

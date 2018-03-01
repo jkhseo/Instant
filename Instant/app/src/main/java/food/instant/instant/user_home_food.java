@@ -2,6 +2,7 @@ package food.instant.instant;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -30,6 +31,7 @@ public class user_home_food extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private Food food;
+    private String Rest_Name;
     private int quantity;
 
     // TODO: Rename and change types of parameters
@@ -42,8 +44,9 @@ public class user_home_food extends Fragment {
         // Required empty public constructor
     }
     @SuppressLint("ValidFragment")
-    public user_home_food(Food temp){
+    public user_home_food(Food temp, String Rest_Name){
         food = new Food(temp);
+        this.Rest_Name = Rest_Name;
     }
 
     /**
@@ -83,6 +86,7 @@ public class user_home_food extends Fragment {
         Button addOrder = view.findViewById(R.id.add_order);
         FloatingActionButton addQuantity = view.findViewById(R.id.add_quantity);
         FloatingActionButton removeQuantity = view.findViewById(R.id.remove_quantity);
+        final TextView comments = view.findViewById(R.id.comments);
         final EditText quantityText = view.findViewById(R.id.quantity);
         final EditText priceTotal = view.findViewById(R.id.price_total);
         final ToggleButton small = view.findViewById(R.id.small);
@@ -140,10 +144,18 @@ public class user_home_food extends Fragment {
             @Override
             public void onClick(View view) {
 
+                addOrderToDatabase(comments.getText().toString());
             }
         });
 
         return view;
+    }
+
+    private void addOrderToDatabase(String comments) {
+        OrderDbHelper orderDbHelper = new OrderDbHelper(getActivity());
+        SQLiteDatabase database = orderDbHelper.getWritableDatabase();
+        orderDbHelper.addOrder(food.getRest_ID(),food,quantity,comments,Rest_Name,database);
+        orderDbHelper.close();
     }
 
     // TODO: Rename method, update argument and hook method into UI event

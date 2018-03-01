@@ -102,7 +102,7 @@ public class OrderAddNew extends Fragment {
 
                 //TODO: move off of the main thread.
                 SQLiteDatabase database = orderDbHelper.getWritableDatabase();
-                orderDbHelper.addOrder(Integer.parseInt(id), name, emailStr, database);
+                //orderDbHelper.addOrder(Integer.parseInt(id), name, emailStr, database);
                 orderDbHelper.close();
 
                 orderId.setText("");
