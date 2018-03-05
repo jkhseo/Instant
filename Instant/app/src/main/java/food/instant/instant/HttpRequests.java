@@ -87,12 +87,11 @@ public class HttpRequests {
             }
         });
     }
-    public static void HttpPostRestaurant(String url,String json){
+    public static void HttpPost(String url, final Handler handler){
         OkHttpClient client = new OkHttpClient();
         //success tag, true or false value
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-        RequestBody postRequest = RequestBody.create(JSON,json);
-        com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).post(postRequest).build();
+
+        com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(com.squareup.okhttp.Request request, IOException e) {
@@ -102,8 +101,10 @@ public class HttpRequests {
             @Override
             public void onResponse(Response response) throws IOException {
                 try {
+                    Message msg = handler.obtainMessage();
                     JSONObject responseObject = new JSONObject(response.body().string());
-                    System.out.println(responseObject.get("Success"));
+                    msg.obj = responseObject;
+                    handler.sendMessage(msg);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

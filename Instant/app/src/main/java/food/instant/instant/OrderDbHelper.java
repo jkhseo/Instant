@@ -58,7 +58,9 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         Log.d(TAG, "One row inserted");
 
     }
-
+    public void removeOrder(){
+        
+    }
     public Cursor readOrders(SQLiteDatabase database)
     {
         String[] projections = {OrderContract.OrderEntry.RESTAURANT_ID, OrderContract.OrderEntry.RESTAURANT_NAME,OrderContract.OrderEntry.FOOD_ID,

@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.net.URI;
 
 import static food.instant.instant.HttpRequests.HttpGET;
-import static food.instant.instant.HttpRequests.HttpPostRestaurant;
+import static food.instant.instant.HttpRequests.HttpPost;
 
 public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, OrderAddNew.OnFragmentInteractionListener, OrderViewAll.OnFragmentInteractionListener,user_home_food.OnFragmentInteractionListener {
 

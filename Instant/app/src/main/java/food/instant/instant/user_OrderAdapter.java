@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.lang.reflect.Array;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
  */
 
 public class user_OrderAdapter extends BaseExpandableListAdapter {
-    private String[] categories;
     private ArrayList<ArrayList<Order>> orders;
     private Context context;
     public user_OrderAdapter(Context context, ArrayList<ArrayList<Order>> orders){
@@ -62,21 +62,35 @@ public class user_OrderAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-        String Rest_Name = orders.get(i).get(0).getRestaurant_Name();
-        view = LayoutInflater.from(context).inflate(R.layout.order_group,null);
-        TextView orderName = view.findViewById(R.id.order_name);
-        orderName.setText(Rest_Name+" Order");
-        Button orderStatus = view.findViewById(R.id.order_status);
+        if(orders.get(i).size()!=0) {
+            String Rest_Name = orders.get(i).get(0).getRestaurant_Name();
+            view = LayoutInflater.from(context).inflate(R.layout.order_group, null);
+            TextView orderName = view.findViewById(R.id.order_name);
+            orderName.setText(Rest_Name + " Order");
+            Button orderStatus = view.findViewById(R.id.order_status);
+            orderStatus.setText("Submit Order");
+        }
         return view;
     }
 
     @Override
-    public View getChildView(int g, int c, boolean b, View view, ViewGroup viewGroup) {
+    public View getChildView(final int g, final int c, boolean b, View view, ViewGroup viewGroup) {
         Food food = orders.get(g).get(c).getFood();
-        view = LayoutInflater.from(context).inflate(R.layout.menu_child,null);
-        TextView foodName = view.findViewById(R.id.menu_child_food);
+        view = LayoutInflater.from(context).inflate(R.layout.order_child,null);
+        TextView foodName = view.findViewById(R.id.name);
+        ImageButton delete = view.findViewById(R.id.delete);
+        delete.setTag(this);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                orders.get(g).remove(c);
+                ((user_OrderAdapter)view.getTag()).notifyDataSetChanged();
+            }
+        });
         foodName.setText(food.getFood_Name());
-        TextView foodPrice = view.findViewById(R.id.menu_child_price);
+        TextView foodPrice = view.findViewById(R.id.price);
+        TextView foodQuantity = view.findViewById(R.id.quantity);
+        foodQuantity.setText(""+orders.get(g).get(c).getFood_Quantity());
         foodPrice.setText(""+food.getFood_Price());
         return view;
     }
