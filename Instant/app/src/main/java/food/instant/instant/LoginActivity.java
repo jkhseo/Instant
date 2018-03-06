@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etPassword;
     private static String username;
     private String password;
+    private LoginHandler handler;
 
     private Button bLogin;
 
@@ -89,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    final LoginHandler handler = new LoginHandler(LoginActivity.this, password);
+                    handler = new LoginHandler(LoginActivity.this, password);
                     HttpGET("getPassword?User_Email=" + username, handler);
                 }
             }
@@ -130,44 +131,64 @@ public class LoginActivity extends AppCompatActivity {
         /*** End Code***/
         @Override
         public void handleMessage(Message msg) {
-            LoginActivity login = loginActivity.get();
-            if (login != null) {
-                JSONArray response = null;
-                String gottenPass = "";
+            if(msg.what == GlobalConstants.PASSWORD) {
+                LoginActivity login = loginActivity.get();
+                if (login != null) {
+                    JSONArray response = null;
+                    String gottenPass = "";
 
-                //Get the stupid json and store the password in the String
-                try {
-                response = ((JSONObject) msg.obj).getJSONArray("Get_Password");
-                    gottenPass = (String)((JSONObject)response.get(0)).get("User_Password");
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    //Get the stupid json and store the password in the String
+                    try {
+                        response = ((JSONObject) msg.obj).getJSONArray("Get_Password");
+                        gottenPass = (String) ((JSONObject) response.get(0)).get("User_Password");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    //check if login credentials were correct
+                    if (gottenPass.equals(password)) {
+                        HttpGET("getAllUserInfo?User_Email=" + username, login.handler);
+                    } else {
+                        Toast.makeText(c, "Invalid username/password", Toast.LENGTH_SHORT).show();
+                        etUsername.setText("");
+                        etPassword.setText("");
+                    }
+                    //Log.d(TAG, response.toString());
                 }
+            }
+            else if(msg.what == GlobalConstants.USERINFO)
+            {
+                LoginActivity login = loginActivity.get();
+                if (login != null) {
+                    JSONArray response = null;
+                    String username = "";
+                    String firstname = "";
+                    String lastname = "";
+                    String birthday = "";
+                    String address = "";
+                    String id = "";
+                    String type = "";
 
-                //check if login credentials were correct
-                if(gottenPass.equals(password))
-                {
-                    if(username.equals("admin")) {
-                        SaveSharedPreference.login(c, username, "admin");
+                    try {
+                        response = ((JSONObject) msg.obj).getJSONArray("All_User_Info");
+                        username = (String) ((JSONObject) response.get(0)).get("User_Email");
+                        firstname = (String) ((JSONObject) response.get(0)).get("First_Name");
+                        lastname = (String) ((JSONObject) response.get(0)).get("Last_Name");
+                        birthday = (String) ((JSONObject) response.get(0)).get("User_Birthdate");
+                        address = (String) ((JSONObject) response.get(0)).get("User_Address");
+                        id = "" + ((JSONObject) response.get(0)).get("User_ID");
+                        type = (String) ((JSONObject) response.get(0)).get("User_Type");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    else if(username.equals("vendor"))
-                    {
-                        SaveSharedPreference.login(c, username, "vendor");
-                    }
-                    else {
-                        SaveSharedPreference.login(c, username, "customer");
-                    }
+
+                    //context, username, firstname, lastname, birthday, address, id, type
+                    SaveSharedPreference.login(c, username, firstname, lastname, birthday, address, id, type);
                     Log.d(TAG, "////////   Logged in!   //////");
                     Toast.makeText(c, "Logged in!", Toast.LENGTH_SHORT).show();
                     LoginActivity.this.finish();
                     return;
                 }
-                else
-                {
-                    Toast.makeText(c, "Invalid username/password", Toast.LENGTH_SHORT).show();
-                    etUsername.setText("");
-                    etPassword.setText("");
-                }
-                //Log.d(TAG, response.toString());
             }
         }
     }

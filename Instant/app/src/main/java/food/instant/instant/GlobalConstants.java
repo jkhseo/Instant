@@ -10,4 +10,7 @@ public class GlobalConstants {
     public static final int EMPTY_JSON = 88;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 42;
     public static final int GOOGLE_MAPS_DISTANCES = 66;
+    public static final int PASSWORD = 33;
+    public static final int USERINFO = 11;
+    public static final int ORDER_SUBMISSION_RESPONSE = 17;
 }
