@@ -58,8 +58,9 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         Log.d(TAG, "One row inserted");
 
     }
-    public void removeOrder(){
-        
+    public void removeOrder(int row_id,SQLiteDatabase database){
+        database.delete(OrderContract.OrderEntry.TABLE_NAME,"_rowid_="+row_id,null);
+        Log.d(TAG,"One row removed");
     }
     public Cursor readOrders(SQLiteDatabase database)
     {
