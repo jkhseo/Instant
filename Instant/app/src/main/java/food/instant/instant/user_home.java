@@ -72,7 +72,7 @@ public class user_home extends Fragment {
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                ((MainActivity)getActivity()).swapFragments(new user_home_search());
             }
         });
         mapButton.setOnClickListener(new View.OnClickListener() {
