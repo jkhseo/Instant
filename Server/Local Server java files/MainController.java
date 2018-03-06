@@ -62,6 +62,13 @@ public class MainController {
 		return DATABASE_GET.getCompletedOrderForRestaurant(Restaurant_ID);
 	}
 	
+	@GetMapping(path="/getCancelledOrderForRestaurant")
+	public @ResponseBody String getCancelledOrderForRestaurant(@RequestParam String Restaurant_ID) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getCancelledOrderForRestaurant(Restaurant_ID);
+	}
+	
 	
 	@GetMapping(path="/getNearestRestaurants")
 	public @ResponseBody String getNearestRestaurants(@RequestParam float latitude, @RequestParam float longitude, @RequestParam 
