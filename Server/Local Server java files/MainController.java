@@ -41,7 +41,6 @@ public class MainController {
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getMenu(Restaurant_ID);
 	}
-
 	@GetMapping(path="/getRestaurantFromOwnerUserEmail")
 	public @ResponseBody String getRestaurantFromOwnerUserEmail(@RequestParam String User_Email) 
 	{
@@ -85,7 +84,7 @@ public class MainController {
 		return DATABASE_GET.getRestaurantsInView(max_Lat, max_Long, min_Lat, min_Long);
 	}
 	
-	@PostMapping(path="/addOrder") // Map ONLY GET Requests
+	@GetMapping(path="/addOrder") // Map ONLY Post Requests
 	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity)
 		{ 
 		// @ResponseBody means the returned String is the response, not a view name
@@ -107,7 +106,7 @@ public class MainController {
 	    return "{ \"Success\" : \"False\"}";
 	}
 	
-	@PostMapping(path="/addFood") // Map ONLY GET Requests
+	@GetMapping(path="/addFood") // Map ONLY GET Requests
 	public @ResponseBody String addNewFood(@RequestParam String Rest_ID, @RequestParam String Food_Name, @RequestParam String Food_Price,  @RequestParam String Food_Desc, @RequestParam String Menu_ID,@RequestParam String Food_Tags_Main, @RequestParam String Food_Tags_Secondary)
 	{ 
 		// @ResponseBody means the returned String is the response, not a view name
@@ -134,7 +133,7 @@ public class MainController {
 	}
 	
 	
-	@PostMapping(path="/addRestaurant") // Map ONLY GET Requests
+	@GetMapping(path="/addRestaurant") // Map ONLY GET Requests
 	public @ResponseBody String addNewRestaurants ( @RequestParam String Rest_Name,
 			@RequestParam String Rest_Address, @RequestParam String Rest_Coordinate_X, @RequestParam String Rest_Coordinate_Y, @RequestParam String Rest_Rating) 
 	{

@@ -291,7 +291,14 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	           
+		        
 
+
+
+		        
+		        
+		        
 	            String query = "		        SELECT * FROM(SELECT z.Rest_Name,\n" + 
 	            		"		        p.distance_unit\n" + 
 	            		"		                 * DEGREES(ACOS(COS(RADIANS(p.latpoint))\n" + 
