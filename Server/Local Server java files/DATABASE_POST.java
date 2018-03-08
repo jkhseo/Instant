@@ -21,20 +21,34 @@ public class DATABASE_POST
 	}
 	
 			//Adds an order to the database. 
-			public static boolean Add_Order(String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Complied)
+			public static boolean Add_Order(String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Completed, String Comments, String Quantity)
 			{ 
 				 try
 				 {  		
 				        Class.forName("com.mysql.jdbc.Driver");
 				        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
 			           
-			            String query = "INSERT INTO Food ";
+				        
+				        
+			            String query = "INSERT INTO db309sd4.Order ";
+			            query += "( ";
+			            query += "Order_ID,";
+			            query += "Rest_ID,";
+			            query += "User_ID,";
+			            query += "Food_ID,";
+			            query += "Order_Date_Submitted,";
+			            query += "Comments,";
+			            query += "Quantity";
+			            query += ") ";
+			            
 			            query += " VALUES ( ";
+			            query += "'" + "1" + "', ";
 			            query += "'" + Rest_ID + "', ";
 			            query += "'" + User_ID + "', ";
 			            query += "'" + Food + "', ";
 			            query += "'" + Order_Data_Submitted + "', ";
-			            query += "'" + Order_Data_Complied + "'); ";
+			            query += "'" + Comments + "',";
+			            query += "'" + Quantity + "'); ";
 			            
 			           
 			            System.out.println(query);
@@ -74,7 +88,8 @@ public class DATABASE_POST
 		            System.out.println(query);
 		            Statement stmt=con.createStatement();
 		            stmt.executeUpdate(query);
-		       
+		            
+		            con.commit();
 		            con.close();
 		            return true;
 		        }

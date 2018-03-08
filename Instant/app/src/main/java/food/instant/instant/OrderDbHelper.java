@@ -18,8 +18,10 @@ public class OrderDbHelper extends SQLiteOpenHelper{
     public static final String TAG = "Database Operations";
 
     public static final String CREATE_TABLE = "create table " + OrderContract.OrderEntry.TABLE_NAME +
-            "(" + OrderContract.OrderEntry.ORDER_ID + " number," + OrderContract.OrderEntry.FOOD_NAME + " text," +
-            OrderContract.OrderEntry.EMAIL + " text);";
+            "(" + OrderContract.OrderEntry.RESTAURANT_ID + " number," + OrderContract.OrderEntry.RESTAURANT_NAME + " text,"+
+            OrderContract.OrderEntry.FOOD_ID + " number,"+OrderContract.OrderEntry.FOOD_QUANTITY + " number,"+OrderContract.OrderEntry.FOOD_NAME
+            + " text,"+OrderContract.OrderEntry.FOOD_PRICE + " number,"+OrderContract.OrderEntry.COMMENTS + " text);";
+    ContentValues contentValues = new ContentValues();
 
     public static final String DROP_TABLE = "drop table if exists " + OrderContract.OrderEntry.TABLE_NAME;
 
@@ -42,22 +44,28 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         Log.d(TAG, "Upgraded table...");
     }
 
-    public void addOrder(int id, String foodName, String email, SQLiteDatabase database)
+    public void addOrder(int Rest_ID,Food food, int Food_Quantity, String comments, String Restaurant_Name, SQLiteDatabase database)
     {
         ContentValues contentValues = new ContentValues();
-        contentValues.put(OrderContract.OrderEntry.ORDER_ID, id);
-        contentValues.put(OrderContract.OrderEntry.FOOD_NAME, foodName);
-        contentValues.put(OrderContract.OrderEntry.EMAIL, email);
-
+        contentValues.put(OrderContract.OrderEntry.RESTAURANT_ID, Rest_ID);
+        contentValues.put(OrderContract.OrderEntry.RESTAURANT_NAME, Restaurant_Name);
+        contentValues.put(OrderContract.OrderEntry.FOOD_ID, food.getFood_ID());
+        contentValues.put(OrderContract.OrderEntry.FOOD_QUANTITY, Food_Quantity);
+        contentValues.put(OrderContract.OrderEntry.FOOD_NAME, food.getFood_Name());
+        contentValues.put(OrderContract.OrderEntry.FOOD_PRICE, food.getFood_Price());
+        contentValues.put(OrderContract.OrderEntry.COMMENTS, comments);
         database.insert(OrderContract.OrderEntry.TABLE_NAME, null, contentValues);
         Log.d(TAG, "One row inserted");
 
     }
-
+    public void removeOrder(int row_id,SQLiteDatabase database){
+        database.delete(OrderContract.OrderEntry.TABLE_NAME,"_rowid_="+row_id,null);
+        Log.d(TAG,"One row removed");
+    }
     public Cursor readOrders(SQLiteDatabase database)
     {
-        String[] projections = {OrderContract.OrderEntry.ORDER_ID, OrderContract.OrderEntry.FOOD_NAME,
-                OrderContract.OrderEntry.EMAIL};
+        String[] projections = {OrderContract.OrderEntry.RESTAURANT_ID, OrderContract.OrderEntry.RESTAURANT_NAME,OrderContract.OrderEntry.FOOD_ID,
+                OrderContract.OrderEntry.FOOD_QUANTITY,OrderContract.OrderEntry.FOOD_NAME,OrderContract.OrderEntry.FOOD_PRICE,OrderContract.OrderEntry.COMMENTS};
 
         Cursor cursor = database.query(OrderContract.OrderEntry.TABLE_NAME,
                 projections, null, null, null, null, null);

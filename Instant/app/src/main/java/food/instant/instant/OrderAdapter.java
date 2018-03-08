@@ -32,17 +32,6 @@ public class OrderAdapter extends ArrayAdapter<Order>{
         TextView foodName = convertView.findViewById(R.id.tv_foodName);
         TextView comments = convertView.findViewById(R.id.tv_Comments);
         String foods = "";
-        ArrayList<String> foodList = order.getFoods();
-        if(foodList.size() != 0) {
-            for (int i = 0; i < foodList.size(); i++) {
-                if (foods.equals("")) {
-                    foods = foodList.get(i);
-                }
-                else{
-                    foods = foods + ", " + foodList.get(i);
-                }
-            }
-        }
         foodName.setText(foods);
         comments.setText(order.getComments());
 

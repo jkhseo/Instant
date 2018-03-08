@@ -12,4 +12,5 @@ public class GlobalConstants {
     public static final int GOOGLE_MAPS_DISTANCES = 66;
     public static final int PASSWORD = 33;
     public static final int USERINFO = 11;
+    public static final int ORDER_SUBMISSION_RESPONSE = 17;
 }

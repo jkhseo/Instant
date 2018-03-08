@@ -5,11 +5,10 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-
 
 
 public class DATABASE_GET
@@ -17,17 +16,15 @@ public class DATABASE_GET
 	private final static String USERNAME = "dbu309sd4";
 	private final static String PASSWORD = "xeft3GXR";
 	private final static String URL = "jdbc:mysql://mysql.cs.iastate.edu:3306/db309sd4";
+	private static final int FUZZY_SEARCH_RESULTS_MAX = 5;
 	
-	
-	//Variables for method
-	private final static int FUZZY_SEARCH_RESULTS_MAX = 5;
-	
-	private JSONArray convertToJSON(ResultSet resultSet)
+
+
+	private static JSONArray convertToJSON(ResultSet resultSet)
 	        throws Exception {
 	    JSONArray jsonArray = new JSONArray();
 
-	    while (resultSet.next()) 
-	   {
+	    while (resultSet.next()) {
 	        int total_rows = resultSet.getMetaData().getColumnCount();
 	        JSONObject obj = new JSONObject();
 	        for (int i = 0; i < total_rows; i++) {
@@ -43,7 +40,6 @@ public class DATABASE_GET
 	public static String getAllRestaurant()
 	{
 		 JSONArray json = null;
-		 DATABASE_GET dbg = new DATABASE_GET();
 		 try
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
@@ -54,7 +50,7 @@ public class DATABASE_GET
 	            Statement stmt=con.createStatement();
 	    
 	            ResultSet rs = stmt.executeQuery(query);
-	            json = dbg.convertToJSON(rs);
+	            json = convertToJSON(rs);
 	            con.close(); 
 	          
 	        }
@@ -68,11 +64,177 @@ public class DATABASE_GET
 
 	}
 	
+	public static String getRestaurantFromOwnerUserEmail(String User_Email)
+	{
+		 JSONArray json = null;
+		
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        String query = "SELECT * FROM db309sd4.Restaurant WHERE User_Email = " + '"' + User_Email + '"';
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"All_User_Info\":" + json.toString() +  "}";
+
+
+	}
+	
+	
+	
+	
+	
+	
+	public static String getAllUserInfo(String email)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        String query = "SELECT * FROM db309sd4.User WHERE User_Email = " + '"' + email + '"';
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"All_User_Info\":" + json.toString() +  "}";
+
+
+	}
+	
+	public static String getMenu(String Restaurant_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        String query = "SELECT * FROM db309sd4.Food WHERE Rest_ID = " + '"' + Restaurant_ID + '"';
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"All_User_Info\":" + json.toString() +  "}";
+
+
+	}
+	
+	public static String getPendingOrderForRestaurant(String Restaurant_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        String query = "SELECT * FROM db309sd4.Order WHERE Order_Status = \"Pending\" AND Rest_ID = " + '"' + Restaurant_ID + '"';
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"All_User_Info\":" + json.toString() +  "}";
+
+
+	}
+	
+	public static String getCancelledOrderForRestaurant(String Restaurant_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        String query = "SELECT * FROM db309sd4.Order WHERE Order_Status = \"Cancelled\" AND Rest_ID = " + '"' + Restaurant_ID + '"';
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"All_User_Info\":" + json.toString() +  "}";
+
+
+	}
+	
+	public static String getCompletedOrderForRestaurant(String Restaurant_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        String query = "SELECT * FROM db309sd4.Order WHERE Order_Status = \"Completed\" AND Rest_ID = " + '"' + Restaurant_ID + '"';
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"All_User_Info\":" + json.toString() +  "}";
+
+
+	}
 	
 	public static String getPassword(String User_Email)
 	{
 		 JSONArray json = null;
-		 DATABASE_GET dbg = new DATABASE_GET();
 		 try
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
@@ -83,7 +245,7 @@ public class DATABASE_GET
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
 	            ResultSet rs = stmt.executeQuery(query);
-	            json = dbg.convertToJSON(rs);
+	            json = convertToJSON(rs);
 	            con.close();
 	          
 	        }
@@ -96,10 +258,10 @@ public class DATABASE_GET
 
 	}
 	
+	
 	public static String getRestaurantsInView(String max_Lat, String max_Long, String min_Lat, String min_Long)
 	{
 		 JSONArray json = null;
-		 DATABASE_GET dbg = new DATABASE_GET();
 		 try
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
@@ -109,7 +271,7 @@ public class DATABASE_GET
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
 	            ResultSet rs = stmt.executeQuery(query);
-	            json = dbg.convertToJSON(rs);
+	            json = convertToJSON(rs);
 	            con.close();
 	          
 	        }
@@ -125,11 +287,17 @@ public class DATABASE_GET
 	public static String getNearestRestaurants(float latitude, float longitude, String numOfRestaurants, String rangeInKm)
 	{
 		 JSONArray json = null;
-		 DATABASE_GET dbg = new DATABASE_GET();
 		 try
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	           
+		        
+
+
+
+		        
+		        
 		        
 	            String query = "		        SELECT * FROM(SELECT z.Rest_Name,\n" + 
 	            		"		        p.distance_unit\n" + 
@@ -149,7 +317,7 @@ public class DATABASE_GET
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
 	            ResultSet rs = stmt.executeQuery(query);
-	            json = dbg.convertToJSON(rs);
+	            json = convertToJSON(rs);
 	            con.close();
 	          
 	        }
@@ -226,9 +394,11 @@ public class DATABASE_GET
 		            		String name = rs.getString("Rest_Name");
 		            		int id = (Integer.parseInt(rs.getString("Rest_ID")));
 		            		String cuisine_main = rs.getString("Rest_Type_Cuisine_Main");;
-		            		String cuisine_secondary = rs.getString("Rest_Type_Cuisine_Main");
+		            		String cuisine_secondary = rs.getString("Rest_Type_Cuisine_Secondary");
 		            		String keywordString = rs.getString("Rest_Keywords");
-		            		
+		            		String Rest_Address = rs.getString("Rest_Address");
+		            		String Rest_Coordinate_Lat = rs.getString("Rest_Coordinate_Lat");
+		            		String Rest_Coordinate_Long = rs.getString("Rest_Coordinate_Long");
 		            		
 		            		//Careful Regex going on here. Regular Languages <3
 		            		//Split the keywords based on  (Each Regex listed below)
@@ -238,15 +408,17 @@ public class DATABASE_GET
 		            		String Keywords[] = {};
 		            		if(keywordString != null && keywordString.length() > 0)
 		            			Keywords = keywordString.split("\\s+|,+\\s*|_+\\s*");
-		            		tuples.add(new Restaurant(name, id, cuisine_main, cuisine_secondary, Keywords));
+		            		tuples.add(new Restaurant(name, id, cuisine_main, cuisine_secondary,Rest_Address, Rest_Coordinate_Lat,Rest_Coordinate_Long,  Keywords));
 		            	
 		            }
+		            
+		            System.out.println("Tuples num : " + tuples.size());
 		            Restaurant_Search_Utils searcher = new Restaurant_Search_Utils(tuples);
 		            
 		            //Follows the same rules as above for Regex.
 		            String[] searching_Keywords_Array = searching_Keywords.split("\\s+|,+\\s*|_+\\s*");
 		            
-		            result = searcher.Search(searching_Keywords_Array);
+		            result = searcher.SearchSpellCheck(searching_Keywords_Array);
 
 		            con.close();
 		          
@@ -260,4 +432,5 @@ public class DATABASE_GET
 		}
 	
 }
+
 
