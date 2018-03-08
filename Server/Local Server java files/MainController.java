@@ -41,6 +41,34 @@ public class MainController {
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getMenu(Restaurant_ID);
 	}
+
+	@GetMapping(path="/getRestaurantFromOwnerUserEmail")
+	public @ResponseBody String getRestaurantFromOwnerUserEmail(@RequestParam String User_Email) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getRestaurantFromOwnerUserEmail(User_Email);
+	}
+	
+	@GetMapping(path="/getPendingOrderForRestaurant")
+	public @ResponseBody String getPendingOrderForRestaurant(@RequestParam String Restaurant_ID) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getPendingOrderForRestaurant(Restaurant_ID);
+	}
+	
+	@GetMapping(path="/getCompletedOrderForRestaurant")
+	public @ResponseBody String getCompletedOrderForRestaurant(@RequestParam String Restaurant_ID) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getCompletedOrderForRestaurant(Restaurant_ID);
+	}
+	
+	@GetMapping(path="/getCancelledOrderForRestaurant")
+	public @ResponseBody String getCancelledOrderForRestaurant(@RequestParam String Restaurant_ID) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getCancelledOrderForRestaurant(Restaurant_ID);
+	}
 	
 	
 	@GetMapping(path="/getNearestRestaurants")

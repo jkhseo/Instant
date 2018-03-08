@@ -10,9 +10,13 @@ public class OrderContract {
     public static class OrderEntry
     {
         public static final String TABLE_NAME = "order_info";
-        public static final String ORDER_ID = "order_id";
+        public static final String FOOD_ID = "food_id";
+        public static final String COMMENTS = "comments";
+        public static final String RESTAURANT_ID = "restaurant_id";
         public static final String FOOD_NAME = "food_name";
-        public static final String EMAIL = "user_email";
+        public static final String RESTAURANT_NAME = "restaurant_name";
+        public static final String FOOD_PRICE = "food_price";
+        public static final String FOOD_QUANTITY = "food_quantity";
 
     }
 }

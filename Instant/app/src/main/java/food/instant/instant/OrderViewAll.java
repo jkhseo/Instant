@@ -65,7 +65,7 @@ public class OrderViewAll extends Fragment {
         {
             ArrayList<String> tmp = new ArrayList<String>();
             tmp.add(cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_NAME)));
-            orders.add(new Order(cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.ORDER_ID)), 1, tmp, "comments"));
+            //orders.add(new Order(cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.ORDER_ID)), 1, tmp, "comments"));
             //String id = Integer.toString(cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.ORDER_ID)));
             //String name = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_NAME));
             //String email = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.EMAIL));

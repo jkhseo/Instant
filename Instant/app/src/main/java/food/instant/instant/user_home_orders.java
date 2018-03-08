@@ -1,13 +1,34 @@
 package food.instant.instant;
 
+import android.app.ActionBar;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ExpandableListView;
+import android.widget.PopupWindow;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import static food.instant.instant.HttpRequests.HttpPost;
 
 
 /**
@@ -17,21 +38,171 @@ import android.widget.Button;
  * to handle interaction events.
  */
 public class user_home_orders extends Fragment{
+    private OrdersHandler handler;
+    private PopupWindow orderConfirmation;
+    private ProgressBar sendingOrder;
+    private static class OrdersHandler extends Handler {
+        /***************************************************************************************
+         *    Title: Stack Overflow Answer to Question about static handlers
+         *    Author: Tomasz Niedabylski
+         *    Date: July 10, 2012
+         *    Availability: https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
+         ***************************************************************************************/
+        private final WeakReference<user_home_orders> ordersFragment;
+        public OrdersHandler(user_home_orders ordersFragment) {
+            this.ordersFragment = new WeakReference<user_home_orders>(ordersFragment);
+        }
+        /*** End Code***/
+        @Override
+        public void handleMessage(Message msg) {
+            user_home_orders orders = ordersFragment.get();
+            if (msg.what == GlobalConstants.ORDER_SUBMISSION_RESPONSE) {
+                JSONObject success = (JSONObject) msg.obj;
+                if (success.has("Response")) {
+                    orders.orderInProgress(false, "Order was Successful");
+                } else
+                    orders.orderInProgress(false, "Order Failed to Send");
+            } else {
+                try {
+                    ArrayList<ArrayList<Order>> ordersByRes = new ArrayList<>();
+                    HashMap<Integer,Integer> categories = new HashMap<>();
+                    String Rest_Name, Food_Name, Comments;
+                    int Rest_ID, Food_ID, Food_Quantity,Order_Group_ID;
+                    double Food_Price;
+                    Order tempOrder;
+                    Food tempFood;
+                    JSONArray orderArray = (JSONArray) msg.obj;
+                    int counter =0;
+                    for (int i = 0; i < orderArray.length(); i++) {
+                        Rest_Name = (String)((JSONObject) orderArray.get(i)).get("Rest_Name");
+                        Food_Name = (String)((JSONObject) orderArray.get(i)).get("Food_Name");
+                        Comments = (String)((JSONObject) orderArray.get(i)).get("Comments");
+                        Rest_ID = (Integer)((JSONObject) orderArray.get(i)).get("Rest_ID");
+                        Food_ID = (Integer)((JSONObject) orderArray.get(i)).get("Food_Name");
+                        Food_Quantity = (Integer)((JSONObject) orderArray.get(i)).get("Food_Quantity");
+                        Food_Price = (Double)((JSONObject) orderArray.get(i)).get("Food_Price");
+                        tempFood = new Food(Rest_ID,Food_Name,Food_Price,Food_ID);
+                        tempOrder = new Order(0,tempFood,Comments,Food_Quantity,Rest_Name);
+                        Order_Group_ID = (Integer)((JSONObject) orderArray.get(i)).get("Order_ID");
+
+                        if(categories.containsKey(Order_Group_ID)){
+                             ordersByRes.get(categories.get(Order_Group_ID)).add(tempOrder);
+                        }
+                        else{
+                            ordersByRes.add(new ArrayList<Order>());
+                            ordersByRes.get(counter).add(tempOrder);
+                            categories.put(Order_Group_ID,counter);
+                            counter++;
+                        }
+                    }
+                    orders.updateHistoricalOrders(ordersByRes);
+                } catch(JSONException e){
+                e.printStackTrace();
+                }
+            }
+
+        }
+    }
 
     private OnFragmentInteractionListener mListener;
 
     public user_home_orders() {
         // Required empty public constructor
     }
-
+    public void updateHistoricalOrders(ArrayList<ArrayList<Order>> orders){
+        ExpandableListView completedOrders = getView().findViewById(R.id.completedOrders);
+        user_OrderAdapter pendingAdapter = new user_OrderAdapter(getContext(),orders);
+        handler = new OrdersHandler(this);
+        completedOrders.setAdapter(pendingAdapter);
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
+        ArrayList<ArrayList<Order>> ordersInProgress = new ArrayList<>();
+        HashMap<Integer,Integer> orderCategories = new HashMap<>();
+        ArrayList<ArrayList<Order>> orderHistory = new ArrayList<>();
+        OrderDbHelper orderDbHelper = new OrderDbHelper(getActivity());
+        SQLiteDatabase database = orderDbHelper.getReadableDatabase();
+        Cursor cursor = orderDbHelper.readOrders(database);
+        cursor.moveToFirst();
+        int Rest_ID,Food_ID, Food_Quantity;
+        double Food_Price;
+        String Rest_Name,Food_Name,comments;
+        Food tempFood;
+        Order tempOrder;
+        int counter=0;
+        while(!cursor.isAfterLast()) {
+            Rest_ID = cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.RESTAURANT_ID));
+            Food_ID = cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_ID));
+            Food_Quantity = cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_QUANTITY));
+            Food_Price = cursor.getDouble(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_PRICE));
+            Rest_Name = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.RESTAURANT_NAME));
+            Food_Name = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_NAME));
+            comments = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.COMMENTS));
+            tempFood = new Food(Rest_ID,Food_Name,Food_Price,Food_ID);
+            tempOrder = new Order(0,tempFood,comments,Food_Quantity,Rest_Name);
+            if(orderCategories.containsKey(Rest_ID)){
+                ordersInProgress.get(orderCategories.get(Rest_ID)).add(tempOrder);
+            }
+            else{
+                orderCategories.put(Rest_ID,counter);
+                ordersInProgress.add(new ArrayList<Order>());
+                ordersInProgress.get(counter).add(tempOrder);
+                counter++;
+            }
+            cursor.moveToNext();
+        }
+        orderDbHelper.close();
         View view = inflater.inflate(R.layout.fragment_user_home_orders, container, false);
+        ExpandableListView pendingOrders = view.findViewById(R.id.ordersInProgress);
+        ExpandableListView completedOrders = view.findViewById(R.id.completedOrders);
+        user_OrderAdapter pendingAdapter = new user_OrderAdapter(getContext(),ordersInProgress);
+        handler = new OrdersHandler(this);
+        pendingOrders.setAdapter(pendingAdapter);
+        for(int i=0;i<pendingAdapter.getGroupCount();i++) {
+            View groupView = pendingAdapter.getGroupView(i, false, null, null);
+            Button sendOrder = groupView.findViewById(R.id.order_status);
+            sendOrder.setTag(pendingAdapter.getGroup(i));
+            sendOrder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ArrayList<Order> orderGroup = (ArrayList<Order>) view.getTag();
+                    String[] orderInfo = {"","","","",""};
+                    for(int j=0;j<orderGroup.size();j++){
+                        orderInfo[0]= orderInfo[0]+orderGroup.get(j).getFood().getRest_ID()+",";
+                        orderInfo[1]= orderInfo[1]+orderGroup.get(j).getUser_ID()+",";
+                        orderInfo[2] = orderInfo[2]+orderGroup.get(j).getFood().getFood_ID()+",";
+                        orderInfo[3] = orderInfo[3]+orderGroup.get(j).getComments()+",";
+                        orderInfo[4] = orderInfo[4]+orderGroup.get(j).getFood_Quantity()+",";
+                    }
+                    String url = "addOrder?Rest_ID="+orderInfo[0].substring(0,orderInfo[0].length()-1)+
+                                 "&User_ID="+orderInfo[1].substring(0,orderInfo[1].length()-1)+
+                                 "&Food="+ orderInfo[2].substring(0,orderInfo[2].length()-1)+
+                                 "&Comments="+orderInfo[3].substring(0,orderInfo[3].length()-1)+
+                                 "&Quantity="+orderInfo[4].substring(0,orderInfo[4].length()-1);
+                    HttpPost(url,handler);
+                    orderInProgress(true,null);
+                }
+            });
+        }
 
+        sendingOrder = view.findViewById(R.id.sendingOrders);
+        sendingOrder.setVisibility(View.INVISIBLE);
         return view;
+    }
+    public void orderInProgress(boolean inProgress,String message){
+        if(inProgress) {
+            sendingOrder.setVisibility(View.VISIBLE);
+        }
+        else{
+            sendingOrder.setVisibility(View.INVISIBLE);
+            View popup = LayoutInflater.from(getActivity()).inflate(R.layout.orders_popup_window, null);
+            ((TextView)popup.findViewById(R.id.message)).setText(message);
+            orderConfirmation = new PopupWindow(popup, ActionBar.LayoutParams.WRAP_CONTENT,ActionBar.LayoutParams.WRAP_CONTENT,true);
+            orderConfirmation.showAtLocation(popup, Gravity.CENTER,0,0);
+
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event

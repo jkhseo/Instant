@@ -22,9 +22,9 @@ import java.io.IOException;
 import java.net.URI;
 
 import static food.instant.instant.HttpRequests.HttpGET;
-import static food.instant.instant.HttpRequests.HttpPostRestaurant;
+import static food.instant.instant.HttpRequests.HttpPost;
 
-public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, OrderAddNew.OnFragmentInteractionListener, OrderViewAll.OnFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, OrderAddNew.OnFragmentInteractionListener, OrderViewAll.OnFragmentInteractionListener,user_home_food.OnFragmentInteractionListener {
 
     private Context c;
     private DrawerLayout mDrawerLayout;
@@ -144,12 +144,12 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         android.support.v4.app.FragmentTransaction transaction = manager.beginTransaction();
 
         //if a vendor is logged in
-        if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("vendor"))
+        if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("Vendor"))
         {
             transaction.add(R.id.content_frame, new vendor_home());
         }
         //if an admin is logged in
-        else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("admin"))
+        else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("Admin"))
         {
             transaction.add(R.id.content_frame, new admin_home());
         }
@@ -165,18 +165,18 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
     {
         TextView welcomeMsg = mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message);
         //if customer is logged in
-        if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("customer"))
+        if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("Customer"))
         {
             loginDefault(mNavigationView, cxt);
         }
         //if a vendor is logged in
-        else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("vendor"))
+        else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("Vendor"))
         {
             loginVendor(mNavigationView, cxt);
             swapFragments(new vendor_home());
         }
         //if an admin is logged in
-        else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("admin"))
+        else if(SaveSharedPreference.isLoggedIn(cxt) && SaveSharedPreference.getType(cxt).equals("Admin"))
         {
             loginAdmin(mNavigationView, cxt);
             swapFragments(new admin_home());
@@ -209,6 +209,8 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
 
         mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
         mNavigationView.getMenu().findItem(R.id.nav_login).setEnabled(false);
+
+        ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome, " + SaveSharedPreference.getFirstName(cxt) + " " + SaveSharedPreference.getLastName(cxt));
     }
 
     public void loginVendor(NavigationView mNavigationView, Context cxt)
@@ -244,6 +246,8 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
 
         mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
         mNavigationView.getMenu().findItem(R.id.nav_login).setEnabled(false);
+
+        ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome, " + SaveSharedPreference.getFirstName(cxt) + " " + SaveSharedPreference.getLastName(cxt));
     }
 
     public void loginDefault(NavigationView mNavigationView, Context cxt)
@@ -265,7 +269,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         mNavigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
         mNavigationView.getMenu().findItem(R.id.nav_logout).setEnabled(true);
 
-        ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome, " + SaveSharedPreference.getUserName(cxt));
+        ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome, " + SaveSharedPreference.getFirstName(cxt) + " " + SaveSharedPreference.getLastName(cxt));
     }
 
     public void logoutDefault(NavigationView mNavigationView)
