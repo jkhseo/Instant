@@ -55,7 +55,11 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         contentValues.put(OrderContract.OrderEntry.FOOD_PRICE, food.getFood_Price());
         contentValues.put(OrderContract.OrderEntry.COMMENTS, comments);
         database.insert(OrderContract.OrderEntry.TABLE_NAME, null, contentValues);
+        //Cursor temp = database.rawQuery("SELECT * FROM "+ OrderContract.OrderEntry.TABLE_NAME,null);
+        //temp.moveToLast();
         Log.d(TAG, "One row inserted");
+        //return temp.getInt(temp.getColumnIndex("_rowid_"));
+
 
     }
     public void removeOrder(int row_id,SQLiteDatabase database){
@@ -64,7 +68,7 @@ public class OrderDbHelper extends SQLiteOpenHelper{
     }
     public Cursor readOrders(SQLiteDatabase database)
     {
-        String[] projections = {OrderContract.OrderEntry.RESTAURANT_ID, OrderContract.OrderEntry.RESTAURANT_NAME,OrderContract.OrderEntry.FOOD_ID,
+        String[] projections = {"rowid",OrderContract.OrderEntry.RESTAURANT_ID, OrderContract.OrderEntry.RESTAURANT_NAME,OrderContract.OrderEntry.FOOD_ID,
                 OrderContract.OrderEntry.FOOD_QUANTITY,OrderContract.OrderEntry.FOOD_NAME,OrderContract.OrderEntry.FOOD_PRICE,OrderContract.OrderEntry.COMMENTS};
 
         Cursor cursor = database.query(OrderContract.OrderEntry.TABLE_NAME,

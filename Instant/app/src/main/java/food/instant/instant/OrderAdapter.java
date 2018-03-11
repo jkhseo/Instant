@@ -27,7 +27,7 @@ public class OrderAdapter extends ArrayAdapter<Order>{
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        Order order = getItem(position);
+        /*Order order = getItem(position);
         convertView = LayoutInflater.from(context).inflate(R.layout.order_list_item, parent, false);
         TextView foodName = convertView.findViewById(R.id.tv_foodName);
         TextView comments = convertView.findViewById(R.id.tv_Comments);
@@ -46,6 +46,7 @@ public class OrderAdapter extends ArrayAdapter<Order>{
         foodName.setText(foods);
         comments.setText(order.getComments());
 
-        return convertView;
+        return convertView;*/
+        return null;
     }
 }

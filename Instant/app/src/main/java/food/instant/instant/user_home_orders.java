@@ -69,6 +69,7 @@ public class user_home_orders extends Fragment{
                     String Rest_Name, Food_Name, Comments;
                     int Rest_ID, Food_ID, Food_Quantity,Order_Group_ID;
                     double Food_Price;
+                    char orderStatus;
                     Order tempOrder;
                     Food tempFood;
                     JSONArray orderArray = (JSONArray) msg.obj;
@@ -82,7 +83,8 @@ public class user_home_orders extends Fragment{
                         Food_Quantity = (Integer)((JSONObject) orderArray.get(i)).get("Food_Quantity");
                         Food_Price = (Double)((JSONObject) orderArray.get(i)).get("Food_Price");
                         tempFood = new Food(Rest_ID,Food_Name,Food_Price,Food_ID);
-                        tempOrder = new Order(0,tempFood,Comments,Food_Quantity,Rest_Name);
+                        orderStatus = (Character)((JSONObject)orderArray.get(i)).get("Order_Status");
+                        tempOrder = new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood,Comments,Food_Quantity,Rest_Name,orderStatus);
                         Order_Group_ID = (Integer)((JSONObject) orderArray.get(i)).get("Order_ID");
 
                         if(categories.containsKey(Order_Group_ID)){
@@ -111,8 +113,7 @@ public class user_home_orders extends Fragment{
     }
     public void updateHistoricalOrders(ArrayList<ArrayList<Order>> orders){
         ExpandableListView completedOrders = getView().findViewById(R.id.completedOrders);
-        user_OrderAdapter pendingAdapter = new user_OrderAdapter(getContext(),orders);
-        handler = new OrdersHandler(this);
+        user_OrderAdapter pendingAdapter = new user_OrderAdapter(getContext(),orders,handler);
         completedOrders.setAdapter(pendingAdapter);
     }
     @Override
@@ -126,13 +127,14 @@ public class user_home_orders extends Fragment{
         SQLiteDatabase database = orderDbHelper.getReadableDatabase();
         Cursor cursor = orderDbHelper.readOrders(database);
         cursor.moveToFirst();
-        int Rest_ID,Food_ID, Food_Quantity;
+        int Rest_ID,Food_ID, Food_Quantity, Order_ID;
         double Food_Price;
         String Rest_Name,Food_Name,comments;
         Food tempFood;
         Order tempOrder;
         int counter=0;
         while(!cursor.isAfterLast()) {
+            Order_ID = cursor.getInt(cursor.getColumnIndex("rowid"));
             Rest_ID = cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.RESTAURANT_ID));
             Food_ID = cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_ID));
             Food_Quantity = cursor.getInt(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_QUANTITY));
@@ -141,7 +143,7 @@ public class user_home_orders extends Fragment{
             Food_Name = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_NAME));
             comments = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.COMMENTS));
             tempFood = new Food(Rest_ID,Food_Name,Food_Price,Food_ID);
-            tempOrder = new Order(0,tempFood,comments,Food_Quantity,Rest_Name);
+            tempOrder = new Order(Order_ID,Integer.parseInt(SaveSharedPreference.getId(getContext())),tempFood,comments,Food_Quantity,Rest_Name,'L');
             if(orderCategories.containsKey(Rest_ID)){
                 ordersInProgress.get(orderCategories.get(Rest_ID)).add(tempOrder);
             }
@@ -157,35 +159,9 @@ public class user_home_orders extends Fragment{
         View view = inflater.inflate(R.layout.fragment_user_home_orders, container, false);
         ExpandableListView pendingOrders = view.findViewById(R.id.ordersInProgress);
         ExpandableListView completedOrders = view.findViewById(R.id.completedOrders);
-        user_OrderAdapter pendingAdapter = new user_OrderAdapter(getContext(),ordersInProgress);
         handler = new OrdersHandler(this);
+        user_OrderAdapter pendingAdapter = new user_OrderAdapter(getContext(),ordersInProgress,handler);
         pendingOrders.setAdapter(pendingAdapter);
-        for(int i=0;i<pendingAdapter.getGroupCount();i++) {
-            View groupView = pendingAdapter.getGroupView(i, false, null, null);
-            Button sendOrder = groupView.findViewById(R.id.order_status);
-            sendOrder.setTag(pendingAdapter.getGroup(i));
-            sendOrder.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    ArrayList<Order> orderGroup = (ArrayList<Order>) view.getTag();
-                    String[] orderInfo = {"","","","",""};
-                    for(int j=0;j<orderGroup.size();j++){
-                        orderInfo[0]= orderInfo[0]+orderGroup.get(j).getFood().getRest_ID()+",";
-                        orderInfo[1]= orderInfo[1]+orderGroup.get(j).getUser_ID()+",";
-                        orderInfo[2] = orderInfo[2]+orderGroup.get(j).getFood().getFood_ID()+",";
-                        orderInfo[3] = orderInfo[3]+orderGroup.get(j).getComments()+",";
-                        orderInfo[4] = orderInfo[4]+orderGroup.get(j).getFood_Quantity()+",";
-                    }
-                    String url = "addOrder?Rest_ID="+orderInfo[0].substring(0,orderInfo[0].length()-1)+
-                                 "&User_ID="+orderInfo[1].substring(0,orderInfo[1].length()-1)+
-                                 "&Food="+ orderInfo[2].substring(0,orderInfo[2].length()-1)+
-                                 "&Comments="+orderInfo[3].substring(0,orderInfo[3].length()-1)+
-                                 "&Quantity="+orderInfo[4].substring(0,orderInfo[4].length()-1);
-                    HttpPost(url,handler);
-                    orderInProgress(true,null);
-                }
-            });
-        }
 
         sendingOrder = view.findViewById(R.id.sendingOrders);
         sendingOrder.setVisibility(View.INVISIBLE);
