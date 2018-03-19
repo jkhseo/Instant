@@ -136,7 +136,7 @@ public class user_home_search extends Fragment {
                             Rest_Name = (String) ((JSONObject) response.get(i)).get("Rest_Name");
                             Rest_Address = (String)((JSONObject)response.get(i)).get("Rest_Address");
                             Rest_Coordinate_X = Double.parseDouble((String)((JSONObject)response.get(i)).get("Rest_Coordinate_Lat"));
-                            Rest_Coordinate_Y = Double.parseDouble((String)((JSONObject)response.get(i)).get("Rest_Coordinate_Long"));
+                            Rest_Coordinate_Y = Double.parseDouble((String)((JSONObject)response.get(i)).get("Rest_Coordinate_Lat"));
                             Rest_Rating = 1;//(int)((JSONObject)response.get(i)).get("Rest_Rating");
                             rank = Integer.parseInt((String)((JSONObject) response.get(i)).get("Rank"));
                             search.searchResults.add(search.new RestaurantSearchHelper(new Restaurant(Rest_ID,Rest_Name, Rest_Coordinate_X, Rest_Coordinate_Y, Rest_Address, Rest_Rating),rank));
@@ -239,7 +239,7 @@ public class user_home_search extends Fragment {
     @SuppressLint("MissingPermission")
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getDistances(){
-        if(currentLocation!=null) {
+        if(currentLocation==null) {
             String url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=" + currentLocation.getLatitude() + "," + currentLocation.getLongitude()+"&destinations=";
             for(int i=0;i<searchResults.size();i++){
                 url+=searchResults.get(i).getRestaurant().getLatitude()+","+searchResults.get(i).getRestaurant().getLongitude();
@@ -313,7 +313,7 @@ public class user_home_search extends Fragment {
      */
     public void updateListView(Restaurant[] resArray) {
         TextView noResults = getView().findViewById(R.id.no_results);
-        if(noResults.getVisibility()==0){
+        if(noResults.getVisibility()==View.VISIBLE){
             noResults.setVisibility(View.INVISIBLE);
         }
         String[] resName = new String[resArray.length];

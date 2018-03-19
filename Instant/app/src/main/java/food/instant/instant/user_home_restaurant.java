@@ -67,14 +67,6 @@ public class user_home_restaurant extends Fragment {
                     ArrayList<ArrayList<Food>> foodByCategory = new ArrayList<ArrayList<Food>>();
                     HashMap<String,Integer> categories = new HashMap<String,Integer>();
                     int counter=0;
-                   /* ArrayList<Food> temp = new ArrayList<>();
-                    temp.add(new Food(1,"Burger",9.99,"This is a burger.",0,"Burgers","Burgers"));
-                    temp.add(new Food(1,"Fries",2.99,"These are fries.",0,"Fries","Fries"));
-                    temp.add(new Food(1,"Shake",3.99,"This is a shake.",0,"Shake","Shake"));
-                    foodByCategory.add(temp);
-                    foodByCategory.add(temp);
-                    foodByCategory.add(temp);
-                    String[] cat = {"category1","category2","category3"};*/
                     int Food_ID,Menu_ID;
                     String Food_Name,Food_Desc,Food_Tags_Main,Food_Tags_Secondary;
                     double Food_Price;

@@ -78,25 +78,35 @@ public class user_OrderAdapter extends BaseExpandableListAdapter {
             Button orderStatus = view.findViewById(R.id.order_status);
 
             if(order.getStatus()=='L') {
+
                 orderStatus.setText("Submit Order");
                 orderStatus.setTag(orders.get(i));
                 orderStatus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        String rowids="";
                         ArrayList<Order> orderGroup = (ArrayList<Order>) view.getTag();
                         String[] orderInfo = {"","","","",""};
                         for(int j=0;j<orderGroup.size();j++){
+                            rowids+= orderGroup.get(j).getOrder_ID();
+                            if(j!=orderGroup.size()-1)
+                                rowids+=", ";
                             orderInfo[0]= orderInfo[0]+orderGroup.get(j).getFood().getRest_ID()+",";
                             orderInfo[1]= orderInfo[1]+orderGroup.get(j).getUser_ID()+",";
                             orderInfo[2] = orderInfo[2]+orderGroup.get(j).getFood().getFood_ID()+",";
                             orderInfo[3] = orderInfo[3]+orderGroup.get(j).getComments()+",";
                             orderInfo[4] = orderInfo[4]+orderGroup.get(j).getFood_Quantity()+",";
+                            orderGroup.get(j).setStatus('P');
                         }
                         String url = "addOrder?Rest_ID="+orderInfo[0].substring(0,orderInfo[0].length()-1)+
                                 "&User_ID="+orderInfo[1].substring(0,orderInfo[1].length()-1)+
                                 "&Food="+ orderInfo[2].substring(0,orderInfo[2].length()-1)+
                                 "&Comments="+orderInfo[3].substring(0,orderInfo[3].length()-1)+
                                 "&Quantity="+orderInfo[4].substring(0,orderInfo[4].length()-1);
+                        OrderDbHelper dbHelper = new OrderDbHelper(context);
+                        SQLiteDatabase database = dbHelper.getWritableDatabase();
+                        dbHelper.updatePendingOrders(rowids,database);
+                        dbHelper.close();
                         HttpPost(url,handler);
                     }
                 });
