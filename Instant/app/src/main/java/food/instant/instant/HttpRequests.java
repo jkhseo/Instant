@@ -3,6 +3,7 @@ package food.instant.instant;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -91,7 +92,8 @@ public class HttpRequests {
             }
         });
     }
-    public static void HttpPost(String url, final Handler handler){
+    public static void HttpPost(String path, final Handler handler){
+        String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
         OkHttpClient client = new OkHttpClient();
         //success tag, true or false value
 
@@ -106,6 +108,7 @@ public class HttpRequests {
             public void onResponse(Response response) throws IOException {
                 try {
                     Message msg = handler.obtainMessage();
+                    msg.what = GlobalConstants.ORDER_SUBMISSION_RESPONSE;
                     JSONObject responseObject = new JSONObject(response.body().string());
                     msg.obj = responseObject;
                     handler.sendMessage(msg);
