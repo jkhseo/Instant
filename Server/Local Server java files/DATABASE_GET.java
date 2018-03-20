@@ -158,8 +158,11 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-		        String query = "SELECT * FROM db309sd4.Order WHERE Order_Status = \"Pending\" AND Rest_ID = " + '"' + Restaurant_ID + '"';
-	           
+		        String query = "SELECT * FROM (db309sd4.Order JOIN db309sd4.Food) WHERE db309sd4.Order.Order_Status ="
+		        		+ " \"Pending\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
+		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID";
+
+
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
 	    
@@ -173,7 +176,7 @@ public class DATABASE_GET
 	           e.printStackTrace();
 	      }
 		 
-		  return " {\"All_User_Info\":" + json.toString() +  "}";
+		  return " {\"All_Pending_Orders\":" + json.toString() +  "}";
 
 
 	}
@@ -185,7 +188,9 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-		        String query = "SELECT * FROM db309sd4.Order WHERE Order_Status = \"Cancelled\" AND Rest_ID = " + '"' + Restaurant_ID + '"';
+		        String query = "SELECT * FROM (db309sd4.Order JOIN db309sd4.Food) WHERE db309sd4.Order.Order_Status ="
+		        		+ " \"Cancelled\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
+		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID";
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
@@ -200,7 +205,7 @@ public class DATABASE_GET
 	           e.printStackTrace();
 	      }
 		 
-		  return " {\"All_User_Info\":" + json.toString() +  "}";
+		  return " {\"All_Canceled_Orders\":" + json.toString() +  "}";
 
 
 	}
@@ -212,7 +217,9 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-		        String query = "SELECT * FROM db309sd4.Order WHERE Order_Status = \"Completed\" AND Rest_ID = " + '"' + Restaurant_ID + '"';
+		        String query = "SELECT * FROM (db309sd4.Order JOIN db309sd4.Food) WHERE db309sd4.Order.Order_Status ="
+		        		+ " \"Completed\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
+		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID";
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
@@ -227,7 +234,7 @@ public class DATABASE_GET
 	           e.printStackTrace();
 	      }
 		 
-		  return " {\"All_User_Info\":" + json.toString() +  "}";
+		  return " {\"All_Completed_Orders\":" + json.toString() +  "}";
 
 
 	}
