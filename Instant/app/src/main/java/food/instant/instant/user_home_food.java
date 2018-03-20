@@ -156,6 +156,7 @@ public class user_home_food extends Fragment {
         SQLiteDatabase database = orderDbHelper.getWritableDatabase();
         orderDbHelper.addOrder(food.getRest_ID(),food,quantity,comments,Rest_Name,database);
         orderDbHelper.close();
+        ((MainActivity)getActivity()).swapFragments(new user_home_order(food.getRest_ID()));
     }
 
     // TODO: Rename method, update argument and hook method into UI event

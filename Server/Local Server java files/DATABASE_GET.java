@@ -425,7 +425,7 @@ public class DATABASE_GET
 		            //Follows the same rules as above for Regex.
 		            String[] searching_Keywords_Array = searching_Keywords.split("\\s+|,+\\s*|_+\\s*");
 		            
-		            result = searcher.Search(searching_Keywords_Array);
+		            result = searcher.SearchSpellCheck(searching_Keywords_Array);
 
 		            con.close();
 		          

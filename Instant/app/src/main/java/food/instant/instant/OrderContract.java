@@ -17,6 +17,7 @@ public class OrderContract {
         public static final String RESTAURANT_NAME = "restaurant_name";
         public static final String FOOD_PRICE = "food_price";
         public static final String FOOD_QUANTITY = "food_quantity";
+        public static final String ORDER_STATUS = "order_status";
 
     }
 }
