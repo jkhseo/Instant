@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,6 +33,7 @@ import static food.instant.instant.HttpRequests.HttpGET;
 public class VendorPendingOrdersFragment extends Fragment {
     private static String TAG = "MainActivity";
     private PendingOrdersHandler handler;
+    private ListView lvPendingOrders;
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -80,9 +82,11 @@ public class VendorPendingOrdersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_vendor_pending_orders, container, false);
-        //http://proj-309-sd-4.cs.iastate.edu:8080/demo/getPendingOrderForRestaurant?Restaurant_ID=1
+        //http://proj-309-sd-4.cs.iastate.edu:8080/demo/getPendingOrderForRestaurant?Restaurant_ID=7
+
+        lvPendingOrders = view.findViewById(R.id.lv_vendorPendingOrders);
         handler = new PendingOrdersHandler(VendorPendingOrdersFragment.this);
-        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=1", handler);
+        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=7", handler);
         // Inflate the layout for this fragment
         return view;
     }
@@ -126,7 +130,7 @@ public class VendorPendingOrdersFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private static class PendingOrdersHandler extends Handler {
+    private class PendingOrdersHandler extends Handler {
         /***************************************************************************************
          *    Title: Stack Overflow Answer to Question about static handlers
          *    Author: Tomasz Niedabylski
@@ -145,19 +149,53 @@ public class VendorPendingOrdersFragment extends Fragment {
                 JSONArray response = null;
                 try {
                     response = ((JSONObject) msg.obj).getJSONArray("All_User_Info");
-                    /*ArrayList<Order> orders = new ArrayList<Order>();
+                    ArrayList<Order> tmpOrders = new ArrayList<Order>();
                     for(int i = 0; i < response.length(); i++)
                     {
-                        int userID = Integer.parseInt((String)((JSONObject) response.get(i)).get("User_ID"));
-                        int foodQuantity = Integer.parseInt((String)((JSONObject) response.get(i)).get("Quantity"));
-                        int restID = Integer.parseInt((String)((JSONObject) response.get(i)).get("Rest_ID"));
+                        int orderID = (int)((JSONObject) response.get(i)).get("Order_ID");
+                        int userID = (int)((JSONObject) response.get(i)).get("User_ID");
+                        int foodQuantity = (int)((JSONObject) response.get(i)).get("Quantity");
+                        int restID = (int)((JSONObject) response.get(i)).get("Rest_ID");
                         String restName = "someRestaurant";
-                        String foodName = (String)((JSONObject) response.get(i)).get("Food_ID") + "food";
-                        Food food = new Food(restID, foodName, 20.00, "some food", 0, "tag1", "tag2", Integer.parseInt((String)((JSONObject) response.get(i)).get("Food_ID")));
+                        char status = 'q';
+                        if(((String)((JSONObject) response.get(i)).get("Order_Status")).equals("Pending"))
+                        {
+                            status = 'p';
+                        }
+                        String foodName = ((JSONObject) response.get(i)).get("Food_ID") + "food";
+                        Food food = new Food(restID, foodName, 20.00, "some food", 0, "tag1", "tag2", (int)((JSONObject) response.get(i)).get("Food_ID"));
                         String comments = "comments";
-                        Order tmpOrder = new Order(userID, food, comments, foodQuantity, restName);
-                        orders.add(tmpOrder);
-                    }*/
+                        Order tmpOrder = new Order(orderID, userID, food, comments, foodQuantity, restName, status);
+                        tmpOrders.add(tmpOrder);
+                    }
+                    ArrayList<ArrayList<Order>> orders = new ArrayList<ArrayList<Order>>();
+                    for (int i = 0; i < tmpOrders.size(); i++)
+                        {
+                            if (orders.size() == 0) {
+                                ArrayList<Order> first = new ArrayList<Order>();
+                                first.add(tmpOrders.get(i));
+                                orders.add(first);
+                            }
+                            else {
+                                for (int j = 0; j < orders.size(); j++) {
+                                    if (orders.get(j).get(0).getUser_ID() == tmpOrders.get(i).getUser_ID())
+                                    {
+                                        orders.get(j).add(tmpOrders.get(i));
+                                    }
+                                    else
+                                    {
+                                        ArrayList<Order> next = new ArrayList<Order>();
+                                        next.add(tmpOrders.get(i));
+                                        orders.add(next);
+                                    }
+                                }
+                            }
+                        }
+
+                    //ArrayList<ArrayList<Order>> tmp = new ArrayList<ArrayList<Order>>();
+                    //tmp.add(tmpOrders);
+                    user_home_orders_adapter pendingAdapter = new user_home_orders_adapter(getContext(), orders);
+                    lvPendingOrders.setAdapter(pendingAdapter);
                     Log.d(TAG, "Request made.........................");
                     Log.d(TAG, response.toString());
                 } catch (JSONException e) {
