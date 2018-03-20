@@ -170,7 +170,7 @@ public class Restaurant_Search_Utils
 				results += " \"Rest_Type_Cuisine_Secondary\" : \"" + e.cuisine_secondary + "\",";
 				results += " \"Rest_Address\" : \"" + e.Rest_Address + "\",";
 				results += " \"Rest_Coordinate_Lat\" : \"" + e.Rest_Coordinate_Lat + "\",";
-				results += " \"Rest_Coordinate_Lat\" : \"" + e.Rest_Coordinate_Long + "\",";
+				results += " \"Rest_Coordinate_Long\" : \"" + e.Rest_Coordinate_Long + "\",";
 				results += " \"Rest_Keywords\" : \"" + e.keywords + "\"} ,";
 				
 			}
@@ -227,7 +227,7 @@ public class Restaurant_Search_Utils
 	    			}
 	    			if(i < word1.length()-1)
 	    				min = Math.min(min, matrix[i+1][0]);
-	    			//Break out early if there is no help.
+	    			//Break out early if there is no way to achieve the goal.
 	    			if(min > max)
 						return max+1;
 	    		}

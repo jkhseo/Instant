@@ -21,7 +21,7 @@ public class DATABASE_POST
 	}
 	
 			//Adds an order to the database. 
-			public static boolean Add_Order(String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Completed, String Comments, String Quantity)
+			public static boolean Add_Order(int Order_ID, String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Pick_Up, String Order_Data_Completed, String Comments, String Quantity)
 			{ 
 				 try
 				 {  		
@@ -29,6 +29,7 @@ public class DATABASE_POST
 				        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
 			           
 				        
+				        int QR_CODE = (int) (Math.random() * 15000);
 				        
 			            String query = "INSERT INTO db309sd4.Order ";
 			            query += "( ";
@@ -37,18 +38,24 @@ public class DATABASE_POST
 			            query += "User_ID,";
 			            query += "Food_ID,";
 			            query += "Order_Date_Submitted,";
+			            query += "Order_Date_Pick_Up,";
 			            query += "Comments,";
-			            query += "Quantity";
+			            query += "Quantity,";
+			            query += "Order_Status,";
+			            query += "Order_Confirmation_Code";
 			            query += ") ";
 			            
 			            query += " VALUES ( ";
-			            query += "'" + "1" + "', ";
+			            query += "'" + Order_ID + "', ";
 			            query += "'" + Rest_ID + "', ";
 			            query += "'" + User_ID + "', ";
 			            query += "'" + Food + "', ";
 			            query += "'" + Order_Data_Submitted + "', ";
+			            query += "'" + Order_Data_Pick_Up + "', ";
 			            query += "'" + Comments + "',";
-			            query += "'" + Quantity + "'); ";
+			            query += "'" + Quantity + "',";
+			            query += "'" + "Pending" + "',";
+			            query += "'" + QR_CODE + "')";
 			            
 			           
 			            System.out.println(query);
