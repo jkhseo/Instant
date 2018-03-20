@@ -87,7 +87,7 @@ public class DATABASE_GET
 	           e.printStackTrace();
 	      }
 		 
-		  return " {\"All_User_Info\":" + json.toString() +  "}";
+		  return " {\"Restaurant_From_OwnerUserEmail\":" + json.toString() +  "}";
 
 
 	}
@@ -146,7 +146,7 @@ public class DATABASE_GET
 	           e.printStackTrace();
 	      }
 		 
-		  return " {\"All_User_Info\":" + json.toString() +  "}";
+		  return " {\"Menu\":" + json.toString() +  "}";
 
 
 	}
@@ -425,7 +425,7 @@ public class DATABASE_GET
 		            //Follows the same rules as above for Regex.
 		            String[] searching_Keywords_Array = searching_Keywords.split("\\s+|,+\\s*|_+\\s*");
 		            
-		            result = searcher.SearchSpellCheck(searching_Keywords_Array);
+		            result = searcher.Search(searching_Keywords_Array);
 
 		            con.close();
 		          
