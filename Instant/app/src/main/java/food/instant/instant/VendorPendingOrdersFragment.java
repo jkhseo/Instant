@@ -3,10 +3,22 @@ package food.instant.instant;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
+import static food.instant.instant.HttpRequests.HttpGET;
 
 
 /**
@@ -18,6 +30,9 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class VendorPendingOrdersFragment extends Fragment {
+    private static String TAG = "MainActivity";
+    private PendingOrdersHandler handler;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -54,6 +69,7 @@ public class VendorPendingOrdersFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -63,8 +79,12 @@ public class VendorPendingOrdersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_vendor_pending_orders, container, false);
+        //http://proj-309-sd-4.cs.iastate.edu:8080/demo/getPendingOrderForRestaurant?Restaurant_ID=1
+        handler = new PendingOrdersHandler(VendorPendingOrdersFragment.this);
+        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=1", handler);
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_vendor_pending_orders, container, false);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -104,5 +124,46 @@ public class VendorPendingOrdersFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    private static class PendingOrdersHandler extends Handler {
+        /***************************************************************************************
+         *    Title: Stack Overflow Answer to Question about static handlers
+         *    Author: Tomasz Niedabylski
+         *    Date: July 10, 2012
+         *    Availability: https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
+         ***************************************************************************************/
+        private final WeakReference<VendorPendingOrdersFragment> pendingOrdersFragment;
+        public PendingOrdersHandler(VendorPendingOrdersFragment pendingOrdersFragment) {
+            this.pendingOrdersFragment = new WeakReference<VendorPendingOrdersFragment>(pendingOrdersFragment);
+        }
+        /*** End Code***/
+        @Override
+        public void handleMessage(Message msg) {
+            VendorPendingOrdersFragment pendingOrders = pendingOrdersFragment.get();
+            if (pendingOrders != null) {
+                JSONArray response = null;
+                try {
+                    response = ((JSONObject) msg.obj).getJSONArray("All_User_Info");
+                    /*ArrayList<Order> orders = new ArrayList<Order>();
+                    for(int i = 0; i < response.length(); i++)
+                    {
+                        int userID = Integer.parseInt((String)((JSONObject) response.get(i)).get("User_ID"));
+                        int foodQuantity = Integer.parseInt((String)((JSONObject) response.get(i)).get("Quantity"));
+                        int restID = Integer.parseInt((String)((JSONObject) response.get(i)).get("Rest_ID"));
+                        String restName = "someRestaurant";
+                        String foodName = (String)((JSONObject) response.get(i)).get("Food_ID") + "food";
+                        Food food = new Food(restID, foodName, 20.00, "some food", 0, "tag1", "tag2", Integer.parseInt((String)((JSONObject) response.get(i)).get("Food_ID")));
+                        String comments = "comments";
+                        Order tmpOrder = new Order(userID, food, comments, foodQuantity, restName);
+                        orders.add(tmpOrder);
+                    }*/
+                    Log.d(TAG, "Request made.........................");
+                    Log.d(TAG, response.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }
