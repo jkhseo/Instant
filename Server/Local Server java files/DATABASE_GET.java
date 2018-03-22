@@ -64,6 +64,61 @@ public class DATABASE_GET
 
 	}
 	
+	public static String getConfirmationCode(String Order_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	            String query = "SELECT Order_Confirmation_Code FROM db309sd4.Order WHERE Order_ID= " + Order_ID; 
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"Confirmation_Code\":" + json.toString() +  "}";
+
+
+	}
+	
+	public static String getRestaurantFromID(String Rest_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	            String query = "SELECT * FROM db309sd4.Restaurant WHERE Rest_ID= " + Rest_ID; 
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"Restaurant_Name\":" + json.toString() +  "}";
+
+
+	}
+	
+	
 	public static String getRestaurantFromOwnerUserEmail(String User_Email)
 	{
 		 JSONArray json = null;
@@ -238,6 +293,36 @@ public class DATABASE_GET
 
 
 	}
+	
+	public static String getAllOrdersForUser(String User_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        String query = "SELECT db309sd4.Order.Rest_ID, Rest_Name, db309sd4.Order.Food_ID, Quantity, Food_Name, Food_Price, Comments, Order_Status, Order_ID, Order_Date_Pick_Up "
+		        		+ "FROM (db309sd4.Order JOIN db309sd4.Food JOIN db309sd4.Restaurant) "
+		        		+ "WHERE db309sd4.Order.User_ID = " + User_ID + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID "
+		        		+ "AND db309sd4.Order.Rest_ID = db309sd4.Restaurant.Rest_ID";
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"All_Orders_For_User\":" + json.toString() +  "}";
+
+
+	}	
 	
 	public static String getPassword(String User_Email)
 	{
