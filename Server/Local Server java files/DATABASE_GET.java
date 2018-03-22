@@ -86,7 +86,7 @@ public class DATABASE_GET
 	           e.printStackTrace();
 	      }
 		 
-		  return " {\"All_Restaurant\":" + json.toString() +  "}";
+		  return " {\"Confirmation_Code\":" + json.toString() +  "}";
 
 
 	}
@@ -113,7 +113,7 @@ public class DATABASE_GET
 	           e.printStackTrace();
 	      }
 		 
-		  return " {\"All_Restaurant\":" + json.toString() +  "}";
+		  return " {\"Restaurant_Name\":" + json.toString() +  "}";
 
 
 	}
