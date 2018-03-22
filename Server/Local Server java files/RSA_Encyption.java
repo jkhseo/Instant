@@ -2,6 +2,9 @@ package hello;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import org.hibernate.boot.model.relational.Database;
+
 import java.math.BigInteger;
 
 public class RSA_Encyption 
@@ -10,15 +13,18 @@ public class RSA_Encyption
 	KeySet keys = null;	
 	static ArrayList<Integer> primes = new ArrayList<Integer>();
 
+	public RSA_Encyption()
+	{
+		GenerateKeys();
+		DATABASE_POST.Add_New_RSA_Key(keys.n, keys.EncryptionExponet);
+	}
 	
 	
-	
-	
-	private static BigInteger DecryptMessage(int message, int n, int decryptionExponet)
+	public BigInteger DecryptMessage(int message)
 	{
 		String strMessage = ""+message;
-		String strN = ""+n;
-		String strDecryptionExponet = "" + decryptionExponet;
+		String strN = ""+keys.n;
+		String strDecryptionExponet = "" + keys.DecryptionExponet;
 		
 		BigInteger nBIG = new BigInteger(strN);
 		BigInteger decryptionExponetBIG = new BigInteger(strDecryptionExponet);
@@ -29,12 +35,11 @@ public class RSA_Encyption
 		return ans;	
 	}
 	
-	
-	private static BigInteger EncryptMessage(int message, int n, int encryptionExponet)
+	public BigInteger EncryptMessage(int message)
 	{
 		String strMessage = ""+message;
-		String strN = ""+n;
-		String strEncryptionExponet = "" + encryptionExponet;
+		String strN = ""+ keys.n;
+		String strEncryptionExponet = "" + keys.EncryptionExponet;
 		
 		BigInteger nBIG = new BigInteger(strN);
 		BigInteger encryptionExponetBIG = new BigInteger(strEncryptionExponet);
@@ -47,12 +52,14 @@ public class RSA_Encyption
 		
 	}
 	
-	private void GenerateKeys()
+	public void GenerateKeys()
 	{
-		addPrimes(1000);
-		primes.remove(0);
-		removePrimes(.75); //Remove the first 75% of primes. 
+		System.out.println("Generating RSA KEYS ... ");
+		long StartTime = System.currentTimeMillis();
 		
+		addPrimes(SIZE);
+		primes.remove(0);
+		removePrimes(.95); //Remove the first 95% of primes. 
 		
 		int firstPrime = (int) (Math.random() * primes.size());
 		int p = primes.get(firstPrime);
@@ -73,17 +80,20 @@ public class RSA_Encyption
 		int t = modularInverse(s, m); 
 		
 		
-//		System.out.println("Public KEYS");
-//		System.out.println("N = " + n + " Encryption Exponet = " + s);
-//		System.out.println("Private KEYS");
-//		System.out.println("Decryption Exponet = " + t);
-//		
-//		System.out.println("Other Stuff");
-//		System.out.println("P = " + p + " Q = " + q + " M = " + m );
+		long EndTime = System.currentTimeMillis();
+		System.out.println("Finished RSA Keys. " + (EndTime - StartTime) + "ms.");
 		
-
-//int[] vals = gcdExtended(p, q);
-//System.out.println(vals[1] + "(" + p + ") + " + vals[2] + "(" + q + ") = " + vals[0]);
+				System.out.println("Public KEYS");
+				System.out.println("N = " + n + " Encryption Exponet = " + s);
+				System.out.println("Private KEYS");
+				System.out.println("Decryption Exponet = " + t);
+				
+				System.out.println("Other Stuff");
+				System.out.println("P = " + p + " Q = " + q + " M = " + m );
+				
+		
+		//int[] vals = gcdExtended(p, q);
+		//System.out.println(vals[1] + "(" + p + ") + " + vals[2] + "(" + q + ") = " + vals[0]);
 		
 		
 		keys = new KeySet();
@@ -126,7 +136,7 @@ public class RSA_Encyption
 	
 	public static void removePrimes(double amount)
 	{
-		int limit = (int) amount * primes.size();
+		int limit = (int) (amount * primes.size());
 		for(int i=0; i<limit; i++)
 			primes.remove(0);
 		
