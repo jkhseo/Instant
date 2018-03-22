@@ -148,24 +148,34 @@ public class VendorPendingOrdersFragment extends Fragment {
             if (pendingOrders != null) {
                 JSONArray response = null;
                 try {
-                    response = ((JSONObject) msg.obj).getJSONArray("All_User_Info");
+                    response = ((JSONObject) msg.obj).getJSONArray("All_Pending_Orders");
                     ArrayList<Order> tmpOrders = new ArrayList<Order>();
                     for(int i = 0; i < response.length(); i++)
                     {
                         int orderID = (int)((JSONObject) response.get(i)).get("Order_ID");
-                        int userID = (int)((JSONObject) response.get(i)).get("User_ID");
-                        int foodQuantity = (int)((JSONObject) response.get(i)).get("Quantity");
-                        int restID = (int)((JSONObject) response.get(i)).get("Rest_ID");
-                        String restName = "someRestaurant";
                         char status = 'q';
                         if(((String)((JSONObject) response.get(i)).get("Order_Status")).equals("Pending"))
                         {
                             status = 'p';
                         }
-                        String foodName = ((JSONObject) response.get(i)).get("Food_ID") + "food";
-                        Food food = new Food(restID, foodName, 20.00, "some food", 0, "tag1", "tag2", (int)((JSONObject) response.get(i)).get("Food_ID"));
-                        String comments = "comments";
-                        Order tmpOrder = new Order(orderID, userID, food, comments, foodQuantity, restName, status);
+                        int Dummy_PK = (int)((JSONObject) response.get(i)).get("DummyPK");
+                        double foodPrice = (double)((JSONObject) response.get(i)).get("Food_Price");
+                        int restID = (int)((JSONObject) response.get(i)).get("Rest_ID");
+                        String comments = (String)((JSONObject) response.get(i)).get("Comments");
+                        int orderConfCode = (int)((JSONObject) response.get(i)).get("Order_Confirmation_Code");
+                        int menuID = (int)((JSONObject) response.get(i)).get("Menu_ID");
+                        int foodQuantity = (int)((JSONObject) response.get(i)).get("Quantity");
+                        String foodTagsMain = (String)((JSONObject) response.get(i)).get("Food_Tags_Main");
+                        String orderDateSubmitted = (String)((JSONObject) response.get(i)).get("Order_Date_Submitted");
+                        String foodTagsSecondary = (String)((JSONObject) response.get(i)).get("Food_Tags_Secondary");
+                        String orderDatePickup = (String)((JSONObject) response.get(i)).get("Order_Date_Pickup");
+                        int foodID = (int)((JSONObject) response.get(i)).get("Food_ID");
+                        int userID = (int)((JSONObject) response.get(i)).get("User_ID");
+                        String foodName = (String)((JSONObject) response.get(i)).get("Food_Name");
+                        String foodDesc = (String)((JSONObject) response.get(i)).get("Food_Desc");
+                        String restName = "someRestaurant";
+                        Food food = new Food(restID, foodName, foodPrice, foodDesc, menuID, foodTagsMain, foodTagsSecondary, foodID);
+                        Order tmpOrder = new Order(orderID, userID, food, comments, foodQuantity, restName, status, Dummy_PK, orderConfCode, orderDateSubmitted, orderDatePickup);
                         tmpOrders.add(tmpOrder);
                     }
                     ArrayList<ArrayList<Order>> orders = new ArrayList<ArrayList<Order>>();
