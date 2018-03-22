@@ -5,14 +5,20 @@ import java.util.ArrayList;
 
 public class Order {
     private int Order_ID;
-    private int User_ID;
+    private char status;
+    private int Dummy_PK;  //
+    private String comments;
+    private int Order_Confirmation_Code;  //
     private int Food_Quantity;
+    private String date_submitted;  //
+    private String date_pickedUp;  //
+    private int User_ID;
     private String Restaurant_Name;
     private Food food;
-    private String comments;
-    private char status;
 
-    public Order(int Order_ID,int User_ID, Food food,String comments,int Food_Quantity, String Restaurant_Name,char status)
+
+
+    public Order(int Order_ID,int User_ID, Food food,String comments,int Food_Quantity, String Restaurant_Name,char status, int Dummy_PK, int Order_Confirmation_Code, String date_submitted, String date_pickedUp)
     {
         this.Order_ID = Order_ID;
         this.User_ID=User_ID;
@@ -21,6 +27,10 @@ public class Order {
         this.Restaurant_Name = Restaurant_Name;
         this.Food_Quantity = Food_Quantity;
         this.status = status;
+        this.Dummy_PK = Dummy_PK;
+        this.Order_Confirmation_Code = Order_Confirmation_Code;
+        this.date_submitted = date_submitted;
+        this.date_pickedUp = date_pickedUp;
     }
 
     public Order(int User_ID)
@@ -70,4 +80,12 @@ public class Order {
     public void setStatus(char status) {
         this.status = status;
     }
+
+    public int getDummyPK(){ return this.Dummy_PK; }
+
+    public int getOrder_Confirmation_Code(){ return this.Order_Confirmation_Code; }
+
+    public String getDate_submitted(){ return this.date_submitted; }
+
+    public String getDate_pickedUp(){ return this.date_pickedUp; }
 }
