@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class MainController {
 
 	RSA_Encyption RSA = null;
+	public static final int QRCODE_SIZE = 10000;
 	
 	@GetMapping(path="/getRestaurants")
 	public @ResponseBody String getAllRestaurants() 
@@ -150,7 +151,8 @@ public class MainController {
 		if(FoodItems.length != QuanityItems.length && FoodItems.length != CommentsItems.length)
 			 return "{ \"Success\" : \"False\"}";
 		
-		int orderID = DATABASE_GET.getNextOrderID(Rest_ID);		
+		int orderID = DATABASE_GET.getNextOrderID(Rest_ID);	
+		String QR_CODE = "" +  ((int) (Math.random() * QRCODE_SIZE));
 		//System.out.println(Comments);
 		//System.out.println(FoodItems.length + " " + QuanityItems.length + " " + CommentsItems.length);
 		
@@ -158,7 +160,7 @@ public class MainController {
 		boolean added = true;
 		for(int i=0; i<FoodItems.length; i++)
 		{
-			if(!DATABASE_POST.Add_Order(orderID, Rest_ID,   User_ID,  FoodItems[i], dtf.format(now), Order_Date_Pick_Up ,null, CommentsItems[i], QuanityItems[i]))
+			if(!DATABASE_POST.Add_Order(orderID, Rest_ID,   User_ID,  FoodItems[i], dtf.format(now), Order_Date_Pick_Up ,null, CommentsItems[i], QuanityItems[i],QR_CODE))
 			   added = false;
 		}
 	

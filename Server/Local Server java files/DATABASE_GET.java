@@ -433,7 +433,7 @@ public class DATABASE_GET
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
 		        
 		        
-	            String query = "SELECT Order_ID from db309sd4.Order WHERE Rest_ID = '" + rest_ID + "' order by Order_ID ";
+	            String query = "SELECT Order_ID from db309sd4.Order WHERE Rest_ID = '" + rest_ID + "' order by Order_ID DESC";
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
@@ -453,7 +453,7 @@ public class DATABASE_GET
 	      {
 	           e.printStackTrace();
 	      }
-		  //System.out.println("Next ID is " + result);
+		  System.out.println("Next ID is " + result);
 		  return result;
 		
 

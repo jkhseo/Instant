@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class DATABASE_POST 
 {
@@ -33,6 +35,14 @@ public class DATABASE_POST
 			            String query = "UPDATE db309sd4.Order ";
 			            query += " SET ";
 			            query += "Order_Status = '" + Status + "'";
+			            
+			            if(Status.equalsIgnoreCase("Completed"))
+			            {
+				        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+				        		LocalDateTime now = LocalDateTime.now();
+				        		
+				        		query += "Order_Date_Completed = '" + dtf.format(now) + "'";
+			            }
 			            query += "Where Order_ID = '" +  order_ID +"'";
 			       
 			            
@@ -52,14 +62,13 @@ public class DATABASE_POST
 			}
 	
 			//Adds an order to the database. 
-			public static boolean Add_Order(int Order_ID, String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Pick_Up, String Order_Data_Completed, String Comments, String Quantity)
+			public static boolean Add_Order(int Order_ID, String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Pick_Up, String Order_Data_Completed, String Comments, String Quantity, String QR_CODE)
 			{ 
 				 try
 				 {  		
 				        Class.forName("com.mysql.jdbc.Driver");
 				        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-			              
-				        int QR_CODE = (int) (Math.random() * QRCODE_SIZE);
+			             
 				        
 			            String query = "INSERT INTO db309sd4.Order ";
 			            query += "( ";
