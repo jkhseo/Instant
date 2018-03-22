@@ -85,19 +85,32 @@ public class MainController {
 	}
 	
 	@GetMapping(path="/addOrder") // Map ONLY Post Requests
-	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity)
-		{ 
+	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity, @RequestParam String Order_Date_Pick_Up)
+	{ 
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
+	
+		
 		
 		String[] FoodItems = Food.split(",+\\s*");
+		String[] QuanityItems = Quantity.split(",+\\s*");
+		String[] CommentsItems = Comments.split("NEWCOMMENTBLOCK\\s*"); //Imperfect Solution for an imperfect world. 
+		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
 
+		if(FoodItems.length != QuanityItems.length && FoodItems.length != CommentsItems.length)
+			 return "{ \"Success\" : \"False\"}";
+		
+		int orderID = DATABASE_GET.getNextOrderID(Rest_ID);		
+		//System.out.println(Comments);
+		//System.out.println(FoodItems.length + " " + QuanityItems.length + " " + CommentsItems.length);
+		
+		
 		boolean added = true;
-		for (String e : FoodItems)
+		for(int i=0; i<FoodItems.length; i++)
 		{
-			if(!DATABASE_POST.Add_Order(  Rest_ID,   User_ID,  e, dtf.format(now), null, Comments, Quantity))
+			if(!DATABASE_POST.Add_Order(orderID, Rest_ID,   User_ID,  FoodItems[i], dtf.format(now), Order_Date_Pick_Up ,null, CommentsItems[i], QuanityItems[i]))
 			   added = false;
 		}
 	

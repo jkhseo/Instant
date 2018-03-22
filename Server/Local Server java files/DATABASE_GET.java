@@ -335,6 +335,45 @@ public class DATABASE_GET
 		  return " {\"Nearest_Restaurants\":" + json.toString() + "}";
 
 	}
+
+		//A non JSON returning function that gets the next order number for a restaurant
+	//Written by Adam de Gala. 
+	public static int getNextOrderID(String rest_ID)
+	{
+		
+		int result = 1;
+		try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        
+		        
+	            String query = "SELECT Order_ID from db309sd4.Order WHERE Rest_ID = '" + rest_ID + "' order by Order_ID ";
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	            ResultSet rs = stmt.executeQuery(query);
+	            
+
+	            if(rs.next())
+	            {
+	            		result = Integer.parseInt(rs.getString("Order_ID"));
+	            		result++;
+	            }
+
+	            con.close();
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		  //System.out.println("Next ID is " + result);
+		  return result;
+		
+
+
+	}
 	
 	
 	//Method to FuzzySearch for Restaurant 
@@ -425,9 +464,8 @@ public class DATABASE_GET
 		            //Follows the same rules as above for Regex.
 		            String[] searching_Keywords_Array = searching_Keywords.split("\\s+|,+\\s*|_+\\s*");
 		            
-		            result = searcher.Search(searching_Keywords_Array);
-
-		            con.close();
+		           result = searcher.SearchSpellCheck(searching_Keywords_Array);
+		           con.close();
 		          
 		        }
 		      catch(Exception e)
