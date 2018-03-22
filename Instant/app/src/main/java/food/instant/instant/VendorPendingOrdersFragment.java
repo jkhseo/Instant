@@ -159,16 +159,16 @@ public class VendorPendingOrdersFragment extends Fragment {
                             status = 'p';
                         }
                         int Dummy_PK = (int)((JSONObject) response.get(i)).get("DummyPK");
-                        double foodPrice = (double)((JSONObject) response.get(i)).get("Food_Price");
-                        int restID = (int)((JSONObject) response.get(i)).get("Rest_ID");
+                        double foodPrice = Double.parseDouble((String)((JSONObject) response.get(i)).get("Food_Price"));
+                        int restID = Integer.parseInt((String)((JSONObject) response.get(i)).get("Rest_ID"));
                         String comments = (String)((JSONObject) response.get(i)).get("Comments");
                         int orderConfCode = (int)((JSONObject) response.get(i)).get("Order_Confirmation_Code");
-                        int menuID = (int)((JSONObject) response.get(i)).get("Menu_ID");
+                        int menuID = Integer.parseInt((String)((JSONObject) response.get(i)).get("Menu_ID"));
                         int foodQuantity = (int)((JSONObject) response.get(i)).get("Quantity");
                         String foodTagsMain = (String)((JSONObject) response.get(i)).get("Food_Tags_Main");
                         String orderDateSubmitted = (String)((JSONObject) response.get(i)).get("Order_Date_Submitted");
                         String foodTagsSecondary = (String)((JSONObject) response.get(i)).get("Food_Tags_Secondary");
-                        String orderDatePickup = (String)((JSONObject) response.get(i)).get("Order_Date_Pickup");
+                        String orderDatePickup = (String)((JSONObject) response.get(i)).get("Order_Date_Pick_Up");
                         int foodID = (int)((JSONObject) response.get(i)).get("Food_ID");
                         int userID = (int)((JSONObject) response.get(i)).get("User_ID");
                         String foodName = (String)((JSONObject) response.get(i)).get("Food_Name");
@@ -178,6 +178,7 @@ public class VendorPendingOrdersFragment extends Fragment {
                         Order tmpOrder = new Order(orderID, userID, food, comments, foodQuantity, restName, status, Dummy_PK, orderConfCode, orderDateSubmitted, orderDatePickup);
                         tmpOrders.add(tmpOrder);
                     }
+                    Log.d(TAG, "" + tmpOrders.size());
                     ArrayList<ArrayList<Order>> orders = new ArrayList<ArrayList<Order>>();
                     for (int i = 0; i < tmpOrders.size(); i++)
                         {

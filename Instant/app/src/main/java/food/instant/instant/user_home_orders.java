@@ -68,10 +68,10 @@ public class user_home_orders extends Fragment{
                     tempFood = new Food(1,"TestFood",9.99,4);
                     tempFood2 = new Food(1,"TestFood2",1.99,3);
                     tempFood3 = new Food(2,"TestFood3",2.50,2);
-                    ordersByRes.get(0).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood,"",2,"TestRestaurant",'C'));
-                    ordersByRes.get(0).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood2,"",1,"TestRestaurant",'C'));
-                    ordersByRes.get(1).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood3,"",1,"TestRestaurant1",'X'));
-                    ordersByRes.get(2).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood,"",1,"TestRestaurant",'P'));
+            //TODO: ordersByRes.get(0).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood,"",2,"TestRestaurant",'C'));
+            //TODO:  ordersByRes.get(0).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood2,"",1,"TestRestaurant",'C'));
+            //TODO: ordersByRes.get(1).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood3,"",1,"TestRestaurant1",'X'));
+            //TODO: ordersByRes.get(2).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood,"",1,"TestRestaurant",'P'));
                     HashMap<Integer, Integer> categories = new HashMap<>();
                     String Rest_Name, Food_Name, Comments;
                     /*int Rest_ID, Food_ID, Food_Quantity, Order_Group_ID;
@@ -150,14 +150,14 @@ public class user_home_orders extends Fragment{
             comments = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.COMMENTS));
             order_status = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.ORDER_STATUS)).charAt(0);
             tempFood = new Food(Rest_ID,Food_Name,Food_Price,Food_ID);
-            tempOrder = new Order(Order_ID,Integer.parseInt(SaveSharedPreference.getId(getContext())),tempFood,comments,Food_Quantity,Rest_Name,order_status);
+            //TODO: tempOrder = new Order(Order_ID,Integer.parseInt(SaveSharedPreference.getId(getContext())),tempFood,comments,Food_Quantity,Rest_Name,order_status);
             if(orderCategories.containsKey(Rest_ID)){
-                ordersInProgress.get(orderCategories.get(Rest_ID)).add(tempOrder);
+                //TODO:  ordersInProgress.get(orderCategories.get(Rest_ID)).add(tempOrder);
             }
             else{
                 orderCategories.put(Rest_ID,counter);
                 ordersInProgress.add(new ArrayList<Order>());
-                ordersInProgress.get(counter).add(tempOrder);
+                //TODO: ordersInProgress.get(counter).add(tempOrder);
                 counter++;
             }
             cursor.moveToNext();

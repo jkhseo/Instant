@@ -84,10 +84,10 @@ public class user_home_order extends Fragment {
                     tempFood = new Food(1, "TestFood", 9.99, 4);
                     tempFood2 = new Food(1, "TestFood2", 1.99, 3);
                     tempFood3 = new Food(2, "TestFood3", 2.50, 2);
-                    ordersByRes.get(0).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood, "", 2, "TestRestaurant", 'C'));
-                    ordersByRes.get(0).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood2, "", 1, "TestRestaurant", 'C'));
-                    ordersByRes.get(1).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood3, "", 1, "TestRestaurant1", 'X'));
-                    ordersByRes.get(2).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood, "", 1, "TestRestaurant", 'P'));
+                    //TODO: ordersByRes.get(0).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood, "", 2, "TestRestaurant", 'C'));
+                    //TODO: ordersByRes.get(0).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood2, "", 1, "TestRestaurant", 'C'));
+                    //TODO: ordersByRes.get(1).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood3, "", 1, "TestRestaurant1", 'X'));
+                    //TODO: ordersByRes.get(2).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood, "", 1, "TestRestaurant", 'P'));
                     HashMap<Integer, Integer> categories = new HashMap<>();
                     String Rest_Name, Food_Name, Comments;
                     /*int Rest_ID, Food_ID, Food_Quantity, Order_Group_ID;
@@ -208,7 +208,7 @@ public class user_home_order extends Fragment {
             Food_Name = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_NAME));
             Food_Price = cursor.getDouble(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_PRICE));
             Order_Status = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.ORDER_STATUS)).charAt(0);
-            order.add(new Order(Order_ID,Integer.parseInt(SaveSharedPreference.getId(getContext())),new Food(Rest_ID,Food_Name,Food_Price,Food_ID),Comments,Food_Quantity,Rest_Name,Order_Status));
+            //TODO: order.add(new Order(Order_ID,Integer.parseInt(SaveSharedPreference.getId(getContext())),new Food(Rest_ID,Food_Name,Food_Price,Food_ID),Comments,Food_Quantity,Rest_Name,Order_Status));
             cursor.moveToNext();
         }
         dbHelper.close();
