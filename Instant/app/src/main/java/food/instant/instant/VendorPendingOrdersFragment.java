@@ -160,7 +160,7 @@ public class VendorPendingOrdersFragment extends Fragment {
                         }
                         int Dummy_PK = (int)((JSONObject) response.get(i)).get("DummyPK");
                         double foodPrice = Double.parseDouble((String)((JSONObject) response.get(i)).get("Food_Price"));
-                        int restID = Integer.parseInt((String)((JSONObject) response.get(i)).get("Rest_ID"));
+                        int restID = (int)((JSONObject) response.get(i)).get("Rest_ID");
                         String comments = (String)((JSONObject) response.get(i)).get("Comments");
                         int orderConfCode = (int)((JSONObject) response.get(i)).get("Order_Confirmation_Code");
                         int menuID = Integer.parseInt((String)((JSONObject) response.get(i)).get("Menu_ID"));
@@ -205,7 +205,7 @@ public class VendorPendingOrdersFragment extends Fragment {
 
                     //ArrayList<ArrayList<Order>> tmp = new ArrayList<ArrayList<Order>>();
                     //tmp.add(tmpOrders);
-                    user_home_orders_adapter pendingAdapter = new user_home_orders_adapter(getContext(), orders);
+                    vendor_home_orders_adapter pendingAdapter = new vendor_home_orders_adapter(getContext(), orders);
                     lvPendingOrders.setAdapter(pendingAdapter);
                     Log.d(TAG, "Request made.........................");
                     Log.d(TAG, response.toString());
