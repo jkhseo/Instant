@@ -59,9 +59,9 @@ public class user_home_orders extends Fragment{
         @Override
         public void handleMessage(Message msg) {
             user_home_orders orders = ordersFragment.get();
-            //try{
-                    ArrayList<ArrayList<Order>> ordersByRes = new ArrayList<>();
-                    ordersByRes.add(new ArrayList<Order>());
+            try{
+                   ArrayList<ArrayList<Order>> ordersByRes = new ArrayList<>();
+                    /*ordersByRes.add(new ArrayList<Order>());
                     ordersByRes.add(new ArrayList<Order>());
                     ordersByRes.add(new ArrayList<Order>());
                     Food tempFood,tempFood2,tempFood3,TempFood4;
@@ -71,27 +71,34 @@ public class user_home_orders extends Fragment{
                     ordersByRes.get(0).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood,"",2,"TestRestaurant",'C'));
                     ordersByRes.get(0).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood2,"",1,"TestRestaurant",'C'));
                     ordersByRes.get(1).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood3,"",1,"TestRestaurant1",'X'));
-                    ordersByRes.get(2).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood,"",1,"TestRestaurant",'P'));
+                    ordersByRes.get(2).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood,"",1,"TestRestaurant",'P'));*/
                     HashMap<Integer, Integer> categories = new HashMap<>();
                     String Rest_Name, Food_Name, Comments;
-                    /*int Rest_ID, Food_ID, Food_Quantity, Order_Group_ID;
+                    int Rest_ID, Food_ID, Food_Quantity, Order_Group_ID;
                     double Food_Price;
-                    char orderStatus;
+                    char status;
+                    String orderStatus;
                     Order tempOrder;
                     Food tempFood;
-                    JSONArray orderArray = (JSONArray) msg.obj;
+                    JSONArray orderArray = ((JSONObject)msg.obj).getJSONArray("All_Orders_For_User");
                     int counter = 0;
                     for (int i = 0; i < orderArray.length(); i++) {
                         Rest_Name = (String) ((JSONObject) orderArray.get(i)).get("Rest_Name");
                         Food_Name = (String) ((JSONObject) orderArray.get(i)).get("Food_Name");
                         Comments = (String) ((JSONObject) orderArray.get(i)).get("Comments");
                         Rest_ID = (Integer) ((JSONObject) orderArray.get(i)).get("Rest_ID");
-                        Food_ID = (Integer) ((JSONObject) orderArray.get(i)).get("Food_Name");
-                        Food_Quantity = (Integer) ((JSONObject) orderArray.get(i)).get("Food_Quantity");
-                        Food_Price = (Double) ((JSONObject) orderArray.get(i)).get("Food_Price");
+                        Food_ID = (Integer)((JSONObject) orderArray.get(i)).get("Food_ID");
+                        Food_Quantity = (Integer) ((JSONObject) orderArray.get(i)).get("Quantity");
+                        Food_Price = Double.parseDouble((String)((JSONObject) orderArray.get(i)).get("Food_Price"));
                         tempFood = new Food(Rest_ID, Food_Name, Food_Price, Food_ID);
-                        orderStatus = (Character) ((JSONObject) orderArray.get(i)).get("Order_Status");
-                        tempOrder = new Order(0, Integer.parseInt(SaveSharedPreference.getId(orders.getContext())), tempFood, Comments, Food_Quantity, Rest_Name, orderStatus);
+                        orderStatus = (String) ((JSONObject) orderArray.get(i)).get("Order_Status");
+                        if(orderStatus.equals("Pending"))
+                            status = 'P';
+                        else if(orderStatus.equals("Canceled"))
+                            status = 'X';
+                        else
+                            status = 'C';
+                        tempOrder = new Order(0, Integer.parseInt(SaveSharedPreference.getId(orders.getContext())), tempFood, Comments, Food_Quantity, Rest_Name, status);
                         Order_Group_ID = (Integer) ((JSONObject) orderArray.get(i)).get("Order_ID");
                         if (categories.containsKey(Order_Group_ID)) {
                             ordersByRes.get(categories.get(Order_Group_ID)).add(tempOrder);
@@ -101,12 +108,12 @@ public class user_home_orders extends Fragment{
                             categories.put(Order_Group_ID, counter);
                             counter++;
                         }
-                    }*/
+                    }
                     orders.updateHistoricalOrders(ordersByRes);
 
-           /* } catch(JSONException e){
+           } catch(JSONException e){
                 e.printStackTrace();
-                }*/
+                }
             }
 
     }
@@ -168,7 +175,7 @@ public class user_home_orders extends Fragment{
         handler = new OrdersHandler(this);
         user_home_orders_adapter pendingAdapter = new user_home_orders_adapter(getActivity(),ordersInProgress);
         pendingOrders.setAdapter(pendingAdapter);
-        HttpGET("getRestaurants",handler);
+        HttpGET("getAllOrdersForUser?User_ID="+SaveSharedPreference.getId(getContext()),handler);
         return view;
     }
     public void orderInProgress(boolean inProgress,String message){
