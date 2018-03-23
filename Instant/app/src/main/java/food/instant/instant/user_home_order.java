@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import static food.instant.instant.HttpRequests.HttpPost;
@@ -210,6 +211,7 @@ public class user_home_order extends Fragment {
             Order_Status = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.ORDER_STATUS)).charAt(0);
             order.add(new Order(Order_ID,Integer.parseInt(SaveSharedPreference.getId(getContext())),new Food(Rest_ID,Food_Name,Food_Price,Food_ID),Comments,Food_Quantity,Rest_Name,Order_Status));
             cursor.moveToNext();
+
         }
         dbHelper.close();
     }
@@ -259,23 +261,26 @@ public class user_home_order extends Fragment {
                     @Override
                     public void onClick(View view) {
                         String rowids="";
-                        String[] orderInfo = {"","","","",""};
+                        String comments;
+                        String[] orderInfo = {"","",""};
                         for(int j=0;j<order.size();j++){
                             rowids+= order.get(j).getOrder_ID();
                             if(j!=order.size()-1)
                                 rowids+=", ";
-                            orderInfo[0]= orderInfo[0]+order.get(j).getFood().getRest_ID()+",";
-                            orderInfo[1]= orderInfo[1]+order.get(j).getUser_ID()+",";
-                            orderInfo[2] = orderInfo[2]+order.get(j).getFood().getFood_ID()+",";
-                            orderInfo[3] = orderInfo[3]+order.get(j).getComments()+",";
-                            orderInfo[4] = orderInfo[4]+order.get(j).getFood_Quantity()+",";
+                            orderInfo[0] = orderInfo[0]+order.get(j).getFood().getFood_ID()+",";
+                            comments= order.get(j).getComments();
+                            //comments.replaceAll("$^$","");
+                            orderInfo[1] = orderInfo[1]+comments+"NEWCOMMENTBLOCK";
+                            orderInfo[2] = orderInfo[2]+order.get(j).getFood_Quantity()+",";
                             order.get(j).setStatus('P');
                         }
-                        String url = "addOrder?Rest_ID="+orderInfo[0].substring(0,orderInfo[0].length()-1)+
-                                "&User_ID="+orderInfo[1].substring(0,orderInfo[1].length()-1)+
-                                "&Food="+ orderInfo[2].substring(0,orderInfo[2].length()-1)+
-                                "&Comments="+orderInfo[3].substring(0,orderInfo[3].length()-1)+
-                                "&Quantity="+orderInfo[4].substring(0,orderInfo[4].length()-1);
+                        String url = "addOrder?Rest_ID="+order.get(0).getFood().getRest_ID()+
+                                "&User_ID="+order.get(0).getUser_ID()+
+                                "&Food="+ orderInfo[0].substring(0,orderInfo[0].length()-1)+
+                                "&Comments="+orderInfo[1].substring(0,orderInfo[1].length()-15)+
+                                "&Quantity="+orderInfo[2].substring(0,orderInfo[2].length()-1)+
+                                "&Order_Date_Pick_Up="+orderDT.get(Calendar.YEAR)+"/"+orderDT.get(Calendar.MONTH)+"/"+orderDT.get(Calendar.DAY_OF_MONTH)+" "+orderDT.get(Calendar.HOUR_OF_DAY)+":"+orderDT.get(Calendar.MINUTE)+":00";
+                        System.out.println(url);
                         OrderDbHelper dbHelper = new OrderDbHelper(getContext());
                         SQLiteDatabase database = dbHelper.getWritableDatabase();
                         dbHelper.updatePendingOrders(rowids,database);
