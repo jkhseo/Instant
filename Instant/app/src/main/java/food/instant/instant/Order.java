@@ -32,6 +32,17 @@ public class Order {
         this.date_submitted = date_submitted;
         this.date_pickedUp = date_pickedUp;
     }
+    public Order(int Order_ID,int User_ID, Food food,String comments,int Food_Quantity, String Restaurant_Name,char status, String date_pickedUp)
+    {
+        this.Order_ID = Order_ID;
+        this.User_ID=User_ID;
+        this.food=food;
+        this.comments=comments;
+        this.Restaurant_Name = Restaurant_Name;
+        this.Food_Quantity = Food_Quantity;
+        this.status = status;
+        this.date_pickedUp = date_pickedUp;
+    }
 
     public Order(int User_ID)
     {

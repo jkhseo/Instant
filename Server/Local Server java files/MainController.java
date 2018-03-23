@@ -1,11 +1,12 @@
 package hello;
 
-import org.hibernate.boot.model.relational.Database;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(path="/demo") // This means URL's start with /demo (after Application path)
 public class MainController {
 
+	RSA_Encyption RSA = null;
+	public static final int QRCODE_SIZE = 10000;
 	
 	@GetMapping(path="/getRestaurants")
 	public @ResponseBody String getAllRestaurants() 
@@ -40,7 +43,6 @@ public class MainController {
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getMenu(Restaurant_ID);
 	}
-
 	@GetMapping(path="/getRestaurantFromOwnerUserEmail")
 	public @ResponseBody String getRestaurantFromOwnerUserEmail(@RequestParam String User_Email) 
 	{
@@ -61,34 +63,12 @@ public class MainController {
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getCompletedOrderForRestaurant(Restaurant_ID);
 	}
-
-	
-	@GetMapping(path="/getAllOrdersForUser")
-	public @ResponseBody String getAllOrdersForUser(@RequestParam String User_ID) 
-	{
-		// This returns a JSON or XML with the users
-		return DATABASE_GET.getAllOrdersForUser(User_ID);
-	}
 	
 	@GetMapping(path="/getCancelledOrderForRestaurant")
 	public @ResponseBody String getCancelledOrderForRestaurant(@RequestParam String Restaurant_ID) 
 	{
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getCancelledOrderForRestaurant(Restaurant_ID);
-	}
-	
-	@GetMapping(path="/getConfirmationCode")
-	public @ResponseBody String getConfirmationCode(@RequestParam String Order_ID)
-	{
-		// This returns a JSON or XML with the users
-		return DATABASE_GET.getConfirmationCode(Order_ID);
-	}
-	
-	@GetMapping(path="/getRestaurantFromID")
-	public @ResponseBody String getRestaurantFromID(@RequestParam String Rest_ID)
-	{
-		// This returns a JSON or XML with the users
-		return DATABASE_GET.getRestaurantFromID(Rest_ID);
 	}
 	
 	
@@ -106,10 +86,56 @@ public class MainController {
 		return DATABASE_GET.getRestaurantsInView(max_Lat, max_Long, min_Lat, min_Long);
 	}
 	
+	@GetMapping(path="/getAllOrdersForUser")		
+	public @ResponseBody String getAllOrdersForUser(@RequestParam String User_ID) 		
+	{		
+		// This returns a JSON or XML with the users		
+		return DATABASE_GET.getAllOrdersForUser(User_ID);		
+	}
+	
+	@GetMapping(path="/getConfirmationCode")		
+	public @ResponseBody String getConfirmationCode(@RequestParam String Order_ID)		
+	{		
+		// This returns a JSON or XML with the users		
+		return DATABASE_GET.getConfirmationCode(Order_ID);		
+	}		
+					
+	@GetMapping(path="/getRestaurantFromID")		
+	public @ResponseBody String getRestaurantFromID(@RequestParam String Rest_ID)		
+	{		
+		// This returns a JSON or XML with the users		
+		return DATABASE_GET.getRestaurantFromID(Rest_ID);		
+	}
+	
+	@GetMapping(path="/getRSAPublicKey") // Map ONLY GET Requests
+	public @ResponseBody String getRSAPublicKey()
+	{ 
+		// @ResponseBody means the returned String is the response, not a view name
+		// @RequestParam means it is a parameter from the GET or POST request
+	
+		if(RSA == null)
+			RSA = new RSA_Encyption();
+		
+	    return DATABASE_GET.getRSAKEY();
+	}
+	
+	@GetMapping(path="/updateOrderStatus") // Map ONLY GET Requests
+	public @ResponseBody String addNewFood(@RequestParam String Order_ID, @RequestParam String Order_Status)
+	{ 
+		// @ResponseBody means the returned String is the response, not a view name
+		// @RequestParam means it is a parameter from the GET or POST request
+		
+	    boolean added = DATABASE_POST.Update_Order_Status(Order_ID, Order_Status);
+	    
+	    if(added)
+	    		return "{ \"Success\" : \"True\"}";
+	    return "{ \"Success\" : \"False\"}";
+	}
+	
+	
 	@GetMapping(path="/addOrder") // Map ONLY Post Requests
 	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity, @RequestParam String Order_Date_Pick_Up)
 	{ 
-
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
 	
@@ -125,7 +151,8 @@ public class MainController {
 		if(FoodItems.length != QuanityItems.length && FoodItems.length != CommentsItems.length)
 			 return "{ \"Success\" : \"False\"}";
 		
-		int orderID = DATABASE_GET.getNextOrderID(Rest_ID);		
+		int orderID = DATABASE_GET.getNextOrderID(Rest_ID);	
+		String QR_CODE = "" +  ((int) (Math.random() * QRCODE_SIZE));
 		//System.out.println(Comments);
 		//System.out.println(FoodItems.length + " " + QuanityItems.length + " " + CommentsItems.length);
 		
@@ -133,17 +160,16 @@ public class MainController {
 		boolean added = true;
 		for(int i=0; i<FoodItems.length; i++)
 		{
-			if(!DATABASE_POST.Add_Order(orderID, Rest_ID,   User_ID,  FoodItems[i], dtf.format(now), Order_Date_Pick_Up ,null, CommentsItems[i], QuanityItems[i]))
+			if(!DATABASE_POST.Add_Order(orderID, Rest_ID,   User_ID,  FoodItems[i], dtf.format(now), Order_Date_Pick_Up ,null, CommentsItems[i], QuanityItems[i],QR_CODE))
 			   added = false;
 		}
 	
-
 	    if(added)
 	    		return "{ \"Success\" : \"True\"}";
 	    return "{ \"Success\" : \"False\"}";
 	}
 	
-	@PostMapping(path="/addFood") // Map ONLY GET Requests
+	@GetMapping(path="/addFood") // Map ONLY GET Requests
 	public @ResponseBody String addNewFood(@RequestParam String Rest_ID, @RequestParam String Food_Name, @RequestParam String Food_Price,  @RequestParam String Food_Desc, @RequestParam String Menu_ID,@RequestParam String Food_Tags_Main, @RequestParam String Food_Tags_Secondary)
 	{ 
 		// @ResponseBody means the returned String is the response, not a view name
@@ -170,7 +196,7 @@ public class MainController {
 	}
 	
 	
-	@PostMapping(path="/addRestaurant") // Map ONLY GET Requests
+	@GetMapping(path="/addRestaurant") // Map ONLY GET Requests
 	public @ResponseBody String addNewRestaurants ( @RequestParam String Rest_Name,
 			@RequestParam String Rest_Address, @RequestParam String Rest_Coordinate_X, @RequestParam String Rest_Coordinate_Y, @RequestParam String Rest_Rating) 
 	{
@@ -199,4 +225,3 @@ public class MainController {
 	
 
 }
-

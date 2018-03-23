@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                 return true;
             }
         });
+        SaveSharedPreference.login(c, "test", "test", "test", "1997-12-31", "test", "7", "Customer");
     }
 
     @Override

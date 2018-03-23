@@ -421,7 +421,7 @@ public class DATABASE_GET
 
 	}
 
-		//A non JSON returning function that gets the next order number for a restaurant
+	//A non JSON returning function that gets the next order number for a restaurant
 	//Written by Adam de Gala. 
 	public static int getNextOrderID(String rest_ID)
 	{
@@ -433,7 +433,7 @@ public class DATABASE_GET
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
 		        
 		        
-	            String query = "SELECT Order_ID from db309sd4.Order WHERE Rest_ID = '" + rest_ID + "' order by Order_ID ";
+	            String query = "SELECT Order_ID from db309sd4.Order WHERE Rest_ID = '" + rest_ID + "' order by Order_ID DESC";
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
@@ -453,12 +453,58 @@ public class DATABASE_GET
 	      {
 	           e.printStackTrace();
 	      }
-		  //System.out.println("Next ID is " + result);
+		  System.out.println("Next ID is " + result);
 		  return result;
 		
 
 
 	}
+	
+		//A non JSON returning function that gets the next order number for a restaurant
+		//Written by Adam de Gala. 
+		public static String getRSAKEY()
+		{			
+			String result = "";
+			try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");			  
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+
+			        String query = "SELECT * from db309sd4.Server_Keys order by Version DESC ";
+			           
+			        System.out.println(query);
+			        
+			        Statement stmt=con.createStatement();
+			        ResultSet rs = stmt.executeQuery(query);
+			            
+		            if(rs.next())
+		            {
+		            		String publicKey = rs.getString("Public_Key");
+		            		String version = rs.getString("Version");
+		            		String Encyption_Exponet = rs.getString("Encyption_Exponet");
+		            		
+		            		result = "{ \"Public_Key\" : \"" + publicKey + "\",";
+		            		result += " \"Version\" : \"" + version + "\",";
+		            		result += " \"Encyption_Exponet\" : \"" + Encyption_Exponet + "\"}";
+		            		
+		            		
+		            }
+		            else
+		            {
+		            		
+		            }
+
+		            con.close();
+		          
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		      }
+			  System.out.println(result);
+			  return result;
+
+		}
 	
 	
 	//Method to FuzzySearch for Restaurant 

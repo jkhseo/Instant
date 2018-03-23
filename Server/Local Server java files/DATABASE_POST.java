@@ -4,12 +4,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class DATABASE_POST 
 {
 	private final static String USERNAME = "dbu309sd4";
 	private final static String PASSWORD = "xeft3GXR";
 	private final static String URL = "jdbc:mysql://mysql.cs.iastate.edu:3306/db309sd4";
+	private final static int QRCODE_SIZE = 10000;
 	
 	//Scrubs the string for any invalid characters
 	private static String Scrubber(String str)
@@ -20,16 +23,52 @@ public class DATABASE_POST
 		return str;
 	}
 	
+	
+			public static boolean Update_Order_Status(String order_ID, String Status)
+			{
+			
+				try
+				 {  		
+				        Class.forName("com.mysql.jdbc.Driver");
+				        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+				        
+			            String query = "UPDATE db309sd4.Order ";
+			            query += " SET ";
+			            query += "Order_Status = '" + Status + "'";
+			            
+			            if(Status.equalsIgnoreCase("Completed"))
+			            {
+				        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+				        		LocalDateTime now = LocalDateTime.now();
+				        		
+				        		query += "Order_Date_Completed = '" + dtf.format(now) + "'";
+			            }
+			            query += "Where Order_ID = '" +  order_ID +"'";
+			       
+			            
+			           
+			            System.out.println(query);
+			            Statement stmt=con.createStatement();
+			            stmt.executeUpdate(query);
+			       
+			            con.close();
+			            return true;
+			        }
+			      catch(Exception e)
+			      {
+			           e.printStackTrace();
+			           return false;
+			      }
+			}
+	
 			//Adds an order to the database. 
-			public static boolean Add_Order(int Order_ID, String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Pick_Up, String Order_Data_Completed, String Comments, String Quantity)
+			public static boolean Add_Order(int Order_ID, String Rest_ID, String User_ID, String Food,  String Order_Data_Submitted, String Order_Data_Pick_Up, String Order_Data_Completed, String Comments, String Quantity, String QR_CODE)
 			{ 
 				 try
 				 {  		
 				        Class.forName("com.mysql.jdbc.Driver");
 				        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-			           
-				        
-				        int QR_CODE = (int) (Math.random() * 15000);
+			             
 				        
 			            String query = "INSERT INTO db309sd4.Order ";
 			            query += "( ";
@@ -179,4 +218,36 @@ public class DATABASE_POST
 	      }
 
 	}
+	
+		//Adds a User to the database. 
+		public static boolean Add_New_RSA_Key(int n, int encryptionExponet)
+		{ 
+			 try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		           
+			        
+
+
+		            String query = "INSERT INTO Server_Keys ( Public_Key ,  Encyption_Exponet)";
+		            query += " VALUES ( ";
+		            query += "'" + n + "', ";
+		            query += "'" + encryptionExponet + "'); ";
+		            
+		           
+		            System.out.println(query);
+		            Statement stmt=con.createStatement();
+		            stmt.executeUpdate(query);
+		       
+		            con.close();
+		            return true;
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		           return false;
+		      }
+
+		}
 }
