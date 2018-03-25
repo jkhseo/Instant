@@ -64,6 +64,34 @@ public class DATABASE_GET
 
 	}
 	
+	
+	public static String getOrderStatus(String Order_ID, String Rest_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	            String query = "SELECT Order_Status FROM db309sd4.`Order` WHERE Rest_ID = "+ Rest_ID + " AND Order_ID = " +  Order_ID;
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"Order_Status\":" + json.toString() +  "}";
+
+
+	}
+	
 	public static String getConfirmationCode(String Order_ID)
 	{
 		 JSONArray json = null;
@@ -237,6 +265,41 @@ public class DATABASE_GET
 	      }
 		 
 		  return " {\"All_Pending_Orders\":" + json.toString() +  "}";
+
+
+	}
+	
+	public static String getConfirmedOrderForRestaurant(String Restaurant_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        String query = "SELECT db309sd4.Order.Order_ID, db309sd4.Order.Order_Status, db309sd4.Order.DummyPK, db309sd4.Order.Comments,"
+		        		+ " db309sd4.Order.Order_Confirmation_Code, db309sd4.Order.Quantity, db309sd4.Order.Order_Date_Submitted, db309sd4.Order.Order_Date_Pick_Up, \n" + 
+		        		"db309sd4.Restaurant.Rest_Name, db309sd4.Restaurant.Rest_ID, db309sd4.Food.Food_Name, db309sd4.Food.Food_ID, db309sd4.Food.Food_Price,"
+		        		+ " db309sd4.Food.Food_Desc, db309sd4.Food.Menu_ID, db309sd4.Food.Food_Tags_Main, db309sd4.Food.Food_Tags_Secondary,  db309sd4.User.User_Email,"
+		        		+ "  db309sd4.User.First_Name,  db309sd4.User.Last_Name, db309sd4.User.User_ID\n" + 
+		        		" FROM (((db309sd4.Order JOIN db309sd4.Food) JOIN db309sd4.Restaurant) JOIN db309sd4.User) WHERE db309sd4.Order.Order_Status ="
+		        		+ " \"Confirmed\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
+		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
+
+
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"All_Confirmed_Orders\":" + json.toString() +  "}";
 
 
 	}
