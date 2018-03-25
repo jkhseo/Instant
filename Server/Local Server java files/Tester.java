@@ -1,5 +1,6 @@
 package hello;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 
 public class Tester {
@@ -24,11 +25,29 @@ public class Tester {
 //		restaurants.add(r3);
 //		
 //		
-//		String[] keywords = {"Amerkan"};
-//		System.out.println(DATABASE_GET.searchRestaurant_KeyWords("Amerkan"));
+		DATABASE_GET.searchRestaurant_KeyWords("Amerkan");
 		
-		RSA_Encyption RSA = new RSA_Encyption();
-		RSA.GenerateKeys();
+		System.out.println();
+		System.out.println("NEXT DEMO STUFF ");
+		System.out.println();
+		
+		//Simuating a typical encounter
+		//User Logs in 
+		MainController mc = new MainController();
+		String JSONreturned = mc.getRSAPublicKey();
+		
+		int newESAKey = (int) (Math.random()*100000);
+		System.out.println("Chosing ESA Key to be " + newESAKey);
+		BigInteger EncyrptedData = mc.RSA.EncryptMessage(newESAKey);
+		System.out.println("Encrypted Version is " + EncyrptedData);
+		System.out.println("Decyrpted Version is " + mc.RSA.DecryptMessage(Integer.parseInt(EncyrptedData.toString())));
+		
+		
+		String Comments = "NEWCOMMENTBLOCK NEWCOMMENTBLOCK NEWCOMMENTBLOCK";
+		String[] CommentsItems = Comments.split("NEWCOMMENTBLOCK\\s*"); //Imperfect Solution for an imperfect world. 
+		for(String e : CommentsItems)
+			System.out.println(e);
+		System.out.println("SIZE " + CommentsItems.length);
 		
 	}
 

@@ -62,22 +62,27 @@ public class RSA_Encyption
 		removePrimes(.95); //Remove the first 95% of primes. 
 		
 		int firstPrime = (int) (Math.random() * primes.size());
-		int p = primes.get(firstPrime);
+		BigInteger p = new BigInteger("" + primes.get(firstPrime));
 		primes.remove(firstPrime);
 		
-		int q = primes.get((int) (Math.random() * primes.size()));
-		int n = p*q;
-		int m = (p-1)*(q-1); //Euler-Toient Function for realtively prime numbers;
+		BigInteger q = new BigInteger("" + primes.get((int) (Math.random() * primes.size())));
+		BigInteger n = p.multiply(q);
+	
+		BigInteger m = p.subtract(new BigInteger("1")).multiply(q.subtract(new BigInteger("1")));
+		
+		int intN = Integer.parseInt(n.toString());
 		
 		//S is the encryption exponet 
-		int s = 2;
-		while(gcd(s,m) > 1)
-			s = ((int) (Math.random() * (n-4))) + 3;
-
+		BigInteger s = new BigInteger("2");
+		while(!gcd_Big_Integer(s,m).equals(new BigInteger("1")))
+		{
+			System.out.println(gcd_Big_Integer(s,m));
+			s = new BigInteger("" + ((int) (Math.random() * (intN-4))) + 3);
+		}
 		//T is the decryption exponent
 		//T*S - 1 % M == 0 //Equation for T. 
 		//In other words, T is the Modular inverse of S. 
-		int t = modularInverse(s, m); 
+		BigInteger t = modularInverse_Big_Integer(s, m); 
 		
 		
 		long EndTime = System.currentTimeMillis();
@@ -95,11 +100,12 @@ public class RSA_Encyption
 		//int[] vals = gcdExtended(p, q);
 		//System.out.println(vals[1] + "(" + p + ") + " + vals[2] + "(" + q + ") = " + vals[0]);
 		
+				
 		
 		keys = new KeySet();
-		keys.EncryptionExponet = s;
-		keys.DecryptionExponet = t;
-		keys.n = n;
+		keys.EncryptionExponet = Integer.parseInt(s.toString());
+		keys.DecryptionExponet = Integer.parseInt(t.toString());
+		keys.n = Integer.parseInt(n.toString());
 	}
 	
 	
@@ -155,13 +161,22 @@ public class RSA_Encyption
 		      int b = vals[1] - (p / q) * vals[2];
 		      return new int[] { d, a, b };
 	   }
+	   
+	   
+	 //Finds Modular Inverse for BigInteger
+	private static BigInteger modularInverse_Big_Integer(BigInteger s , BigInteger m)
+	{
+		return s.modInverse(m);
+		
+	}  
 
 	//Finds Modular Inverse
 	//Need to find a faster way to do this. 
 	private static int modularInverse(int s, int m)
 	{
-		for(int i=0; i<m-1; i++)
+		for(int i=0; i<=m-1; i++)
 		{
+			//System.out.println(s + "*" + i + "%" + m + " == " + (s*i % m));
 			if(s*i % m == 1)
 				return i; 
 		}
@@ -178,6 +193,29 @@ public class RSA_Encyption
 		return (num1*num2)/gcd(num1,num2);
 	}
 	
+	
+	private static BigInteger gcd_Big_Integer(BigInteger num1, BigInteger num2)
+	{
+		BigInteger gcd = new BigInteger("0");
+		
+	
+		while(num1.compareTo(gcd) > 0   && num2.compareTo(gcd) > 0)
+		{
+			if(num1.compareTo(num2) == 1)
+				num1 = num1.mod(num2);
+			else
+				num2 = num2.mod(num1);
+			//System.out.println("Num1 " + num1 + " Num2 " + num2);
+		}
+		
+		if(num1.compareTo(gcd) != 0 )
+			gcd = num1;
+		else
+			gcd = num2;
+		//System.out.println("GCD = " + gcd);
+		return gcd;
+				
+	}
 	//Find GCD by Euclid's algorithm 
 	private static int gcd(int num1, int num2)
 	{
