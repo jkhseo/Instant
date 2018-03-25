@@ -153,7 +153,13 @@ public class VendorPendingOrdersFragment extends Fragment {
                         response = ((JSONObject) msg.obj).getJSONArray("Restaurant_From_OwnerUserEmail");
                         for(int i = 0; i < response.length(); i++)
                         {
-                            
+                            double latitude = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Rest_Coordinate_Lat"));
+                            double longitude = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Rest_Coordinate_Long"));
+                            String name = (String) ((JSONObject) response.get(i)).get("Comments");
+                            String address;
+                            double rating;
+                            double distance;
+                            int Rest_ID;
                         }
 
 
