@@ -54,7 +54,7 @@ public class HttpRequests {
     }
     public static void HttpGET(String path, final Handler handler) {
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
-        String localurl = "http://10.26.155.133:8080/demo/"+path;
+        String localurl = "http://10.26.12.74:8080/demo/"+path;
         OkHttpClient client = new OkHttpClient();
         com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
@@ -102,7 +102,7 @@ public class HttpRequests {
     }
     public static void HttpPost(String path, final Handler handler){
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
-        //String url = "http://10.26.183.30:8080/demo/"+path;
+        //String url = "http://10.26.12.74:8080/demo/"+path;
         OkHttpClient client = new OkHttpClient();
         //success tag, true or false value
 

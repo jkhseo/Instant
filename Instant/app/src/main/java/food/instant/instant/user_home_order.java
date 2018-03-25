@@ -253,7 +253,7 @@ public class user_home_order extends Fragment {
                                 rowids+=", ";
                             orderInfo[0] = orderInfo[0]+order.get(j).getFood().getFood_ID()+",";
                             comments= order.get(j).getComments();
-                            orderInfo[1] = orderInfo[1]+comments+"NEWCOMMENTBLOCK";
+                            orderInfo[1] = orderInfo[1]+comments+"NEWCOMMENTBLOCK ";
                             orderInfo[2] = orderInfo[2]+order.get(j).getFood_Quantity()+",";
                             order.get(j).setStatus('P');
                         }
@@ -268,6 +268,7 @@ public class user_home_order extends Fragment {
                         SQLiteDatabase database = dbHelper.getWritableDatabase();
                         dbHelper.updatePendingOrders(rowids,database);
                         dbHelper.close();
+                        System.out.println(url);
                         HttpPost(url,handler);
                     }
                 });
