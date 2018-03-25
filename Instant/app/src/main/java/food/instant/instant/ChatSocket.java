@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class ChatSocket extends AsyncTask<Void,Void,Void>{
     private static final int PORT_NUMBER = 2222;
-    private static final String HOST_NAME = "10.36.18.53";
+    private static final String HOST_NAME = "10.29.181.235";
     private List<Message> adapterList;
     private List<Message> outbox;
     private String ID;
@@ -52,7 +52,7 @@ public class ChatSocket extends AsyncTask<Void,Void,Void>{
     }
     @Override
     protected void onProgressUpdate(Void... voids){
-        System.out.println("updated"+adapterList.get(0).getMessage());
+        //System.out.println("updated"+adapterList.get(0).getMessage());
         ((chat_adapter)view.getAdapter()).notifyDataSetChanged();
         view.invalidate();
     }
@@ -74,20 +74,20 @@ public class ChatSocket extends AsyncTask<Void,Void,Void>{
                     writeMessages();
                     outbox.clear();
                 }
-                input = in.readLine();
+                /*input = in.readLine();
                 System.out.println("recieved"+input);
                 synchronized(adapterList) {
                     adapterList.add(new Message(input));
                 }
-                publishProgress();
-               /* if(in.ready()){
+                publishProgress();*/
+               if(in.ready()){
                     System.out.println("recieved");
                     input = in.readLine();
                     synchronized(adapterList) {
                         adapterList.add(new Message(input));
                     }
                     publishProgress();
-                }*/
+                }
             }
 
         } catch (IOException e) {
