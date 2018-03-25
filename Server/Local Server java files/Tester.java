@@ -24,8 +24,11 @@ public class Tester {
 //		restaurants.add(r3);
 //		
 //		
-		String[] keywords = {"Amerkan"};
-		System.out.println(DATABASE_GET.searchRestaurant_KeyWords("Amerkan"));
+//		String[] keywords = {"Amerkan"};
+//		System.out.println(DATABASE_GET.searchRestaurant_KeyWords("Amerkan"));
+		
+		RSA_Encyption RSA = new RSA_Encyption();
+		RSA.GenerateKeys();
 		
 	}
 

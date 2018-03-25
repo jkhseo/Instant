@@ -50,6 +50,13 @@ public class MainController {
 		return DATABASE_GET.getRestaurantFromOwnerUserEmail(User_Email);
 	}
 	
+	@GetMapping(path="/getOrderStatus")
+	public @ResponseBody String getOrderStatus(@RequestParam String Rest_ID,@RequestParam String Order_ID ) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getOrderStatus(Order_ID, Rest_ID);
+	}
+	
 	@GetMapping(path="/getPendingOrderForRestaurant")
 	public @ResponseBody String getPendingOrderForRestaurant(@RequestParam String Restaurant_ID) 
 	{
@@ -62,6 +69,12 @@ public class MainController {
 	{
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getCompletedOrderForRestaurant(Restaurant_ID);
+	}
+	@GetMapping(path="/getConfirmedOrderForRestaurant")
+	public @ResponseBody String getConfirmedOrderForRestaurant(@RequestParam String Restaurant_ID) 
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getConfirmedOrderForRestaurant(Restaurant_ID);
 	}
 	
 	@GetMapping(path="/getCancelledOrderForRestaurant")
@@ -119,19 +132,32 @@ public class MainController {
 	    return DATABASE_GET.getRSAKEY();
 	}
 	
-	@GetMapping(path="/updateOrderStatus") // Map ONLY GET Requests
-	public @ResponseBody String addNewFood(@RequestParam String Order_ID, @RequestParam String Order_Status)
-	{ 
-		// @ResponseBody means the returned String is the response, not a view name
-		// @RequestParam means it is a parameter from the GET or POST request
+
+
+		//USING RSA ENCRYPTION, POST A NEW ESA KEY
+		@GetMapping(path="/postESAKEY") // Map ONLY GET Requests
+		public @ResponseBody String postESAKey(@RequestParam String EncryptedCode)
+		{ 
+			// @ResponseBody means the returned String is the response, not a view name
+			// @RequestParam means it is a parameter from the GET or POST request
+			
+			return null;
+		}
 		
-	    boolean added = DATABASE_POST.Update_Order_Status(Order_ID, Order_Status);
-	    
-	    if(added)
-	    		return "{ \"Success\" : \"True\"}";
-	    return "{ \"Success\" : \"False\"}";
-	}
-	
+		
+		@GetMapping(path="/updateOrderStatus") // Map ONLY GET Requests
+		public @ResponseBody String updateOrderStatus(@RequestParam String Order_ID, @RequestParam String Rest_ID,  @RequestParam String Order_Status)
+		{ 
+			// @ResponseBody means the returned String is the response, not a view name
+			// @RequestParam means it is a parameter from the GET or POST request
+			
+		    boolean added = DATABASE_POST.Update_Order_Status(Order_ID,Rest_ID, Order_Status);
+		    
+		    if(added)
+		    		return "{ \"Success\" : \"True\"}";
+		    return "{ \"Success\" : \"False\"}";
+		}
+
 	
 	@GetMapping(path="/addOrder") // Map ONLY Post Requests
 	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity, @RequestParam String Order_Date_Pick_Up)
@@ -225,3 +251,4 @@ public class MainController {
 	
 
 }
+

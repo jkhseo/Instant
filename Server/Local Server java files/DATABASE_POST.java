@@ -24,7 +24,7 @@ public class DATABASE_POST
 	}
 	
 	
-			public static boolean Update_Order_Status(String order_ID, String Status)
+			public static boolean Update_Order_Status(String order_ID,String rest_ID, String Status)
 			{
 			
 				try
@@ -34,16 +34,18 @@ public class DATABASE_POST
 				        
 			            String query = "UPDATE db309sd4.Order ";
 			            query += " SET ";
-			            query += "Order_Status = '" + Status + "'";
+			            query += " Order_Status = '" + Status + "' ";
 			            
 			            if(Status.equalsIgnoreCase("Completed"))
 			            {
 				        		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 				        		LocalDateTime now = LocalDateTime.now();
 				        		
-				        		query += "Order_Date_Completed = '" + dtf.format(now) + "'";
+				        		query += " , Order_Date_Completed = '" + dtf.format(now) + "' ";
 			            }
-			            query += "Where Order_ID = '" +  order_ID +"'";
+			            
+			            query += " Where Order_ID = '" +  order_ID +"' AND ";
+			            query += " Rest_ID = '" +  rest_ID +"' ";
 			       
 			            
 			           
