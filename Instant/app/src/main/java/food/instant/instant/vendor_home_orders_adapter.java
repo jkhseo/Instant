@@ -39,10 +39,11 @@ public class vendor_home_orders_adapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         Order order = orders.get(i).get(0);
-        String Rest_Name = orders.get(i).get(0).getRestaurant_Name();
+        String User_Name = orders.get(i).get(0).getUser_First_Name();
+        User_Name = User_Name + " " + orders.get(i).get(0).getUser_Last_Name();
         view = LayoutInflater.from(context).inflate(R.layout.order_group, null);
         TextView orderName = view.findViewById(R.id.order_name);
-        orderName.setText(Rest_Name + " Order");
+        orderName.setText(User_Name + "'s Order");
         Button orderStatus = view.findViewById(R.id.order_status);
         if(order.getStatus()=='L'|| order.getStatus()=='P'){
             orderStatus.setText("Edit Order");

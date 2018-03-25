@@ -66,6 +66,7 @@ public class vendor_orders extends Fragment {
     {
         Adapter adapter = new Adapter(getChildFragmentManager());
         adapter.addFragment(new VendorPendingOrdersFragment(), "Pending");
+        adapter.addFragment(new VendorConfirmedOrdersFragment(), "Confirmed");
         adapter.addFragment(new VendorCompletedOrdersFragment(), "Completed");
         viewPager.setAdapter(adapter);
     }

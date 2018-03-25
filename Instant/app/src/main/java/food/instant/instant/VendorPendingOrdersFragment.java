@@ -34,6 +34,7 @@ public class VendorPendingOrdersFragment extends Fragment {
     private static String TAG = "MainActivity";
     private PendingOrdersHandler handler;
     private ListView lvPendingOrders;
+    private static ArrayList<Restaurant> these_restaurants = new ArrayList<Restaurant>();
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -86,7 +87,7 @@ public class VendorPendingOrdersFragment extends Fragment {
 
         lvPendingOrders = view.findViewById(R.id.lv_vendorPendingOrders);
         handler = new PendingOrdersHandler(VendorPendingOrdersFragment.this);
-        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=7", handler);
+        HttpGET("getRestaurantFromOwnerUserEmail?User_Email=" + SaveSharedPreference.getUserName(getContext()), handler);
         // Inflate the layout for this fragment
         return view;
     }
@@ -144,57 +145,73 @@ public class VendorPendingOrdersFragment extends Fragment {
         /*** End Code***/
         @Override
         public void handleMessage(Message msg) {
-            VendorPendingOrdersFragment pendingOrders = pendingOrdersFragment.get();
-            if (pendingOrders != null) {
-                JSONArray response = null;
-                try {
-                    response = ((JSONObject) msg.obj).getJSONArray("All_Pending_Orders");
-                    ArrayList<Order> tmpOrders = new ArrayList<Order>();
-                    for(int i = 0; i < response.length(); i++)
-                    {
-                        int orderID = (int)((JSONObject) response.get(i)).get("Order_ID");
-                        char status = 'q';
-                        if(((String)((JSONObject) response.get(i)).get("Order_Status")).equals("Pending"))
+            if(msg.what == GlobalConstants.USER_RESTAURANTS) {
+                VendorPendingOrdersFragment pendingOrders = pendingOrdersFragment.get();
+                if (pendingOrders != null) {
+                    JSONArray response = null;
+                    try {
+                        response = ((JSONObject) msg.obj).getJSONArray("Restaurant_From_OwnerUserEmail");
+                        for(int i = 0; i < response.length(); i++)
                         {
-                            status = 'p';
+                            
                         }
-                        int Dummy_PK = (int)((JSONObject) response.get(i)).get("DummyPK");
-                        double foodPrice = Double.parseDouble((String)((JSONObject) response.get(i)).get("Food_Price"));
-                        int restID = (int)((JSONObject) response.get(i)).get("Rest_ID");
-                        String comments = (String)((JSONObject) response.get(i)).get("Comments");
-                        int orderConfCode = (int)((JSONObject) response.get(i)).get("Order_Confirmation_Code");
-                        int menuID = Integer.parseInt((String)((JSONObject) response.get(i)).get("Menu_ID"));
-                        int foodQuantity = (int)((JSONObject) response.get(i)).get("Quantity");
-                        String foodTagsMain = (String)((JSONObject) response.get(i)).get("Food_Tags_Main");
-                        String orderDateSubmitted = (String)((JSONObject) response.get(i)).get("Order_Date_Submitted");
-                        String foodTagsSecondary = (String)((JSONObject) response.get(i)).get("Food_Tags_Secondary");
-                        String orderDatePickup = (String)((JSONObject) response.get(i)).get("Order_Date_Pick_Up");
-                        int foodID = (int)((JSONObject) response.get(i)).get("Food_ID");
-                        int userID = (int)((JSONObject) response.get(i)).get("User_ID");
-                        String foodName = (String)((JSONObject) response.get(i)).get("Food_Name");
-                        String foodDesc = (String)((JSONObject) response.get(i)).get("Food_Desc");
-                        String restName = "someRestaurant";
-                        Food food = new Food(restID, foodName, foodPrice, foodDesc, menuID, foodTagsMain, foodTagsSecondary, foodID);
-                        Order tmpOrder = new Order(orderID, userID, food, comments, foodQuantity, restName, status, Dummy_PK, orderConfCode, orderDateSubmitted, orderDatePickup);
-                        tmpOrders.add(tmpOrder);
+
+
+                        Log.d(TAG, "Request made.........................");
+                        Log.d(TAG, response.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                    Log.d(TAG, "" + tmpOrders.size());
-                    ArrayList<ArrayList<Order>> orders = new ArrayList<ArrayList<Order>>();
-                    for (int i = 0; i < tmpOrders.size(); i++)
-                        {
+                }
+            }
+            else if(msg.what == GlobalConstants.ORDERS) {
+                VendorPendingOrdersFragment pendingOrders = pendingOrdersFragment.get();
+                if (pendingOrders != null) {
+                    JSONArray response = null;
+                    try {
+                        response = ((JSONObject) msg.obj).getJSONArray("All_Pending_Orders");
+                        ArrayList<Order> tmpOrders = new ArrayList<Order>();
+                        for (int i = 0; i < response.length(); i++) {
+                            int orderID = (int) ((JSONObject) response.get(i)).get("Order_ID");
+                            char status = 'q';
+                            if (((String) ((JSONObject) response.get(i)).get("Order_Status")).equals("Pending")) {
+                                status = 'p';
+                            }
+                            int Dummy_PK = (int) ((JSONObject) response.get(i)).get("DummyPK");
+                            double foodPrice = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Food_Price"));
+                            int restID = (int) ((JSONObject) response.get(i)).get("Rest_ID");
+                            String comments = (String) ((JSONObject) response.get(i)).get("Comments");
+                            int orderConfCode = (int) ((JSONObject) response.get(i)).get("Order_Confirmation_Code");
+                            int menuID = Integer.parseInt((String) ((JSONObject) response.get(i)).get("Menu_ID"));
+                            int foodQuantity = (int) ((JSONObject) response.get(i)).get("Quantity");
+                            String foodTagsMain = (String) ((JSONObject) response.get(i)).get("Food_Tags_Main");
+                            String orderDateSubmitted = (String) ((JSONObject) response.get(i)).get("Order_Date_Submitted");
+                            String foodTagsSecondary = (String) ((JSONObject) response.get(i)).get("Food_Tags_Secondary");
+                            String orderDatePickup = (String) ((JSONObject) response.get(i)).get("Order_Date_Pick_Up");
+                            int foodID = (int) ((JSONObject) response.get(i)).get("Food_ID");
+                            int userID = (int) ((JSONObject) response.get(i)).get("User_ID");
+                            String foodName = (String) ((JSONObject) response.get(i)).get("Food_Name");
+                            String foodDesc = (String) ((JSONObject) response.get(i)).get("Food_Desc");
+                            String restName = (String) ((JSONObject) response.get(i)).get("Rest_Name");
+                            String userFirstName = (String) ((JSONObject) response.get(i)).get("First_Name");
+                            String userLastName = (String) ((JSONObject) response.get(i)).get("Last_Name");
+                            String userEmail = (String) ((JSONObject) response.get(i)).get("User_Email");
+                            Food food = new Food(restID, foodName, foodPrice, foodDesc, menuID, foodTagsMain, foodTagsSecondary, foodID);
+                            Order tmpOrder = new Order(orderID, userID, food, comments, foodQuantity, restName, status, Dummy_PK, orderConfCode, orderDateSubmitted, orderDatePickup, userFirstName, userLastName, userEmail);
+                            tmpOrders.add(tmpOrder);
+                        }
+                        Log.d(TAG, "" + tmpOrders.size());
+                        ArrayList<ArrayList<Order>> orders = new ArrayList<ArrayList<Order>>();
+                        for (int i = 0; i < tmpOrders.size(); i++) {
                             if (orders.size() == 0) {
                                 ArrayList<Order> first = new ArrayList<Order>();
                                 first.add(tmpOrders.get(i));
                                 orders.add(first);
-                            }
-                            else {
+                            } else {
                                 for (int j = 0; j < orders.size(); j++) {
-                                    if (orders.get(j).get(0).getUser_ID() == tmpOrders.get(i).getUser_ID())
-                                    {
+                                    if (orders.get(j).get(0).getUser_ID() == tmpOrders.get(i).getUser_ID()) {
                                         orders.get(j).add(tmpOrders.get(i));
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         ArrayList<Order> next = new ArrayList<Order>();
                                         next.add(tmpOrders.get(i));
                                         orders.add(next);
@@ -203,14 +220,15 @@ public class VendorPendingOrdersFragment extends Fragment {
                             }
                         }
 
-                    //ArrayList<ArrayList<Order>> tmp = new ArrayList<ArrayList<Order>>();
-                    //tmp.add(tmpOrders);
-                    vendor_home_orders_adapter pendingAdapter = new vendor_home_orders_adapter(getContext(), orders);
-                    lvPendingOrders.setAdapter(pendingAdapter);
-                    Log.d(TAG, "Request made.........................");
-                    Log.d(TAG, response.toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                        //ArrayList<ArrayList<Order>> tmp = new ArrayList<ArrayList<Order>>();
+                        //tmp.add(tmpOrders);
+                        vendor_home_orders_adapter pendingAdapter = new vendor_home_orders_adapter(getContext(), orders);
+                        lvPendingOrders.setAdapter(pendingAdapter);
+                        Log.d(TAG, "Request made.........................");
+                        Log.d(TAG, response.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

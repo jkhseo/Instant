@@ -2,17 +2,15 @@ package food.instant.instant;
 
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,9 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.TimePicker;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,21 +71,6 @@ public class vendor_home_order extends Fragment {
                     } else {
                         order.showPopup("Order Submission Failed");
                     }
-                } else {
-                    ArrayList<ArrayList<Order>> ordersByRes = new ArrayList<>();
-                    ordersByRes.add(new ArrayList<Order>());
-                    ordersByRes.add(new ArrayList<Order>());
-                    ordersByRes.add(new ArrayList<Order>());
-                    Food tempFood, tempFood2, tempFood3, TempFood4;
-                    tempFood = new Food(1, "TestFood", 9.99, 4);
-                    tempFood2 = new Food(1, "TestFood2", 1.99, 3);
-                    tempFood3 = new Food(2, "TestFood3", 2.50, 2);
-                    //TODO: ordersByRes.get(0).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood, "", 2, "TestRestaurant", 'C'));
-                    //TODO: ordersByRes.get(0).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood2, "", 1, "TestRestaurant", 'C'));
-                    //TODO: ordersByRes.get(1).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood3, "", 1, "TestRestaurant1", 'X'));
-                    //TODO: ordersByRes.get(2).add(new Order(0, Integer.parseInt(SaveSharedPreference.getId(order.getContext())), tempFood, "", 1, "TestRestaurant", 'P'));
-                    HashMap<Integer, Integer> categories = new HashMap<>();
-                    String Rest_Name, Food_Name, Comments;
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -179,7 +160,6 @@ public class vendor_home_order extends Fragment {
             Food_Name = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_NAME));
             Food_Price = cursor.getDouble(cursor.getColumnIndex(OrderContract.OrderEntry.FOOD_PRICE));
             Order_Status = cursor.getString(cursor.getColumnIndex(OrderContract.OrderEntry.ORDER_STATUS)).charAt(0);
-            //TODO: order.add(new Order(Order_ID,Integer.parseInt(SaveSharedPreference.getId(getContext())),new Food(Rest_ID,Food_Name,Food_Price,Food_ID),Comments,Food_Quantity,Rest_Name,Order_Status));
             cursor.moveToNext();
         }
         dbHelper.close();
@@ -209,80 +189,14 @@ public class vendor_home_order extends Fragment {
         listView.setAdapter(adapter);
         String[] dropDown = {"Please select a payment option"};
         ArrayAdapter<String> dropDownAdapter = new ArrayAdapter<String>(getContext(),R.layout.support_simple_spinner_dropdown_item,dropDown);
-        Button leftButton = view.findViewById(R.id.button5);
-        final Button rightButton = view.findViewById(R.id.button6);
-        if(order.size()!=0){
-            if(order.get(0).getStatus()=='L'){
-                leftButton.setText("Add to Order");
-                leftButton.setTag(getActivity());
-                leftButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ((MainActivity)view.getTag()).swapFragments(new user_home_restaurant(new Restaurant(order.get(0).getFood().getRest_ID(),order.get(0).getRestaurant_Name(),0,0,"",0)));
-                    }
-                });
-                rightButton.setText("Submit Order");
-                rightButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String rowids="";
-                        String[] orderInfo = {"","","","",""};
-                        for(int j=0;j<order.size();j++){
-                            rowids+= order.get(j).getOrder_ID();
-                            if(j!=order.size()-1)
-                                rowids+=", ";
-                            orderInfo[0]= orderInfo[0]+order.get(j).getFood().getRest_ID()+",";
-                            orderInfo[1]= orderInfo[1]+order.get(j).getUser_ID()+",";
-                            orderInfo[2] = orderInfo[2]+order.get(j).getFood().getFood_ID()+",";
-                            orderInfo[3] = orderInfo[3]+order.get(j).getComments()+",";
-                            orderInfo[4] = orderInfo[4]+order.get(j).getFood_Quantity()+",";
-                            order.get(j).setStatus('P');
-                        }
-                        String url = "addOrder?Rest_ID="+orderInfo[0].substring(0,orderInfo[0].length()-1)+
-                                "&User_ID="+orderInfo[1].substring(0,orderInfo[1].length()-1)+
-                                "&Food="+ orderInfo[2].substring(0,orderInfo[2].length()-1)+
-                                "&Comments="+orderInfo[3].substring(0,orderInfo[3].length()-1)+
-                                "&Quantity="+orderInfo[4].substring(0,orderInfo[4].length()-1);
-                        OrderDbHelper dbHelper = new OrderDbHelper(getContext());
-                        SQLiteDatabase database = dbHelper.getWritableDatabase();
-                        dbHelper.updatePendingOrders(rowids,database);
-                        dbHelper.close();
-                        HttpPost(url,handler);
-                    }
-                });
+        Button cancel = view.findViewById(R.id.b_cancel_order);
+        Button confirm = view.findViewById(R.id.b_confirm_order);
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //HTTPPOST()
             }
-            else if(order.get(0).getStatus()=='P'){
-                leftButton.setText("Waiting on Restaurant Confimation");
-                leftButton.setClickable(false);
-                rightButton.setText("Cancel Order");
-                rightButton.setTag(getActivity());
-                rightButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        /*OrderDbHelper dbHelper = new OrderDbHelper((MainActivity)view.getTag());
-                        SQLiteDatabase database = dbHelper.getWritableDatabase();
-                        dbHelper.removeRestOrders(order.get(0).getFood().getRest_ID(),database);
-                        dbHelper.close();*/
-                        ((MainActivity)view.getTag()).swapFragments(new user_home());
-                    }
-                });
-            }
-            else if(order.get(0).getStatus()=='X'){
-                leftButton.setVisibility(View.GONE);
-                rightButton.setVisibility(View.GONE);
-
-            }
-            else if(order.get(0).getStatus()=='C'){
-                leftButton.setVisibility(View.GONE);
-                rightButton.setText("View Confirmation Code");
-                rightButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                    }
-                });
-            }
-        }
+        });
         return view;
     }
 

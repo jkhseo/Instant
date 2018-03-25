@@ -6,7 +6,6 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,8 +31,6 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 
 import static food.instant.instant.HttpRequests.HttpPost;
 
@@ -200,7 +197,7 @@ public class user_home_order extends Fragment {
         ArrayAdapter<String> dropDownAdapter = new ArrayAdapter<String>(getContext(),R.layout.support_simple_spinner_dropdown_item,dropDown);
         paymentOptions.setAdapter(dropDownAdapter);
         updateDateTime(view);
-        Button leftButton = view.findViewById(R.id.button5);
+        Button leftButton = view.findViewById(R.id.b_cancel_order);
         final Button rightButton = view.findViewById(R.id.button6);
         if(order.size()!=0){
             if(order.get(0).getStatus()=='L'){

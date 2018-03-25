@@ -81,6 +81,10 @@ public class HttpRequests {
                            msg.what = GlobalConstants.PASSWORD;
                        if(responseObject.has("All_User_Info"))
                            msg.what = GlobalConstants.USERINFO;
+                       if(responseObject.has("Restaurant_From_OwnerUserEmail"))
+                           msg.what = GlobalConstants.USER_RESTAURANTS;
+                       if(responseObject.has("All_Pending_Orders"))
+                           msg.what = GlobalConstants.ORDERS;
                        //restaurantsearchresults
                        msg.obj = responseObject;
                        handler.sendMessage(msg);

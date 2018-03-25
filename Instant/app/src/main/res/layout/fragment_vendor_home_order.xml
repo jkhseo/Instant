@@ -52,26 +52,28 @@
 
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/b_cancel_order"
         android:layout_width="121dp"
         android:layout_height="63dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="488dp"
-        android:text="Button"
+        android:background="@android:color/holo_red_light"
+        android:text="Cancel Order"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button6"
+        android:id="@+id/b_confirm_order"
         android:layout_width="126dp"
         android:layout_height="65dp"
         android:layout_marginEnd="24dp"
         android:layout_marginStart="48dp"
         android:layout_marginTop="488dp"
-        android:text="Button"
+        android:background="@android:color/holo_green_light"
+        android:text="Confirm Order"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.618"
-        app:layout_constraintStart_toEndOf="@+id/button5"
+        app:layout_constraintStart_toEndOf="@+id/b_cancel_order"
         app:layout_constraintTop_toTopOf="parent" />
 
 

@@ -25,7 +25,7 @@ import static food.instant.instant.HttpRequests.HttpGET;
 import static food.instant.instant.HttpRequests.HttpPost;
 
 
-public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, user_home_food.OnFragmentInteractionListener, user_home_order.OnFragmentInteractionListener , VendorCompletedOrdersFragment.OnFragmentInteractionListener, VendorPendingOrdersFragment.OnFragmentInteractionListener, vendor_home_order.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, user_home_food.OnFragmentInteractionListener, user_home_order.OnFragmentInteractionListener , VendorCompletedOrdersFragment.OnFragmentInteractionListener, VendorPendingOrdersFragment.OnFragmentInteractionListener, vendor_home_order.OnFragmentInteractionListener, VendorConfirmedOrdersFragment.OnFragmentInteractionListener{
 
 
     private Context c;
@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                 return true;
             }
         });
-        SaveSharedPreference.login(c, "test", "test", "test", "1997-12-31", "test", "7", "Customer");
     }
 
     @Override
