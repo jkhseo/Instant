@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import java.text.DecimalFormat;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -47,6 +49,7 @@ public class user_home_food extends Fragment {
     public user_home_food(Food temp, String Rest_Name){
         food = new Food(temp);
         this.Rest_Name = Rest_Name;
+        quantity=1;
     }
 
     /**
@@ -86,14 +89,22 @@ public class user_home_food extends Fragment {
         Button addOrder = view.findViewById(R.id.add_order);
         FloatingActionButton addQuantity = view.findViewById(R.id.add_quantity);
         FloatingActionButton removeQuantity = view.findViewById(R.id.remove_quantity);
-        final TextView comments = view.findViewById(R.id.comments);
+        final EditText comments = view.findViewById(R.id.editText);
         final EditText quantityText = view.findViewById(R.id.quantity);
         final EditText priceTotal = view.findViewById(R.id.price_total);
         final ToggleButton small = view.findViewById(R.id.small);
+        small.setVisibility(View.GONE);
         final ToggleButton medium = view.findViewById(R.id.medium);
+        medium.setVisibility(View.GONE);
         final ToggleButton large = view.findViewById(R.id.large);
-        priceTotal.setText(Double.toString(0.00));
-        quantityText.setText("0");
+        large.setVisibility(View.GONE);
+        DecimalFormat df = new DecimalFormat("#.00");
+        priceTotal.setText(df.format(food.getFood_Price()*quantity));
+        priceTotal.setClickable(false);
+        priceTotal.setFocusable(false);
+        quantityText.setFocusable(false);
+        quantityText.setClickable(false);
+        quantityText.setText("1");
         small.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -128,16 +139,18 @@ public class user_home_food extends Fragment {
             @Override
             public void onClick(View view) {
                 quantity++;
+                DecimalFormat df = new DecimalFormat("#.00");
                 quantityText.setText(Integer.toString(quantity));
-                priceTotal.setText(Double.toString(food.getFood_Price()*quantity));
+                priceTotal.setText(df.format(food.getFood_Price()*quantity));
             }
         });
         removeQuantity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                quantity--;
+                quantity=Math.max(1,quantity-1);
+                DecimalFormat df = new DecimalFormat("#.00");
                 quantityText.setText(Integer.toString(quantity));
-                priceTotal.setText(Double.toString(food.getFood_Price()*quantity));
+                priceTotal.setText(df.format(food.getFood_Price()*quantity));
             }
         });
         addOrder.setOnClickListener(new View.OnClickListener() {

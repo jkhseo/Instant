@@ -25,7 +25,8 @@ import static food.instant.instant.HttpRequests.HttpGET;
 import static food.instant.instant.HttpRequests.HttpPost;
 
 
-public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, user_home_food.OnFragmentInteractionListener, user_home_order.OnFragmentInteractionListener , VendorCompletedOrdersFragment.OnFragmentInteractionListener, VendorPendingOrdersFragment.OnFragmentInteractionListener, vendor_home_order.OnFragmentInteractionListener, VendorConfirmedOrdersFragment.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, user_home_food.OnFragmentInteractionListener, user_home_order.OnFragmentInteractionListener , VendorCompletedOrdersFragment.OnFragmentInteractionListener, VendorPendingOrdersFragment.OnFragmentInteractionListener, vendor_home_order.OnFragmentInteractionListener, VendorConfirmedOrdersFragment.OnFragmentInteractionListener,user_home_chat.OnFragmentInteractionListener, user_home_messages.OnFragmentInteractionListener{
+
 
 
     private Context c;
@@ -67,6 +68,9 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                 boolean close = true;
                 switch (item.getItemId())
                 {
+                    case(R.id.nav_messages):
+                        swapFragments(new user_home_messages());
+                        break;
                     case(R.id.nav_login):
                         Intent loginIntent = new Intent(c, LoginActivity.class);
                         c.startActivity(loginIntent);
@@ -206,6 +210,9 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
         mNavigationView.getMenu().findItem(R.id.nav_login).setEnabled(false);
 
+        mNavigationView.getMenu().findItem(R.id.nav_messages).setVisible(false);
+        mNavigationView.getMenu().findItem(R.id.nav_messages).setEnabled(false);
+
         ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome, " + SaveSharedPreference.getFirstName(cxt) + " " + SaveSharedPreference.getLastName(cxt));
     }
 
@@ -240,8 +247,13 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         mNavigationView.getMenu().findItem(R.id.nav_map).setVisible(false);
         mNavigationView.getMenu().findItem(R.id.nav_map).setEnabled(false);
 
+        mNavigationView.getMenu().findItem(R.id.nav_messages).setVisible(true);
+        mNavigationView.getMenu().findItem(R.id.nav_messages).setEnabled(true);
+
         mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(false);
         mNavigationView.getMenu().findItem(R.id.nav_login).setEnabled(false);
+
+
 
         ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome, " + SaveSharedPreference.getFirstName(cxt) + " " + SaveSharedPreference.getLastName(cxt));
     }
@@ -262,8 +274,13 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         mNavigationView.getMenu().findItem(R.id.nav_home_user).setVisible(true);
         mNavigationView.getMenu().findItem(R.id.nav_home_user).setEnabled(true);
 
+        mNavigationView.getMenu().findItem(R.id.nav_messages).setVisible(true);
+        mNavigationView.getMenu().findItem(R.id.nav_messages).setEnabled(true);
+
         mNavigationView.getMenu().findItem(R.id.nav_logout).setVisible(true);
         mNavigationView.getMenu().findItem(R.id.nav_logout).setEnabled(true);
+
+
 
         ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome, " + SaveSharedPreference.getFirstName(cxt) + " " + SaveSharedPreference.getLastName(cxt));
     }
@@ -311,8 +328,13 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         mNavigationView.getMenu().findItem(R.id.nav_map).setVisible(true);
         mNavigationView.getMenu().findItem(R.id.nav_map).setEnabled(true);
 
+        mNavigationView.getMenu().findItem(R.id.nav_messages).setVisible(false);
+        mNavigationView.getMenu().findItem(R.id.nav_messages).setEnabled(false);
+
         mNavigationView.getMenu().findItem(R.id.nav_login).setVisible(true);
         mNavigationView.getMenu().findItem(R.id.nav_login).setEnabled(true);
+
+
 
         ((TextView)mNavigationView.getHeaderView(0).findViewById(R.id.nav_header_message)).setText("Welcome");
         swapFragments(new user_home());

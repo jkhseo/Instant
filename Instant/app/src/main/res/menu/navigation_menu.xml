@@ -49,7 +49,12 @@
         android:title="Logout"
         android:icon="@mipmap/logout"/>
     <item
+        android:id="@+id/nav_messages"
+        android:title="Messages"
+        android:icon="@drawable/ic_message_black_24dp"/>
+    <item
         android:id="@+id/nav_login"
         android:title="Login"
         android:icon="@mipmap/login"/>
+
 </menu>

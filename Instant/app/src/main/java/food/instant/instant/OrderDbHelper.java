@@ -61,7 +61,9 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         Log.d(TAG, "One row inserted");
     }
     public void updatePendingOrders(String rowids, SQLiteDatabase database){
-        database.rawQuery("UPDATE "+OrderContract.OrderEntry.TABLE_NAME+" SET "+OrderContract.OrderEntry.ORDER_STATUS+"='P'",null);// WHERE _rowid_ IN ("+rowids+")",null);
+        String query = "UPDATE "+OrderContract.OrderEntry.TABLE_NAME+" SET "+OrderContract.OrderEntry.ORDER_STATUS+"='P' "+"WHERE _rowid_ IN ("+rowids+")";
+        System.out.println(query);
+        database.execSQL(query);//
     }
     public void removeOrder(int row_id,SQLiteDatabase database){
         database.delete(OrderContract.OrderEntry.TABLE_NAME,"_rowid_="+row_id,null);

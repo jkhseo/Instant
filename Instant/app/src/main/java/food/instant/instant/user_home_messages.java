@@ -1,6 +1,5 @@
 package food.instant.instant;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -8,41 +7,21 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link user_home_chat.OnFragmentInteractionListener} interface
+ * {@link user_home_messages.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link user_home_chat#newInstance} factory method to
+ * Use the {@link user_home_messages#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class user_home_chat extends Fragment {
+public class user_home_messages extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final int PORT_NUMBER = 8884;
-    private static final String HOST_NAME = "localhost";
-    private String sendType;
-    private int sendID;
-    private BufferedReader in;
-    private PrintWriter out;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -50,13 +29,8 @@ public class user_home_chat extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public user_home_chat() {
+    public user_home_messages() {
         // Required empty public constructor
-    }
-    @SuppressLint("ValidFragment")
-    public user_home_chat(String sendAddress, int sendID){
-        this.sendType = sendAddress;
-        this.sendID = sendID;
     }
 
     /**
@@ -65,11 +39,11 @@ public class user_home_chat extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment user_home_chat.
+     * @return A new instance of fragment user_home_messages.
      */
     // TODO: Rename and change types and number of parameters
-    public static user_home_chat newInstance(String param1, String param2) {
-        user_home_chat fragment = new user_home_chat();
+    public static user_home_messages newInstance(String param1, String param2) {
+        user_home_messages fragment = new user_home_messages();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -89,34 +63,10 @@ public class user_home_chat extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_user_home_chat, container, false);
-        Button sendMessage = view.findViewById(R.id.sendButton);
-        List<Message> adapterList = Collections.synchronizedList(new ArrayList<Message>());
-        List<Message> outbox = Collections.synchronizedList(new ArrayList<Message>());
-        chat_adapter adapter = new chat_adapter(getContext(),adapterList);
-        ListView listView = view.findViewById(R.id.chatView);
-        listView.setAdapter(adapter);
-        final EditText messageBox = view.findViewById(R.id.chatBox);
-        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        messageBox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                imm.showSoftInput(messageBox,InputMethodManager.SHOW_IMPLICIT);
-            }
-        });
-        final int id = Integer.parseInt(SaveSharedPreference.getId(getContext()));
-        final String type = SaveSharedPreference.getType(getContext()).substring(0,5);
-        sendMessage.setTag(outbox);
-        sendMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                 synchronized (view.getTag()) {
-                     ((List<Message>)view.getTag()).add(new Message(sendID, sendType, messageBox.getText().toString(), type, id));
-                 }
-            }
-        });
-        new ChatSocket(adapterList,outbox,listView,SaveSharedPreference.getType(getContext()).substring(0,5)+SaveSharedPreference.getId(getContext())).execute();
-        return view;
+        // Inflate the layout for this fragment
+        //((MainActivity)getActivity()).swapFragments(new user_home_chat("Custo",7));
+        ((MainActivity)getActivity()).swapFragments(new user_home_chat("Vendo",10));
+        return inflater.inflate(R.layout.fragment_blank, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
