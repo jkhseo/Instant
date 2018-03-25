@@ -93,14 +93,15 @@ public class user_home_orders extends Fragment{
                         PickupDate = (String)((JSONObject)orderArray.get(i)).get("Order_Date_Pick_Up");
                         tempFood = new Food(Rest_ID, Food_Name, Food_Price, Food_ID);
                         orderStatus = (String) ((JSONObject) orderArray.get(i)).get("Order_Status");
+                        Order_Group_ID = (Integer) ((JSONObject) orderArray.get(i)).get("Order_ID");
                         if(orderStatus.equals("Pending"))
-                            status = 'P';
+                            status = 'C';
                         else if(orderStatus.equals("Canceled"))
                             status = 'X';
                         else
                             status = 'C';
-                        tempOrder = new Order(0, Integer.parseInt(SaveSharedPreference.getId(orders.getContext())), tempFood, Comments, Food_Quantity, Rest_Name, status,PickupDate);
-                        Order_Group_ID = (Integer) ((JSONObject) orderArray.get(i)).get("Order_ID");
+                        tempOrder = new Order(Order_Group_ID, Integer.parseInt(SaveSharedPreference.getId(orders.getContext())), tempFood, Comments, Food_Quantity, Rest_Name, status,PickupDate);
+
                         if (categories.containsKey(Order_Group_ID)) {
                             ordersByRes.get(categories.get(Order_Group_ID)).add(tempOrder);
                         } else {

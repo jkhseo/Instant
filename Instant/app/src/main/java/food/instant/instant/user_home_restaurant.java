@@ -63,7 +63,7 @@ public class user_home_restaurant extends Fragment {
             if (restaurant != null) {
                 JSONArray response = null;
                 try {
-                    response = ((JSONObject) msg.obj).getJSONArray("All_User_Info");
+                    response = ((JSONObject) msg.obj).getJSONArray("Menu");
                     ArrayList<ArrayList<Food>> foodByCategory = new ArrayList<ArrayList<Food>>();
                     HashMap<String,Integer> categories = new HashMap<String,Integer>();
                     int counter=0;
