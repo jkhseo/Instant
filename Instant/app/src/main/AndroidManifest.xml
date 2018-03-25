@@ -29,6 +29,7 @@
                 android:resource="@xml/searchable" />
         </activity>
         <activity
+            android:windowSoftInputMode="stateVisible"
             android:name=".LoginActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".ForgotPassword" />

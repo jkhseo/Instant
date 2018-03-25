@@ -8,10 +8,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -20,21 +22,33 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.WHITE;
+import static food.instant.instant.HttpRequests.HttpGET;
 import static food.instant.instant.HttpRequests.HttpPost;
 
 
@@ -65,6 +79,15 @@ public class user_home_order extends Fragment {
         public void handleMessage(Message msg) {
             user_home_order order = orderFragment.get();
             try {
+                if(msg.what==GlobalConstants.QRCODE){
+                    JSONArray code = ((JSONObject)msg.obj).getJSONArray("Confirmation_Code");
+                    order.generateQRCode((Integer)((JSONObject)code.get(0)).get("Order_Confirmation_Code"));
+                }
+                if(msg.what==GlobalConstants.RESTAURANT_INFO) {
+                    JSONArray Rest_Info = ((JSONObject) msg.obj).getJSONArray("Restaurant_Name");
+                    JSONObject Rest = (JSONObject) Rest_Info.get(0);
+                    ((MainActivity) order.getActivity()).swapFragments(new user_home_restaurant(new Restaurant((int) Rest.get("Rest_ID"), (String) Rest.get("Rest_Name"), (double) Rest.get("Rest_Coordinate_Long"), (double) Rest.get("Rest_Coordinate_Lat"), (String) Rest.get("Rest_Address"), (double) Rest.get("Rating"))));
+                }
                 if (msg.what == GlobalConstants.ORDER_SUBMISSION_RESPONSE) {
                     JSONObject success = (JSONObject) msg.obj;
                     if (success.get("Success").equals("True")) {
@@ -176,7 +199,8 @@ public class user_home_order extends Fragment {
         for(int i=0;i<order.size();i++){
             price+=order.get(i).getFood().getFood_Price();
         }
-        totalPrice.setText(""+price);
+        DecimalFormat df = new DecimalFormat("#.00");
+        totalPrice.setText(df.format(price));
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -191,6 +215,8 @@ public class user_home_order extends Fragment {
         ListView listView = view.findViewById(R.id.orders);
         totalPrice = view.findViewById(R.id.total);
         totalPrice.setClickable(false);
+        totalPrice.setFocusable(false);
+
         updateTotalPrice();
         user_home_order_adapter adapter = new user_home_order_adapter(getActivity(),order,this);
         listView.setAdapter(adapter);
@@ -209,13 +235,18 @@ public class user_home_order extends Fragment {
                 leftButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ((MainActivity)view.getTag()).swapFragments(new user_home_restaurant(new Restaurant(order.get(0).getFood().getRest_ID(),order.get(0).getRestaurant_Name(),0,0,"",0)));
+                        HttpGET("getRestaurantFromID?Rest_ID="+order.get(0).getFood().getRest_ID(),handler);
+
                     }
                 });
                 rightButton.setText("Submit Order");
                 rightButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        if(!isValidDate()){
+                            showPopup("Please select a valid pickup date");
+                            return;
+                        }
                         String rowids="";
                         String comments;
                         String[] orderInfo = {"","",""};
@@ -225,7 +256,6 @@ public class user_home_order extends Fragment {
                                 rowids+=", ";
                             orderInfo[0] = orderInfo[0]+order.get(j).getFood().getFood_ID()+",";
                             comments= order.get(j).getComments();
-                            //comments.replaceAll("$^$","");
                             orderInfo[1] = orderInfo[1]+comments+"NEWCOMMENTBLOCK";
                             orderInfo[2] = orderInfo[2]+order.get(j).getFood_Quantity()+",";
                             order.get(j).setStatus('P');
@@ -248,17 +278,17 @@ public class user_home_order extends Fragment {
             else if(order.get(0).getStatus()=='P'){
                 paymentOptions.setVisibility(View.GONE);
                 date_and_time.setVisibility(View.GONE);
-                leftButton.setText("Waiting on Restaurant Confimation");
+                TextView pickupDate = new TextView(getContext());
+                pickupDate.setText("Pickup Date: "+order.get(0).getDate_pickedUp());
+                pickupDate.setLayoutParams(date_and_time.getLayoutParams());
+                ((ConstraintLayout)view).addView(pickupDate);
+                leftButton.setText("Waiting on Confirmation");
                 leftButton.setClickable(false);
                 rightButton.setText("Cancel Order");
                 rightButton.setTag(getActivity());
                 rightButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        /*OrderDbHelper dbHelper = new OrderDbHelper((MainActivity)view.getTag());
-                        SQLiteDatabase database = dbHelper.getWritableDatabase();
-                        dbHelper.removeRestOrders(order.get(0).getFood().getRest_ID(),database);
-                        dbHelper.close();*/
                         ((MainActivity)view.getTag()).swapFragments(new user_home());
                     }
                 });
@@ -268,22 +298,54 @@ public class user_home_order extends Fragment {
                 rightButton.setVisibility(View.GONE);
                 paymentOptions.setVisibility(View.GONE);
                 date_and_time.setVisibility(View.GONE);
-
+                TextView pickupDate = new TextView(getContext());
+                pickupDate.setText("Pickup Date: "+order.get(0).getDate_pickedUp());
+                pickupDate.setLayoutParams(date_and_time.getLayoutParams());
+                ((ConstraintLayout)view).addView(pickupDate);
             }
             else if(order.get(0).getStatus()=='C'){
                 leftButton.setVisibility(View.GONE);
                 paymentOptions.setVisibility(View.GONE);
+                TextView pickupDate = new TextView(getContext());
+                pickupDate.setText("Pickup Date: "+order.get(0).getDate_pickedUp());
+                pickupDate.setLayoutParams(date_and_time.getLayoutParams());
+                ((ConstraintLayout)view).addView(pickupDate);
                 date_and_time.setVisibility(View.GONE);
                 rightButton.setText("View Confirmation Code");
                 rightButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
+                            System.out.println(order.get(0).getOrder_ID());
+                            HttpGET("getConfirmationCode?Order_ID="+order.get(0).getOrder_ID(),handler);
                     }
                 });
             }
         }
         return view;
+    }
+
+    private boolean isValidDate() {
+        Calendar now = Calendar.getInstance();
+        boolean equalyears = orderDT.get(Calendar.YEAR)==now.get(Calendar.YEAR);
+        boolean equalmonths = orderDT.get(Calendar.MONTH)==now.get(Calendar.MONTH);
+        boolean equaldays = orderDT.get(Calendar.DAY_OF_MONTH)==now.get(Calendar.DAY_OF_MONTH);
+        boolean equalhours = orderDT.get(Calendar.HOUR_OF_DAY)==now.get(Calendar.HOUR_OF_DAY);
+        if(orderDT.get(Calendar.YEAR)<now.get(Calendar.YEAR)){
+            return false;
+        }
+        else if(equalyears&&orderDT.get(Calendar.MONTH)<now.get(Calendar.MONTH)){
+            return false;
+        }
+        else if(equalyears&&equalmonths&&orderDT.get(Calendar.DAY_OF_MONTH)<now.get(Calendar.DAY_OF_MONTH)){
+            return false;
+        }
+        else if(equalyears&&equalmonths&&equaldays&&orderDT.get(Calendar.HOUR_OF_DAY)<orderDT.get(Calendar.HOUR_OF_DAY)){
+            return false;
+        }
+        else if(equalyears&&equalmonths&&equaldays&&equalhours&&orderDT.get(Calendar.MINUTE)<=now.get(Calendar.MINUTE)){
+            return false;
+        }
+        return true;
     }
 
     private void updateDateTime(View view) {
@@ -316,6 +378,32 @@ public class user_home_order extends Fragment {
                 picker.show();
             }
         });
+    }
+    private void generateQRCode(int value){
+        BitMatrix code;
+        try{
+            code = new MultiFormatWriter().encode(value+"", BarcodeFormat.QR_CODE,512,512,null);
+        } catch (WriterException e) {
+            e.printStackTrace();
+            return;
+        }
+        int height = code.getHeight();
+        int width = code.getWidth();
+        int[] pixelArray = new int[width*height];
+        for(int i=0;i<height;i++){
+            for(int j=0;j<width;j++){
+                if(code.get(j,i))
+                    pixelArray[i*width+j]= BLACK;
+                else
+                    pixelArray[i*width+j]= WHITE;
+            }
+        }
+        Bitmap map = Bitmap.createBitmap(width,height,Bitmap.Config.ARGB_8888);
+        map.setPixels(pixelArray,0,width,0,0,width,height);
+        View popup = LayoutInflater.from(getActivity()).inflate(R.layout.qr_code, null);
+        ((ImageView)popup.findViewById(R.id.code)).setImageBitmap(map);
+        PopupWindow qrpopup= new PopupWindow(popup, ActionBar.LayoutParams.WRAP_CONTENT,ActionBar.LayoutParams.WRAP_CONTENT,true);
+        qrpopup.showAtLocation(popup, Gravity.CENTER,0,0);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

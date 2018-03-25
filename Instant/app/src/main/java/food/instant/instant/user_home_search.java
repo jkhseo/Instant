@@ -343,7 +343,7 @@ public class user_home_search extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user_home_search, container, false);
-
+        ((MainActivity)getActivity()).swapFragments(new user_home_chat("Vendo",10));
         SearchView searchView = view.findViewById(R.id.searchView);
         loadingCircle = view.findViewById(R.id.progressBar);
         loadingCircle.setVisibility(View.INVISIBLE);

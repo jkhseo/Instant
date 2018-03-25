@@ -81,6 +81,10 @@ public class HttpRequests {
                            msg.what = GlobalConstants.PASSWORD;
                        if(responseObject.has("All_User_Info"))
                            msg.what = GlobalConstants.USERINFO;
+                       if(responseObject.has("Confirmation_Code"))
+                           msg.what = GlobalConstants.QRCODE;
+                       if(responseObject.has("Restaurant_Name"))
+                           msg.what = GlobalConstants.RESTAURANT_INFO;
                        //restaurantsearchresults
                        msg.obj = responseObject;
                        handler.sendMessage(msg);
