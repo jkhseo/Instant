@@ -280,7 +280,7 @@ public class user_home_order extends Fragment {
                                 "&Food="+ orderInfo[0].substring(0,orderInfo[0].length()-1)+
                                 "&Comments="+orderInfo[1].substring(0,orderInfo[1].length()-15)+
                                 "&Quantity="+orderInfo[2].substring(0,orderInfo[2].length()-1)+
-                                "&Order_Date_Pick_Up="+orderDT.get(Calendar.YEAR)+"/"+orderDT.get(Calendar.MONTH)+"/"+orderDT.get(Calendar.DAY_OF_MONTH)+" "+orderDT.get(Calendar.HOUR_OF_DAY)+":"+orderDT.get(Calendar.MINUTE)+":00";
+                                "&Order_Date_Pick_Up="+orderDT.get(Calendar.YEAR)+"/"+String.format("%02d",orderDT.get(Calendar.MONTH)+1)+"/"+String.format("%02d",orderDT.get(Calendar.DAY_OF_MONTH))+" "+String.format("%02d",orderDT.get(Calendar.HOUR_OF_DAY))+":"+String.format("%02d",orderDT.get(Calendar.MINUTE))+":00";
                         System.out.println(url);
                         OrderDbHelper dbHelper = new OrderDbHelper(getContext());
                         SQLiteDatabase database = dbHelper.getWritableDatabase();
@@ -374,7 +374,7 @@ public class user_home_order extends Fragment {
 
         final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void onTimeSet(TimePicker timePicker, int m, int h) {
+            public void onTimeSet(TimePicker timePicker, int h, int m) {
                 orderDT.set(Calendar.HOUR_OF_DAY,h);
                 orderDT.set(Calendar.MINUTE,m);
             }
