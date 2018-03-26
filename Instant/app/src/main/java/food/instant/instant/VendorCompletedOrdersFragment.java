@@ -32,7 +32,7 @@ import static food.instant.instant.HttpRequests.HttpGET;
 public class VendorCompletedOrdersFragment extends Fragment {
     private static String TAG = "VendorCompletedOrdersFragment";
     private PendingOrdersHandler handler;
-    private ListView lvPendingOrders;
+    private ListView lvCompletedOrders;
     private static ArrayList<Restaurant> these_restaurants = new ArrayList<Restaurant>();
 
     // TODO: Rename parameter arguments, choose names that match
@@ -80,10 +80,10 @@ public class VendorCompletedOrdersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vendor_pending_orders, container, false);
+        View view = inflater.inflate(R.layout.fragment_vendor_completed_orders, container, false);
         //http://proj-309-sd-4.cs.iastate.edu:8080/demo/getPendingOrderForRestaurant?Restaurant_ID=7
 
-        lvPendingOrders = view.findViewById(R.id.lv_vendorPendingOrders);
+        lvCompletedOrders = view.findViewById(R.id.lv_vendorCompletedOrders);
         handler = new PendingOrdersHandler(VendorCompletedOrdersFragment.this);
         HttpGET("getRestaurantFromOwnerUserEmail?User_Email=" + SaveSharedPreference.getUserName(getContext()), handler);
         // Inflate the layout for this fragment
@@ -168,7 +168,7 @@ public class VendorCompletedOrdersFragment extends Fragment {
                     }
                 }
             }
-            else if(msg.what == GlobalConstants.ORDERS) {
+            else if(msg.what == GlobalConstants.ORDERSCOM) {
                 VendorCompletedOrdersFragment pendingOrders = pendingOrdersFragment.get();
                 if (pendingOrders != null) {
                     JSONArray response = null;
@@ -231,7 +231,7 @@ public class VendorCompletedOrdersFragment extends Fragment {
                         //ArrayList<ArrayList<Order>> tmp = new ArrayList<ArrayList<Order>>();
                         //tmp.add(tmpOrders);
                         vendor_home_orders_adapter pendingAdapter = new vendor_home_orders_adapter(getContext(), orders);
-                        lvPendingOrders.setAdapter(pendingAdapter);
+                        lvCompletedOrders.setAdapter(pendingAdapter);
                         Log.d(TAG, "Request made.........................");
                         Log.d(TAG, response.toString());
                     } catch (JSONException e) {

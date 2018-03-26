@@ -85,6 +85,10 @@ public class HttpRequests {
                            msg.what = GlobalConstants.USER_RESTAURANTS;
                        if(responseObject.has("All_Pending_Orders"))
                            msg.what = GlobalConstants.ORDERS;
+                       if(responseObject.has("All_Confirmed_Orders"))
+                           msg.what = GlobalConstants.ORDERSCON;
+                       if(responseObject.has("All_Completed_Orders"))
+                           msg.what = GlobalConstants.ORDERSCOM;
                        if(responseObject.has("Confirmation_Code"))
                            msg.what = GlobalConstants.QRCODE;
                        if(responseObject.has("Restaurant_Name"))

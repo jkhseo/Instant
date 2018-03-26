@@ -163,9 +163,9 @@ public class VendorPendingOrdersFragment extends Fragment {
                             these_restaurants.add(new Restaurant(Rest_ID, name, latitude, longitude, address, rating));
                         }
                         // + these_restaurants.get(0).getRest_ID()
-                        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=1", handler);
-                        Log.d(TAG, "Request made.........................");
-                        Log.d(TAG, response.toString());
+                        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=7", handler);
+                        //Log.d(TAG, "Request made.........................");
+                        //Log.d(TAG, response.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
