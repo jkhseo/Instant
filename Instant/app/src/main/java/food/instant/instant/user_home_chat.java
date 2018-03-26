@@ -95,6 +95,7 @@ public class user_home_chat extends Fragment {
         List<Message> outbox = Collections.synchronizedList(new ArrayList<Message>());
         chat_adapter adapter = new chat_adapter(getContext(),adapterList);
         ListView listView = view.findViewById(R.id.chatView);
+        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
         listView.setAdapter(adapter);
         final EditText messageBox = view.findViewById(R.id.chatBox);
         final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);

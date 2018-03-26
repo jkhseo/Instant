@@ -76,6 +76,24 @@ public class user_home_order extends Fragment {
         public void handleMessage(Message msg) {
             user_home_order order = orderFragment.get();
             try {
+                if(msg.what==GlobalConstants.UPDATE_STATUS){
+                    JSONArray statusArray = ((JSONObject)msg.obj).getJSONArray("Order_Status");
+                    String status = (String)((JSONObject)statusArray.get(0)).get("Order_Status");
+                    if(status.equals("Pending")){
+                        order.showPopup("Waiting on Order Confirmation from Vendor");
+                    }
+                    else if(status.equals("Confirmed")){
+                        HttpGET("getConfirmationCode?Order_ID="+order.order.get(0).getOrder_ID(),this);
+                        for(Order o:order.order)
+                            o.setStatus('C');
+                    }
+                    else if(status.equals("Canceled")){
+                        for(Order o:order.order)
+                            o.setStatus('X');
+                    }
+
+
+                }
                 if(msg.what==GlobalConstants.QRCODE){
                     JSONArray code = ((JSONObject)msg.obj).getJSONArray("Confirmation_Code");
                     order.generateQRCode((Integer)((JSONObject)code.get(0)).get("Order_Confirmation_Code"));
@@ -83,7 +101,7 @@ public class user_home_order extends Fragment {
                 if(msg.what==GlobalConstants.RESTAURANT_INFO) {
                     JSONArray Rest_Info = ((JSONObject) msg.obj).getJSONArray("Restaurant_Name");
                     JSONObject Rest = (JSONObject) Rest_Info.get(0);
-                    ((MainActivity) order.getActivity()).swapFragments(new user_home_restaurant(new Restaurant((int) Rest.get("Rest_ID"), (String) Rest.get("Rest_Name"), (double) Rest.get("Rest_Coordinate_Long"), (double) Rest.get("Rest_Coordinate_Lat"), (String) Rest.get("Rest_Address"), (double) Rest.get("Rating"))));
+                    ((MainActivity) order.getActivity()).swapFragments(new user_home_restaurant(new Restaurant((int) Rest.get("Rest_ID"), (String) Rest.get("Rest_Name"), (double) Rest.get("Rest_Coordinate_Long"), (double) Rest.get("Rest_Coordinate_Lat"), (String) Rest.get("Rest_Address"), 0)));
                 }
                 if (msg.what == GlobalConstants.ORDER_SUBMISSION_RESPONSE) {
                     JSONObject success = (JSONObject) msg.obj;
@@ -262,7 +280,7 @@ public class user_home_order extends Fragment {
                                 "&Food="+ orderInfo[0].substring(0,orderInfo[0].length()-1)+
                                 "&Comments="+orderInfo[1].substring(0,orderInfo[1].length()-15)+
                                 "&Quantity="+orderInfo[2].substring(0,orderInfo[2].length()-1)+
-                                "&Order_Date_Pick_Up="+orderDT.get(Calendar.YEAR)+"/"+orderDT.get(Calendar.MONTH)+"/"+orderDT.get(Calendar.DAY_OF_MONTH)+" "+orderDT.get(Calendar.HOUR_OF_DAY)+":"+orderDT.get(Calendar.MINUTE)+":00";
+                                "&Order_Date_Pick_Up="+orderDT.get(Calendar.YEAR)+"/"+String.format("%02d",orderDT.get(Calendar.MONTH)+1)+"/"+String.format("%02d",orderDT.get(Calendar.DAY_OF_MONTH))+" "+String.format("%02d",orderDT.get(Calendar.HOUR_OF_DAY))+":"+String.format("%02d",orderDT.get(Calendar.MINUTE))+":00";
                         System.out.println(url);
                         OrderDbHelper dbHelper = new OrderDbHelper(getContext());
                         SQLiteDatabase database = dbHelper.getWritableDatabase();
@@ -280,8 +298,14 @@ public class user_home_order extends Fragment {
                 pickupDate.setText("Pickup Date: "+order.get(0).getDate_pickedUp());
                 pickupDate.setLayoutParams(date_and_time.getLayoutParams());
                 ((ConstraintLayout)view).addView(pickupDate);
-                leftButton.setText("Waiting on Confirmation");
-                leftButton.setClickable(false);
+                leftButton.setText("View Confirmation Code");
+                leftButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        System.out.println(order.get(0).getOrder_ID());
+                        HttpGET("getOrderStatus?Rest_ID="+order.get(0).getFood().getRest_ID()+"&Order_ID="+order.get(0).getOrder_ID(),handler);
+                    }
+                });
                 rightButton.setText("Cancel Order");
                 rightButton.setTag(getActivity());
                 rightButton.setOnClickListener(new View.OnClickListener() {
@@ -350,7 +374,7 @@ public class user_home_order extends Fragment {
 
         final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override
-            public void onTimeSet(TimePicker timePicker, int m, int h) {
+            public void onTimeSet(TimePicker timePicker, int h, int m) {
                 orderDT.set(Calendar.HOUR_OF_DAY,h);
                 orderDT.set(Calendar.MINUTE,m);
             }

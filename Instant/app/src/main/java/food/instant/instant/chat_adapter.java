@@ -41,7 +41,9 @@ public class chat_adapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         Message message = messages.get(i);
         TextView content;
-        if(message.getRecieverType()+""==SaveSharedPreference.getType(context) && message.getRecieverID()==Integer.parseInt(SaveSharedPreference.getId(context))){
+        System.out.println(SaveSharedPreference.getType(context).substring(0,5)+SaveSharedPreference.getId(context));
+        System.out.println(message.getRecieverType()+message.getRecieverID());
+        if(message.getRecieverType().equals(SaveSharedPreference.getType(context).substring(0,5)) && message.getRecieverID()==Integer.parseInt(SaveSharedPreference.getId(context))){
             view = LayoutInflater.from(context).inflate(R.layout.sent_message, null);
             content = view.findViewById(R.id.message_sent);
         }

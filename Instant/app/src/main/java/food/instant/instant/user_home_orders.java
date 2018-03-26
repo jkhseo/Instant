@@ -61,18 +61,7 @@ public class user_home_orders extends Fragment{
             user_home_orders orders = ordersFragment.get();
             try{
                    ArrayList<ArrayList<Order>> ordersByRes = new ArrayList<>();
-                    /*ordersByRes.add(new ArrayList<Order>());
-                    ordersByRes.add(new ArrayList<Order>());
-                    ordersByRes.add(new ArrayList<Order>());
-                    Food tempFood,tempFood2,tempFood3,TempFood4;
-                    tempFood = new Food(1,"TestFood",9.99,4);
-                    tempFood2 = new Food(1,"TestFood2",1.99,3);
-                    tempFood3 = new Food(2,"TestFood3",2.50,2);
-                    ordersByRes.get(0).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood,"",2,"TestRestaurant",'C'));
-                    ordersByRes.get(0).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood2,"",1,"TestRestaurant",'C'));
-                    ordersByRes.get(1).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood3,"",1,"TestRestaurant1",'X'));
-                    ordersByRes.get(2).add(new Order(0,Integer.parseInt(SaveSharedPreference.getId(orders.getContext())),tempFood,"",1,"TestRestaurant",'P'));*/
-                    HashMap<Integer, Integer> categories = new HashMap<>();
+                    HashMap<String, Integer> categories = new HashMap<>();
                     String Rest_Name, Food_Name, Comments,PickupDate;
                     int Rest_ID, Food_ID, Food_Quantity, Order_Group_ID;
                     double Food_Price;
@@ -95,19 +84,19 @@ public class user_home_orders extends Fragment{
                         orderStatus = (String) ((JSONObject) orderArray.get(i)).get("Order_Status");
                         Order_Group_ID = (Integer) ((JSONObject) orderArray.get(i)).get("Order_ID");
                         if(orderStatus.equals("Pending"))
-                            status = 'C';
+                            status = 'P';
                         else if(orderStatus.equals("Canceled"))
                             status = 'X';
                         else
                             status = 'C';
                         tempOrder = new Order(Order_Group_ID, Integer.parseInt(SaveSharedPreference.getId(orders.getContext())), tempFood, Comments, Food_Quantity, Rest_Name, status,PickupDate);
 
-                        if (categories.containsKey(Order_Group_ID)) {
-                            ordersByRes.get(categories.get(Order_Group_ID)).add(tempOrder);
+                        if (categories.containsKey(Rest_Name+Order_Group_ID)) {
+                            ordersByRes.get(categories.get(Rest_Name+Order_Group_ID)).add(tempOrder);
                         } else {
                             ordersByRes.add(new ArrayList<Order>());
                             ordersByRes.get(counter).add(tempOrder);
-                            categories.put(Order_Group_ID, counter);
+                            categories.put(Rest_Name+Order_Group_ID, counter);
                             counter++;
                         }
                     }

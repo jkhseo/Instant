@@ -64,8 +64,8 @@ public class user_home_messages extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //((MainActivity)getActivity()).swapFragments(new user_home_chat("Custo",7));
-        ((MainActivity)getActivity()).swapFragments(new user_home_chat("Vendo",10));
+        ((MainActivity)getActivity()).swapFragments(new user_home_chat("Custo",7));
+        //((MainActivity)getActivity()).swapFragments(new user_home_chat("Vendo",10));
         return inflater.inflate(R.layout.fragment_blank, container, false);
     }
 

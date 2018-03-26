@@ -52,11 +52,11 @@ public class Message {
     }
     public Message(String formattedMessage){
         this.recieverType = formattedMessage.substring(0,5);
-        this.recieverID = Integer.parseInt(formattedMessage.charAt(5)+"");
+        this.recieverID = Integer.parseInt(formattedMessage.substring(5,formattedMessage.indexOf("::")));
         int endMessage = formattedMessage.lastIndexOf("::");
-        this.message= formattedMessage.substring(8,endMessage);
+        this.message= formattedMessage.substring(formattedMessage.indexOf("::")+2,endMessage);
         this.senderType = formattedMessage.substring(endMessage+2,endMessage+7);
-        this.senderID = Integer.parseInt(formattedMessage.charAt(endMessage+7)+"");
+        this.senderID = Integer.parseInt(formattedMessage.substring(endMessage+7));
     }
     public String getFormattedMessage(){
         return recieverType+recieverID+"::"+message+"::"+senderType+senderID;
