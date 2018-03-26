@@ -1,6 +1,7 @@
 package food.instant.instant;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -31,7 +32,7 @@ import static food.instant.instant.HttpRequests.HttpGET;
  * create an instance of this fragment.
  */
 public class VendorPendingOrdersFragment extends Fragment {
-    private static String TAG = "MainActivity";
+    private static String TAG = "VendorPendingOrdersFragment";
     private PendingOrdersHandler handler;
     private ListView lvPendingOrders;
     private static ArrayList<Restaurant> these_restaurants = new ArrayList<Restaurant>();
@@ -161,7 +162,8 @@ public class VendorPendingOrdersFragment extends Fragment {
                             int Rest_ID = (int) ((JSONObject) response.get(i)).get("Rest_ID");
                             these_restaurants.add(new Restaurant(Rest_ID, name, latitude, longitude, address, rating));
                         }
-                        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=" + these_restaurants.get(0).getRest_ID(), handler);
+                        // + these_restaurants.get(0).getRest_ID()
+                        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=7", handler);
                         Log.d(TAG, "Request made.........................");
                         Log.d(TAG, response.toString());
                     } catch (JSONException e) {
@@ -202,7 +204,8 @@ public class VendorPendingOrdersFragment extends Fragment {
                             String userLastName = (String) ((JSONObject) response.get(i)).get("Last_Name");
                             String userEmail = (String) ((JSONObject) response.get(i)).get("User_Email");
                             Food food = new Food(restID, foodName, foodPrice, foodDesc, menuID, foodTagsMain, foodTagsSecondary, foodID);
-                            Order tmpOrder = new Order(orderID, userID, food, comments, foodQuantity, restName, status, Dummy_PK, orderConfCode, orderDateSubmitted, orderDatePickup, userFirstName, userLastName, userEmail);
+                            Order tmpOrder = new Order(orderID, userID, food, comments, foodQuantity, restName, status, Dummy_PK, orderConfCode, orderDateSubmitted, orderDatePickup, userFirstName, userLastName, userEmail, restID);
+                            addOrderToDatabase(comments, food, foodQuantity, restName);
                             tmpOrders.add(tmpOrder);
                         }
                         Log.d(TAG, "" + tmpOrders.size());
@@ -241,5 +244,12 @@ public class VendorPendingOrdersFragment extends Fragment {
                 }
             }
         }
+    }
+
+    private void addOrderToDatabase(String comments, Food food, int quantity, String Rest_Name) {
+        OrderDbHelper orderDbHelper = new OrderDbHelper(getActivity());
+        SQLiteDatabase database = orderDbHelper.getWritableDatabase();
+        orderDbHelper.addOrder(food.getRest_ID(),food,quantity,comments,Rest_Name,database);
+        orderDbHelper.close();
     }
 }
