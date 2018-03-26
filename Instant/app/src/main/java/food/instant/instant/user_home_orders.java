@@ -161,12 +161,12 @@ public class user_home_orders extends Fragment{
             tempFood = new Food(Rest_ID,Food_Name,Food_Price,Food_ID);
             tempOrder = new Order(Order_ID,Integer.parseInt(SaveSharedPreference.getId(getContext())),tempFood,comments,Food_Quantity,Rest_Name,order_status,null);
             if(orderCategories.containsKey(Rest_ID)){
-                //TODO:  ordersInProgress.get(orderCategories.get(Rest_ID)).add(tempOrder);
+                ordersInProgress.get(orderCategories.get(Rest_ID)).add(tempOrder);
             }
             else{
                 orderCategories.put(Rest_ID,counter);
                 ordersInProgress.add(new ArrayList<Order>());
-                //TODO: ordersInProgress.get(counter).add(tempOrder);
+                ordersInProgress.get(counter).add(tempOrder);
                 counter++;
             }
             cursor.moveToNext();

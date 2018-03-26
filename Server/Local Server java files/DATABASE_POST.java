@@ -221,7 +221,7 @@ public class DATABASE_POST
 
 	}
 	
-		//Adds a User to the database. 
+		//Adds a RSA public key for the world to see
 		public static boolean Add_New_RSA_Key(int n, int encryptionExponet)
 		{ 
 			 try
@@ -240,6 +240,41 @@ public class DATABASE_POST
 		           
 		            System.out.println(query);
 		            Statement stmt=con.createStatement();
+		            stmt.executeUpdate(query);
+		       
+		            con.close();
+		            return true;
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		           return false;
+		      }
+
+		}
+		
+		//Adds a ESA Key Unique to a user. 
+		public static boolean Add_New_ESA_Key(String User_ID, String ESA_Key)
+		{ 
+			 try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		           
+			        //Delete the old ESA Key if it exist
+			        String query = "DELETE FROM USER_KEYS WHERE USER_ID = \"" + User_ID + "\"";
+		            Statement stmt=con.createStatement();
+		            stmt.executeUpdate(query);
+			        
+
+		            query = "INSERT INTO User_Keys ";
+		            query += " VALUES ( ";
+		            query += "'" + User_ID + "', ";
+		            query += "'" + ESA_Key + "'); ";
+		            
+		           
+		            System.out.println(query);
+		            stmt=con.createStatement();
 		            stmt.executeUpdate(query);
 		       
 		            con.close();
