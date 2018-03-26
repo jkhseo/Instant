@@ -212,7 +212,7 @@ public class VendorConfirmedOrdersFragment extends Fragment {
                             } else {
                                 boolean added = false;
                                 for (int j = 0; j < orders.size(); j++) {
-                                    if (orders.get(j).get(0).getUser_ID() == tmpOrders.get(i).getUser_ID()) {
+                                    if (orders.get(j).get(0).getUser_ID() == tmpOrders.get(i).getUser_ID() && orders.get(j).get(0).getOrder_ID() == tmpOrders.get(i).getOrder_ID()) {
                                         orders.get(j).add(tmpOrders.get(i));
                                         added = true;
                                         break;
