@@ -153,16 +153,15 @@ public class VendorPendingOrdersFragment extends Fragment {
                         response = ((JSONObject) msg.obj).getJSONArray("Restaurant_From_OwnerUserEmail");
                         for(int i = 0; i < response.length(); i++)
                         {
-                            double latitude = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Rest_Coordinate_Lat"));
-                            double longitude = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Rest_Coordinate_Long"));
-                            String name = (String) ((JSONObject) response.get(i)).get("Comments");
-                            String address;
-                            double rating;
-                            double distance;
-                            int Rest_ID;
+                            double latitude = (Double) ((JSONObject) response.get(i)).get("Rest_Coordinate_Lat");
+                            double longitude = (Double)  ((JSONObject) response.get(i)).get("Rest_Coordinate_Long");
+                            String name = (String) ((JSONObject) response.get(i)).get("Rest_Name");
+                            String address = (String) ((JSONObject) response.get(i)).get("Rest_Address");
+                            double rating = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Rest_Rating"));
+                            int Rest_ID = (int) ((JSONObject) response.get(i)).get("Rest_ID");
+                            these_restaurants.add(new Restaurant(Rest_ID, name, latitude, longitude, address, rating));
                         }
-
-
+                        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=" + these_restaurants.get(0).getRest_ID(), handler);
                         Log.d(TAG, "Request made.........................");
                         Log.d(TAG, response.toString());
                     } catch (JSONException e) {
@@ -214,14 +213,18 @@ public class VendorPendingOrdersFragment extends Fragment {
                                 first.add(tmpOrders.get(i));
                                 orders.add(first);
                             } else {
+                                boolean added = false;
                                 for (int j = 0; j < orders.size(); j++) {
                                     if (orders.get(j).get(0).getUser_ID() == tmpOrders.get(i).getUser_ID()) {
                                         orders.get(j).add(tmpOrders.get(i));
-                                    } else {
-                                        ArrayList<Order> next = new ArrayList<Order>();
-                                        next.add(tmpOrders.get(i));
-                                        orders.add(next);
+                                        added = true;
+                                        break;
                                     }
+                                }
+                                if(!added) {
+                                    ArrayList<Order> next = new ArrayList<Order>();
+                                    next.add(tmpOrders.get(i));
+                                    orders.add(next);
                                 }
                             }
                         }
