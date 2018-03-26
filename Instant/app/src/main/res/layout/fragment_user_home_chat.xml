@@ -5,19 +5,6 @@
     android:layout_height="match_parent"
     tools:context="food.instant.instant.user_home_chat">
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="#939393"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chatView" />
-
     <Button
         android:id="@+id/sendButton"
         android:layout_width="90dp"
@@ -36,25 +23,46 @@
         android:id="@+id/chatBox"
         android:layout_width="269dp"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_weight="3"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ListView
         android:id="@+id/chatView"
         android:layout_width="match_parent"
-        android:layout_height="579dp"
+        android:layout_height="486dp"
+        android:layout_gravity="bottom"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:divider="@null"
         android:dividerHeight="0dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
     </ListView>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="2dp"
+        android:background="#939393"
+        app:layout_constraintBottom_toTopOf="@+id/chatBox"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chatView" />
 
 </android.support.constraint.ConstraintLayout>

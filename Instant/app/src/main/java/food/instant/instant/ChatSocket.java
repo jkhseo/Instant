@@ -22,7 +22,7 @@ import java.util.List;
  */
 public class ChatSocket extends AsyncTask<Void,Void,Void>{
     private static final int PORT_NUMBER = 2222;
-    private static final String HOST_NAME = "10.29.181.235";
+    private static final String HOST_NAME = "10.36.18.53";
     private List<Message> adapterList;
     private List<Message> outbox;
     private String ID;

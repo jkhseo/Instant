@@ -17,4 +17,5 @@ public class GlobalConstants {
     public static final int ORDER_SUBMISSION_RESPONSE = 17;
     public static final int QRCODE = 109;
     public static final int RESTAURANT_INFO = 34;
+    public static final int UPDATE_STATUS = 145;
 }
