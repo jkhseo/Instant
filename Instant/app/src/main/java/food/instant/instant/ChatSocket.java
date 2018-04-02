@@ -1,6 +1,7 @@
 package food.instant.instant;
 
 import android.annotation.SuppressLint;
+import android.app.FragmentManager;
 import android.app.Service;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -22,7 +23,7 @@ import java.util.List;
  */
 public class ChatSocket extends AsyncTask<Void,Void,Void>{
     private static final int PORT_NUMBER = 2222;
-    private static final String HOST_NAME = "10.36.18.53";
+    private static final String HOST_NAME = "10.26.48.135";
     private List<Message> adapterList;
     private List<Message> outbox;
     private String ID;

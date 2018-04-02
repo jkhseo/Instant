@@ -1,12 +1,20 @@
 package food.instant.instant;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 /**
@@ -26,11 +34,13 @@ public class user_home_messages extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private ArrayList<Conversation> conversations;
 
     private OnFragmentInteractionListener mListener;
 
     public user_home_messages() {
         // Required empty public constructor
+        conversations = new ArrayList<>();
     }
 
     /**
@@ -64,9 +74,64 @@ public class user_home_messages extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        ((MainActivity)getActivity()).swapFragments(new user_home_chat("Custo",7));
+        //((MainActivity)getActivity()).swapFragments(new user_home_chat("Custo",7));
         //((MainActivity)getActivity()).swapFragments(new user_home_chat("Vendo",10));
-        return inflater.inflate(R.layout.fragment_blank, container, false);
+        View view = inflater.inflate(R.layout.fragment_user_home_messages, container, false);
+        ListView messageList = view.findViewById(R.id.messages_list);
+
+        getAllMessages();
+        messages_adapter adapter = new messages_adapter(getContext(),conversations);
+        messageList.setAdapter(adapter);
+        messageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Conversation conversation = (Conversation) adapterView.getItemAtPosition(i);
+
+            }
+        });
+
+
+        return view;
+    }
+
+    private void getAllMessages() {
+        MessageDbHelper dbHelper = new MessageDbHelper(getContext());
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor cursor = dbHelper.readMessages(database);
+        dbHelper.close();
+        String Message,SenderType,RecieverType;
+        int SenderID,RecieverID;
+        Message temp;
+        HashMap<String,Integer> conversationMap = new HashMap<String,Integer>();
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()){
+            Message = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.MESSAGE));
+            SenderType = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.SENDER_TYPE));
+            RecieverType = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.RECIEVER_TYPE));
+            SenderID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.SENDER_ID));
+            RecieverID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.RECIEVER_ID));
+            temp = new Message(RecieverID,RecieverType,Message,SenderType,SenderID);
+            if(conversationMap.containsKey(RecieverType+RecieverID)){
+                conversations.get(conversationMap.get(RecieverType+RecieverID)).addMessage(temp);
+            }
+            else if(conversationMap.containsKey(SenderType+SenderID)){
+                conversations.get(conversationMap.get(SenderType+SenderID)).addMessage(temp);
+            }
+            else{
+                ArrayList<Message> list = new ArrayList<>();
+                list.add(temp);
+                if(RecieverType.equals(SaveSharedPreference.getType(getContext()).substring(0,5))){
+                    conversationMap.put(SenderType+SenderID,conversations.size());
+                    conversations.add(new Conversation(list,SenderType,SenderID));
+                }
+                else {
+                    conversationMap.put(RecieverType+RecieverID,conversations.size());
+                    conversations.add(new Conversation(list, RecieverType, RecieverID));
+
+                }
+            }
+        }
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event

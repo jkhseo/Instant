@@ -37,10 +37,10 @@ public class user_home_chat extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final int PORT_NUMBER = 8884;
-    private static final String HOST_NAME = "localhost";
+    private chat_adapter adapter;
     private String sendType;
     private int sendID;
+    private Conversation conversation;
     private BufferedReader in;
     private PrintWriter out;
 
@@ -58,7 +58,10 @@ public class user_home_chat extends Fragment {
         this.sendType = sendAddress;
         this.sendID = sendID;
     }
-
+    @SuppressLint("ValidFragment")
+    public user_home_chat(Conversation conversation){
+        this.conversation = conversation;
+    }
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -76,7 +79,10 @@ public class user_home_chat extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    public void addMessage(Message message){
+        conversation.addMessage(message);
+        adapter.notifyDataSetChanged();
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,7 +99,7 @@ public class user_home_chat extends Fragment {
         Button sendMessage = view.findViewById(R.id.sendButton);
         List<Message> adapterList = Collections.synchronizedList(new ArrayList<Message>());
         List<Message> outbox = Collections.synchronizedList(new ArrayList<Message>());
-        chat_adapter adapter = new chat_adapter(getContext(),adapterList);
+        adapter = new chat_adapter(getContext(),adapterList);
         ListView listView = view.findViewById(R.id.chatView);
         listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
         listView.setAdapter(adapter);

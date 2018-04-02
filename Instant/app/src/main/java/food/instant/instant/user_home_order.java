@@ -107,7 +107,9 @@ public class user_home_order extends Fragment {
                     JSONObject success = (JSONObject) msg.obj;
                     if (success.get("Success").equals("True")) {
                         OrderDbHelper dbHelper = new OrderDbHelper(order.getContext());
-                        dbHelper.removePendingOrders(dbHelper.getWritableDatabase());
+                        SQLiteDatabase database = dbHelper.getWritableDatabase();
+                        for(Order o : order.order)
+                            dbHelper.removeOrder(o.getOrder_ID(),database);
                         dbHelper.close();
                         order.showPopup("Order Submitted Successfully");
                         ((MainActivity) order.getActivity()).swapFragments(new user_home());
@@ -282,10 +284,6 @@ public class user_home_order extends Fragment {
                                 "&Quantity="+orderInfo[2].substring(0,orderInfo[2].length()-1)+
                                 "&Order_Date_Pick_Up="+orderDT.get(Calendar.YEAR)+"/"+String.format("%02d",orderDT.get(Calendar.MONTH)+1)+"/"+String.format("%02d",orderDT.get(Calendar.DAY_OF_MONTH))+" "+String.format("%02d",orderDT.get(Calendar.HOUR_OF_DAY))+":"+String.format("%02d",orderDT.get(Calendar.MINUTE))+":00";
                         System.out.println(url);
-                        OrderDbHelper dbHelper = new OrderDbHelper(getContext());
-                        SQLiteDatabase database = dbHelper.getWritableDatabase();
-                        dbHelper.updatePendingOrders(rowids,database);
-                        dbHelper.close();
                         System.out.println(url);
                         HttpPost(url,handler);
                     }

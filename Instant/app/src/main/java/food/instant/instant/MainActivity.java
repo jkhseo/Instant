@@ -1,25 +1,36 @@
 package food.instant.instant;
 
+import android.content.ComponentName;
+import android.content.ServiceConnection;
 import android.net.Uri;
+import android.os.*;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import static food.instant.instant.HttpRequests.HttpGET;
 import static food.instant.instant.HttpRequests.HttpPost;
@@ -32,6 +43,18 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
     private Context c;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
+    private ChatService service;
+    private ServiceConnection connection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder Binder) {
+            service = ((ChatService.ChatServiceBinder)Binder).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            service=null;
+        }
+    };
     private static String TAG = "MainActivity";
 
     @Override
@@ -121,6 +144,13 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         });
     }
 
+    public void bindService(){
+        Intent intent = new Intent(this,ChatService.class);
+        MainActivityHandler handler = new MainActivityHandler(this);
+        Messenger messenger = new Messenger(handler);
+        intent.putExtra("Handler",messenger);
+        bindService(intent,connection,Context.BIND_AUTO_CREATE);
+    }
     @Override
     protected void onResume(){
         super.onResume();
@@ -348,7 +378,26 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                     .addToBackStack(null)
                     .commit();
     }
+    private static class MainActivityHandler extends Handler {
+        private final WeakReference<MainActivity> mainActivity;
+        public MainActivityHandler(MainActivity mainActivity) {
+            this.mainActivity = new WeakReference<MainActivity>(mainActivity);
+        }
+        /*** End Code***/
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            MainActivity activity = mainActivity.get();
+            FragmentManager manager = activity.getSupportFragmentManager();
+            List<Fragment> list = manager.getFragments();
+            if(list!=null&&list.size()==1){
+                if(list.get(0).getClass().getSimpleName().equals("user_home_chat")){
+                    user_home_chat chat = (user_home_chat) list.get(0);
+                    chat.addMessage((Message)msg.obj);
+                }
+            }
 
+        }
+    }
     @Override
     public void onFragmentInteraction(Uri uri) {
         {}

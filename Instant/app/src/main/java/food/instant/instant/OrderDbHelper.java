@@ -19,7 +19,7 @@ public class OrderDbHelper extends SQLiteOpenHelper{
     public static final int DATABASE_VERSION = 1;
     public static final String TAG = "Database Operations";
 
-    public static final String CREATE_TABLE = "create table " + OrderContract.OrderEntry.TABLE_NAME +
+    public static final String CREATE_TABLE = "create table " + MessageContract.MessageEntry.TABLE_NAME +
             "(" + OrderContract.OrderEntry.RESTAURANT_ID + " number," + OrderContract.OrderEntry.RESTAURANT_NAME + " text,"+
             OrderContract.OrderEntry.FOOD_ID + " number,"+OrderContract.OrderEntry.FOOD_QUANTITY + " number,"+OrderContract.OrderEntry.FOOD_NAME
             + " text,"+OrderContract.OrderEntry.FOOD_PRICE+ " number," + OrderContract.OrderEntry.ORDER_STATUS + " text,"+OrderContract.OrderEntry.COMMENTS + " text);";
