@@ -42,13 +42,6 @@ public class Tester {
 		System.out.println("Encrypted Version is " + EncyrptedData);
 		System.out.println("Decyrpted Version is " + mc.RSA.DecryptMessage(Integer.parseInt(EncyrptedData.toString())));
 		
-		
-		String Comments = "NEWCOMMENTBLOCK NEWCOMMENTBLOCK NEWCOMMENTBLOCK";
-		String[] CommentsItems = Comments.split("NEWCOMMENTBLOCK\\s*"); //Imperfect Solution for an imperfect world. 
-		for(String e : CommentsItems)
-			System.out.println(e);
-		System.out.println("SIZE " + CommentsItems.length);
-		
 	}
 
 }

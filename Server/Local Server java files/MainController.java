@@ -44,11 +44,11 @@ public class MainController {
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getMenu(Restaurant_ID);
 	}
-	@GetMapping(path="/getRestaurantFromOwnerUserEmail")
-	public @ResponseBody String getRestaurantFromOwnerUserEmail(@RequestParam String User_Email) 
+	@GetMapping(path="/getRestaurantFromOwnerUserID")
+	public @ResponseBody String getRestaurantFromOwnerUserID(@RequestParam String User_ID) 
 	{
 		// This returns a JSON or XML with the users
-		return DATABASE_GET.getRestaurantFromOwnerUserEmail(User_Email);
+		return DATABASE_GET.getRestaurantFromOwnerUserID(User_ID);
 	}
 	
 	@GetMapping(path="/getOrderStatus")

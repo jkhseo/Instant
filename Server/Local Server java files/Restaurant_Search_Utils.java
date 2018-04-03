@@ -17,6 +17,10 @@ public class Restaurant_Search_Utils
 	HashMap<String, Bucket> catergorizedHashmap = new HashMap<String, Bucket>();
 	String[] keywords;
 	
+	/**
+	 * 
+	 * @param restaurants The list of restaurants to search
+	 */
 	public Restaurant_Search_Utils(ArrayList<Restaurant> restaurants)
 	{
 		this.restaurants = restaurants;
@@ -49,7 +53,11 @@ public class Restaurant_Search_Utils
 		}
 	}
 	
-	//Standard way
+	/**
+	 * Standard way
+	 * @param keywords keywords to search for
+	 * @return The  JSON Array of Restaurants that contain the keywords
+	 */
 	public String SearchStandard(String[] keywords)
 	{
 
@@ -90,7 +98,11 @@ public class Restaurant_Search_Utils
 	}
 
 	
-	//Search with spellcheck.
+	/**
+	 * Search with spellcheck.
+	 * @param keywords keywords to search for
+	 * @return The  JSON Array of Restaurants that contain the keywords
+	 */
 	public String SearchSpellCheck(String[] keywords)
 	{
 

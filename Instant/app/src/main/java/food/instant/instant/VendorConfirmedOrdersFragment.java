@@ -30,8 +30,8 @@ import static food.instant.instant.HttpRequests.HttpGET;
  */
 public class VendorConfirmedOrdersFragment extends Fragment {
     private static String TAG = "VendorConfirmedOrdersFragment";
-    private PendingOrdersHandler handler;
-    private ListView lvPendingOrders;
+    private ConfirmedOrdersHandler handler;
+    private ListView lvConfirmedOrders;
     private static ArrayList<Restaurant> these_restaurants = new ArrayList<Restaurant>();
 
     // TODO: Rename parameter arguments, choose names that match
@@ -79,11 +79,11 @@ public class VendorConfirmedOrdersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vendor_pending_orders, container, false);
+        View view = inflater.inflate(R.layout.fragment_vendor_confirmed_orders, container, false);
         //http://proj-309-sd-4.cs.iastate.edu:8080/demo/getPendingOrderForRestaurant?Restaurant_ID=7
 
-        lvPendingOrders = view.findViewById(R.id.lv_vendorPendingOrders);
-        handler = new PendingOrdersHandler(VendorConfirmedOrdersFragment.this);
+        lvConfirmedOrders = view.findViewById(R.id.lv_vendorConfirmedOrders);
+        handler = new ConfirmedOrdersHandler(VendorConfirmedOrdersFragment.this);
         HttpGET("getRestaurantFromOwnerUserEmail?User_Email=" + SaveSharedPreference.getUserName(getContext()), handler);
         // Inflate the layout for this fragment
         return view;
@@ -128,7 +128,7 @@ public class VendorConfirmedOrdersFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private class PendingOrdersHandler extends Handler {
+    private class ConfirmedOrdersHandler extends Handler {
         /***************************************************************************************
          *    Title: Stack Overflow Answer to Question about static handlers
          *    Author: Tomasz Niedabylski
@@ -136,7 +136,7 @@ public class VendorConfirmedOrdersFragment extends Fragment {
          *    Availability: https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
          ***************************************************************************************/
         private final WeakReference<VendorConfirmedOrdersFragment> pendingOrdersFragment;
-        public PendingOrdersHandler(VendorConfirmedOrdersFragment pendingOrdersFragment) {
+        public ConfirmedOrdersHandler(VendorConfirmedOrdersFragment pendingOrdersFragment) {
             this.pendingOrdersFragment = new WeakReference<VendorConfirmedOrdersFragment>(pendingOrdersFragment);
         }
         /*** End Code***/
@@ -174,15 +174,16 @@ public class VendorConfirmedOrdersFragment extends Fragment {
                             int Rest_ID = (int) ((JSONObject) response.get(i)).get("Rest_ID");
                             these_restaurants.add(new Restaurant(Rest_ID, name, latitude, longitude, address, rating));
                         }
-                        HttpGET("getConfirmedOrderForRestaurant?Restaurant_ID=" + these_restaurants.get(0).getRest_ID(), handler);
-                        Log.d(TAG, "Request made.........................");
-                        Log.d(TAG, response.toString());
+                        // + these_restaurants.get(0).getRest_ID()
+                        HttpGET("getConfirmedOrderForRestaurant?Restaurant_ID=7", handler);
+                        //Log.d(TAG, "Request made.........................");
+                        //Log.d(TAG, response.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             }
-            else if(msg.what == GlobalConstants.ORDERS) {
+            else if(msg.what == GlobalConstants.ORDERSCON) {
                 VendorConfirmedOrdersFragment pendingOrders = pendingOrdersFragment.get();
                 if (pendingOrders != null) {
                     JSONArray response = null;
@@ -228,7 +229,7 @@ public class VendorConfirmedOrdersFragment extends Fragment {
                             } else {
                                 boolean added = false;
                                 for (int j = 0; j < orders.size(); j++) {
-                                    if (orders.get(j).get(0).getUser_ID() == tmpOrders.get(i).getUser_ID()) {
+                                    if (orders.get(j).get(0).getUser_ID() == tmpOrders.get(i).getUser_ID() && orders.get(j).get(0).getOrder_ID() == tmpOrders.get(i).getOrder_ID()) {
                                         orders.get(j).add(tmpOrders.get(i));
                                         added = true;
                                         break;
@@ -245,7 +246,7 @@ public class VendorConfirmedOrdersFragment extends Fragment {
                         //ArrayList<ArrayList<Order>> tmp = new ArrayList<ArrayList<Order>>();
                         //tmp.add(tmpOrders);
                         vendor_home_orders_adapter pendingAdapter = new vendor_home_orders_adapter(getContext(), orders);
-                        lvPendingOrders.setAdapter(pendingAdapter);
+                        lvConfirmedOrders.setAdapter(pendingAdapter);
                         Log.d(TAG, "Request made.........................");
                         Log.d(TAG, response.toString());
                     } catch (JSONException e) {

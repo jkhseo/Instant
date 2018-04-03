@@ -180,8 +180,8 @@ public class VendorPendingOrdersFragment extends Fragment {
                         }
                         // + these_restaurants.get(0).getRest_ID()
                         HttpGET("getPendingOrderForRestaurant?Restaurant_ID=7", handler);
-                        Log.d(TAG, "Request made.........................");
-                        Log.d(TAG, response.toString());
+                        //Log.d(TAG, "Request made.........................");
+                        //Log.d(TAG, response.toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -234,7 +234,7 @@ public class VendorPendingOrdersFragment extends Fragment {
                             } else {
                                 boolean added = false;
                                 for (int j = 0; j < orders.size(); j++) {
-                                    if (orders.get(j).get(0).getUser_ID() == tmpOrders.get(i).getUser_ID()) {
+                                    if (orders.get(j).get(0).getUser_ID() == tmpOrders.get(i).getUser_ID() && orders.get(j).get(0).getOrder_ID() == tmpOrders.get(i).getOrder_ID()) {
                                         orders.get(j).add(tmpOrders.get(i));
                                         added = true;
                                         break;
