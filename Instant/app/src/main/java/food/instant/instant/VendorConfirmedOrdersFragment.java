@@ -84,7 +84,7 @@ public class VendorConfirmedOrdersFragment extends Fragment {
 
         lvConfirmedOrders = view.findViewById(R.id.lv_vendorConfirmedOrders);
         handler = new ConfirmedOrdersHandler(VendorConfirmedOrdersFragment.this);
-        HttpGET("getRestaurantFromOwnerUserEmail?User_Email=" + SaveSharedPreference.getUserName(getContext()), handler);
+        HttpGET("getRestaurantFromOwnerUserID?User_ID=" + SaveSharedPreference.getId(getContext()), handler);
         // Inflate the layout for this fragment
         return view;
     }
