@@ -1,5 +1,6 @@
 package hello;
 
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -132,19 +133,43 @@ public class MainController {
 	    return DATABASE_GET.getRSAKEY();
 	}
 	
-	@GetMapping(path="/updateOrderStatus") // Map ONLY GET Requests
-	public @ResponseBody String addNewFood(@RequestParam String Order_ID, @RequestParam String Order_Status)
-	{ 
-		// @ResponseBody means the returned String is the response, not a view name
-		// @RequestParam means it is a parameter from the GET or POST request
+
+
+		//USING RSA ENCRYPTION, POST A NEW ESA KEY
+		@GetMapping(path="/postESAKEY") // Map ONLY GET Requests
+		public @ResponseBody String postESAKey(@RequestParam String VersionNumber, @RequestParam String EncryptedCode, @RequestParam String User_ID)
+		{ 
+			// @ResponseBody means the returned String is the response, not a view name
+			// @RequestParam means it is a parameter from the GET or POST request
+			String JSONreturned = DATABASE_GET.getRSAKEY();
+			int Version = Integer.parseInt(JSONreturned.substring(JSONreturned.indexOf("Version") + 12, JSONreturned.indexOf("Encyption_Exponet")-4));
+			
+			if(Version != Integer.parseInt(VersionNumber))
+				return "{ \"Success\" : \"False\"}";
+			
+			BigInteger deycrptedCode = RSA.DecryptMessage(Integer.parseInt(EncryptedCode));
+			
+			boolean added = DATABASE_POST.Add_New_ESA_Key(User_ID, deycrptedCode.toString());
+			
+		    if(added)
+	    			return "{ \"Success\" : \"True\"}";
+		    return "{ \"Success\" : \"False\"}";
+		}
 		
-	    boolean added = DATABASE_POST.Update_Order_Status(Order_ID, Order_Status);
-	    
-	    if(added)
-	    		return "{ \"Success\" : \"True\"}";
-	    return "{ \"Success\" : \"False\"}";
-	}
-	
+		
+		@GetMapping(path="/updateOrderStatus") // Map ONLY GET Requests
+		public @ResponseBody String updateOrderStatus(@RequestParam String Order_ID, @RequestParam String Rest_ID,  @RequestParam String Order_Status)
+		{ 
+			// @ResponseBody means the returned String is the response, not a view name
+			// @RequestParam means it is a parameter from the GET or POST request
+			
+		    boolean added = DATABASE_POST.Update_Order_Status(Order_ID,Rest_ID, Order_Status);
+		    
+		    if(added)
+		    		return "{ \"Success\" : \"True\"}";
+		    return "{ \"Success\" : \"False\"}";
+		}
+
 	
 	@GetMapping(path="/addOrder") // Map ONLY Post Requests
 	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity, @RequestParam String Order_Date_Pick_Up)
@@ -156,32 +181,33 @@ public class MainController {
 		
 		String[] FoodItems = Food.split(",+\\s*");
 		String[] QuanityItems = Quantity.split(",+\\s*");
-		String[] CommentsItems = Comments.split("NEWCOMMENTBLOCK\\s*"); //Imperfect Solution for an imperfect world. 
+		String[] CommentsItems = Comments.split("NEWCOMMENTBLOCK"); //Imperfect Solution for an imperfect world. 
 		
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
 
 		if(FoodItems.length != QuanityItems.length && FoodItems.length != CommentsItems.length)
 			 return "{ \"Success\" : \"False\"}";
-		
-		int orderID = DATABASE_GET.getNextOrderID(Rest_ID);	
-		String QR_CODE = "" +  ((int) (Math.random() * QRCODE_SIZE));
-		//System.out.println(Comments);
-		//System.out.println(FoodItems.length + " " + QuanityItems.length + " " + CommentsItems.length);
-		
-		
-		boolean added = true;
-		for(int i=0; i<FoodItems.length; i++)
+		else
 		{
-			if(!DATABASE_POST.Add_Order(orderID, Rest_ID,   User_ID,  FoodItems[i], dtf.format(now), Order_Date_Pick_Up ,null, CommentsItems[i], QuanityItems[i],QR_CODE))
-			   added = false;
+			int orderID = DATABASE_GET.getNextOrderID(Rest_ID);	
+			String QR_CODE = "" +  ((int) (Math.random() * QRCODE_SIZE));
+			System.out.println(Comments);
+			System.out.println(FoodItems.length + " " + QuanityItems.length + " " + CommentsItems.length);
+			
+			
+			boolean added = true;
+			for(int i=0; i<FoodItems.length; i++)
+			{
+				if(!DATABASE_POST.Add_Order(orderID, Rest_ID,   User_ID,  FoodItems[i], dtf.format(now), Order_Date_Pick_Up ,null, CommentsItems[i], QuanityItems[i],QR_CODE))
+				   added = false;
+			}
+		
+		    if(added)
+		    		return "{ \"Success\" : \"True\"}";
+		    return "{ \"Success\" : \"False\"}";
 		}
-	
-	    if(added)
-	    		return "{ \"Success\" : \"True\"}";
-	    return "{ \"Success\" : \"False\"}";
 	}
-	
 	@GetMapping(path="/addFood") // Map ONLY GET Requests
 	public @ResponseBody String addNewFood(@RequestParam String Rest_ID, @RequestParam String Food_Name, @RequestParam String Food_Price,  @RequestParam String Food_Desc, @RequestParam String Menu_ID,@RequestParam String Food_Tags_Main, @RequestParam String Food_Tags_Secondary)
 	{ 
@@ -238,3 +264,4 @@ public class MainController {
 	
 
 }
+
