@@ -36,7 +36,10 @@ public class DATABASE_GET
 	    return jsonArray;
 	}
 	
-	
+	/**
+	 * 
+	 * @return Returns all information of every restaurant in the database. 
+	 */
 	public static String getAllRestaurant()
 	{
 		 JSONArray json = null;
@@ -64,6 +67,12 @@ public class DATABASE_GET
 
 	}
 	
+	/**
+	 * 
+	 * @param Order_ID The ID of the order's status being checked. 
+	 * @param Rest_ID The ID of the restaurant that the order is being ordered. 
+	 * @return Returns the status of the order: cancelled, confirmed, pending, complete. 
+	 */
 	
 	public static String getOrderStatus(String Order_ID, String Rest_ID)
 	{
@@ -92,6 +101,12 @@ public class DATABASE_GET
 
 	}
 	
+	/**
+	 * 
+	 * @param Order_ID The ID of the order that is being retrieved for the QR/confirmation code. 
+	 * @return Returns the QR/confirmation code of the order. 
+	 */
+	
 	public static String getConfirmationCode(String Order_ID)
 	{
 		 JSONArray json = null;
@@ -119,6 +134,11 @@ public class DATABASE_GET
 
 	}
 	
+	/**
+	 * 
+	 * @param Rest_ID The ID of the restaurant that is used to query the database. 
+	 * @return Returns every information of the restaurant with the ID same with Rest_ID. 
+	 */
 	public static String getRestaurantFromID(String Rest_ID)
 	{
 		 JSONArray json = null;
@@ -146,8 +166,13 @@ public class DATABASE_GET
 
 	}
 	
+	/**
+	 * 
+	 * @param User_Email The email of the restaurant owner.
+	 * @return Returns all restaurants that is owned by the user with User_Email.
+	 */
 	
-	public static String getRestaurantFromOwnerUserEmail(String User_Email)
+	public static String getRestaurantFromOwnerUserID(String User_ID)
 	{
 		 JSONArray json = null;
 		
@@ -155,7 +180,7 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-		        String query = "SELECT * FROM db309sd4.Restaurant WHERE User_Email = " + '"' + User_Email + '"';
+		        String query = "SELECT * FROM db309sd4.Restaurant WHERE User_ID = " + '"' + User_ID + '"';
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
@@ -177,17 +202,21 @@ public class DATABASE_GET
 	
 	
 	
+	/**
+	 * 
+	 * @param User_Email The email of a user being retrieved. 
+	 * @return Returns every information of the user with email = User_Email. 
+	 */
 	
 	
-	
-	public static String getAllUserInfo(String email)
+	public static String getAllUserInfo(String User_Email)
 	{
 		 JSONArray json = null;
 		 try
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-		        String query = "SELECT * FROM db309sd4.User WHERE User_Email = " + '"' + email + '"';
+		        String query = "SELECT * FROM db309sd4.User WHERE User_Email = " + '"' + User_Email + '"';
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
@@ -206,6 +235,12 @@ public class DATABASE_GET
 
 
 	}
+	
+	/** 
+	 * 
+	 * @param Restaurant_ID The ID of the restaurant that is being retrieved for the menu.
+	 * @return Returns the menu of the restaurant where the ID = Restaurant_ID. 
+	 */
 	
 	public static String getMenu(String Restaurant_ID)
 	{
@@ -233,6 +268,12 @@ public class DATABASE_GET
 
 
 	}
+	
+	/**
+	 * 
+	 * @param Restaurant_ID The ID of the restaurant being retrieved. 
+	 * @return Returns all pending orders where the order's restaurant ID = Restaurant_ID. 
+	 */
 	
 	public static String getPendingOrderForRestaurant(String Restaurant_ID)
 	{
@@ -268,6 +309,12 @@ public class DATABASE_GET
 
 
 	}
+	
+	/**
+	 * 
+	 * @param Restaurant_ID The ID of the restaurant being retrieved. 
+	 * @return Returns all confirmed orders where the order's restaurant ID = Restaurant_ID. 
+	 */
 	
 	public static String getConfirmedOrderForRestaurant(String Restaurant_ID)
 	{
