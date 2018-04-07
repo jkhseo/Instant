@@ -2,6 +2,7 @@ package food.instant.instant;
 
 import android.content.ComponentName;
 import android.content.ServiceConnection;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.*;
 import android.support.v4.app.Fragment;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
     private Context c;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
+    private boolean serviceStarted = false;
     private ChatService service;
     private ServiceConnection connection = new ServiceConnection() {
         @Override
@@ -148,7 +150,10 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         Intent intent = new Intent(this,ChatService.class);
         MainActivityHandler handler = new MainActivityHandler(this);
         Messenger messenger = new Messenger(handler);
-        intent.putExtra("Handler",messenger);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("Handler",messenger);
+        //bundle.putString("ID","ID:"+SaveSharedPreference.getType(this).substring(0,5)+SaveSharedPreference.getId(this));
+        intent.putExtras(bundle);
         bindService(intent,connection,Context.BIND_AUTO_CREATE);
     }
     @Override
@@ -156,6 +161,19 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         super.onResume();
         final NavigationView mNavigationView = findViewById(R.id.nav_view);
         chooseNavDrawer(mNavigationView, c);
+        if(SaveSharedPreference.isLoggedIn(this)&&!(SaveSharedPreference.getType(this).equals("Admin"))) {
+            serviceStarted=true;
+            bindService();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(serviceStarted) {
+            stopService(new Intent(this, ChatService.class));
+            unbindService(connection);
+            serviceStarted=false;
+        }
     }
 
     @Override
@@ -394,6 +412,10 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                     user_home_chat chat = (user_home_chat) list.get(0);
                     chat.addMessage((Message)msg.obj);
                 }
+                MessageDbHelper dbHelper = new MessageDbHelper(activity);
+               SQLiteDatabase database =  dbHelper.getWritableDatabase();
+               dbHelper.addMessage((Message)msg.obj,database);
+               dbHelper.close();
             }
 
         }

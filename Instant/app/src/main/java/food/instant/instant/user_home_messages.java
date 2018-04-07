@@ -74,8 +74,6 @@ public class user_home_messages extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        //((MainActivity)getActivity()).swapFragments(new user_home_chat("Custo",7));
-        //((MainActivity)getActivity()).swapFragments(new user_home_chat("Vendo",10));
         View view = inflater.inflate(R.layout.fragment_user_home_messages, container, false);
         ListView messageList = view.findViewById(R.id.messages_list);
 
@@ -86,6 +84,7 @@ public class user_home_messages extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Conversation conversation = (Conversation) adapterView.getItemAtPosition(i);
+                new user_home_chat(conversation);
 
             }
         });

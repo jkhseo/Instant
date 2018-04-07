@@ -40,7 +40,7 @@ public class messages_adapter extends BaseAdapter {
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         view = LayoutInflater.from(context).inflate(R.layout.conversation_list_view_element, null);
-        TextView contact = view.findViewById(R.id.contact);
+        TextView contact = view.findViewById(R.id.contact_name);
         contact.setText("");
         TextView lastMessage = view.findViewById(R.id.contact_last_message);
         lastMessage.setText(conversations.get(i).getLastMessage());

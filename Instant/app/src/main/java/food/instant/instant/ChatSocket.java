@@ -19,77 +19,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Asynchronous task that creates a socket connection with chat server
+ * to send a message.
  * Created by mpauk on 3/20/2018.
  */
-public class ChatSocket extends AsyncTask<Void,Void,Void>{
+public class ChatSocket extends AsyncTask<Message,Void,Void>{
     private static final int PORT_NUMBER = 2222;
-    private static final String HOST_NAME = "10.26.48.135";
-    private List<Message> adapterList;
-    private List<Message> outbox;
-    private String ID;
-    private chat_adapter adapter;
-    private ListView view;
-
-    private BufferedReader in;
+    private static final String HOST_NAME = "10.36.18.4";
     private PrintWriter out;
-    public ChatSocket(List<Message> inbox,List<Message> outbox, ListView view,String ID){
-        this.adapterList = inbox;
-        this.outbox = outbox;
-        this.view = view;
-        this.ID = ID;
-    }
-    private int writeMessages(){
-        synchronized (outbox) {
-            for (Message message : outbox) {
-                out.println(message.getFormattedMessage());
-                synchronized (adapterList) {
-                    adapterList.add(message);
-                }
-            }
-        }
-        publishProgress();
-        out.flush();
-        return 0;
-    }
-    @Override
-    protected void onProgressUpdate(Void... voids){
-        //System.out.println("updated"+adapterList.get(0).getMessage());
-        ((chat_adapter)view.getAdapter()).notifyDataSetChanged();
-        view.invalidate();
-    }
-
     @SuppressLint("NewApi")
     @Override
-    protected Void doInBackground(Void... voids) {
+    /**
+     *Async Method that sends a message to the socket server. This method is called when a new ChatSocket is
+     * created using: new ChatSocket().execute(String s)
+     */
+    protected Void doInBackground(Message... messages) {
         try {
-            String input;
             Socket socket = new Socket(HOST_NAME,PORT_NUMBER);
             System.out.println("connected");
             out = new PrintWriter(socket.getOutputStream(),true);
-            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out.println("ID:" + ID);
-                out.flush();
-            while(true) {
-                if(outbox.size()!=0){
-                    System.out.println("wrote");
-                    writeMessages();
-                    outbox.clear();
-                }
-                /*input = in.readLine();
-                System.out.println("recieved"+input);
-                synchronized(adapterList) {
-                    adapterList.add(new Message(input));
-                }
-                publishProgress();*/
-               if(in.ready()){
-                    System.out.println("recieved");
-                    input = in.readLine();
-                    synchronized(adapterList) {
-                        adapterList.add(new Message(input));
-                    }
-                    publishProgress();
-                }
-            }
+            out.println("$$$"+messages[0].getFormattedMessage());
+            out.flush();
 
         } catch (IOException e) {
             e.printStackTrace();

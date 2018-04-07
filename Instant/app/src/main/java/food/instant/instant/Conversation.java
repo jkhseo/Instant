@@ -7,9 +7,14 @@ import java.util.ArrayList;
  */
 
 public class Conversation {
+
     private ArrayList<Message> messages;
     private String type;
     private int id;
+    public Conversation(String type,int id){
+        this.type = type;
+        this.id = id;
+    }
     public Conversation(ArrayList<Message> messages,String type, int id){
         this.messages=messages;
         this.type=type;
@@ -40,5 +45,12 @@ public class Conversation {
 
     public void setType(String type) {
         this.type = type;
+    }
+    public ArrayList<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(ArrayList<Message> messages) {
+        this.messages = messages;
     }
 }

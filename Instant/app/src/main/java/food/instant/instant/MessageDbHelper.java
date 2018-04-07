@@ -34,7 +34,12 @@ public class MessageDbHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(DROP_TABLE);
         sqLiteDatabase.execSQL(CREATE_TABLE);
     }
-
+    public Cursor getRestMessages(SQLiteDatabase database,int ID,String type){
+        String query = "SELECT * FROM " + MessageContract.MessageEntry.TABLE_NAME + " WHERE (("+ MessageContract.MessageEntry.SENDER_ID+"="+ID+" AND " +MessageContract.MessageEntry.SENDER_TYPE +"='"+type+"') " +
+                "OR ("+MessageContract.MessageEntry.RECIEVER_ID+"="+ID+" AND " +MessageContract.MessageEntry.RECIEVER_TYPE +"='"+type+"'))";
+        System.out.println(query);
+        return database.rawQuery(query,null);
+    }
     public void addMessage(Message message,SQLiteDatabase database){
         ContentValues values = new ContentValues();
         values.put(MessageContract.MessageEntry.MESSAGE,message.getMessage());

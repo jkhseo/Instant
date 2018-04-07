@@ -2,6 +2,7 @@ package food.instant.instant;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -38,12 +39,7 @@ public class user_home_chat extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private chat_adapter adapter;
-    private String sendType;
-    private int sendID;
     private Conversation conversation;
-    private BufferedReader in;
-    private PrintWriter out;
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -55,8 +51,7 @@ public class user_home_chat extends Fragment {
     }
     @SuppressLint("ValidFragment")
     public user_home_chat(String sendAddress, int sendID){
-        this.sendType = sendAddress;
-        this.sendID = sendID;
+        this.conversation = new Conversation(sendAddress,sendID);
     }
     @SuppressLint("ValidFragment")
     public user_home_chat(Conversation conversation){
@@ -93,13 +88,14 @@ public class user_home_chat extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
+        if(conversation.getMessages()==null){
+            getMessages();
+        }
         View view = inflater.inflate(R.layout.fragment_user_home_chat, container, false);
         Button sendMessage = view.findViewById(R.id.sendButton);
-        List<Message> adapterList = Collections.synchronizedList(new ArrayList<Message>());
-        List<Message> outbox = Collections.synchronizedList(new ArrayList<Message>());
-        adapter = new chat_adapter(getContext(),adapterList);
+        adapter = new chat_adapter(getContext(),conversation.getMessages());
         ListView listView = view.findViewById(R.id.chatView);
         listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
         listView.setAdapter(adapter);
@@ -113,17 +109,39 @@ public class user_home_chat extends Fragment {
         });
         final int id = Integer.parseInt(SaveSharedPreference.getId(getContext()));
         final String type = SaveSharedPreference.getType(getContext()).substring(0,5);
-        sendMessage.setTag(outbox);
+        sendMessage.setTag(this);
         sendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 synchronized (view.getTag()) {
-                     ((List<Message>)view.getTag()).add(new Message(sendID, sendType, messageBox.getText().toString(), type, id));
-                 }
+                user_home_chat ref = (user_home_chat) view.getTag();
+                Message temp = new Message(conversation.getId(),conversation.getType(),messageBox.getText().toString(),SaveSharedPreference.getType(ref.getContext()).substring(0,5),Integer.parseInt(SaveSharedPreference.getId(ref.getContext())));
+                new ChatSocket().execute(temp);
+                (ref).addMessage(temp);
+                MessageDbHelper dbHelper = new MessageDbHelper(ref.getContext());
+                dbHelper.addMessage(temp,dbHelper.getWritableDatabase());
+                dbHelper.close();
             }
         });
-        new ChatSocket(adapterList,outbox,listView,SaveSharedPreference.getType(getContext()).substring(0,5)+SaveSharedPreference.getId(getContext())).execute();
+
         return view;
+    }
+
+    private void getMessages() {
+        MessageDbHelper dbHelper = new MessageDbHelper(getContext());
+        Cursor cursor = dbHelper.getRestMessages(dbHelper.getReadableDatabase(),conversation.getId(),conversation.getType());
+        cursor.moveToFirst();
+        String Message,SenderType,RecieverType;
+        int SenderID,RecieverID;
+        conversation.setMessages(new ArrayList<Message>());
+        while(!cursor.isAfterLast()){
+            Message = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.MESSAGE));
+            SenderType = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.SENDER_TYPE));
+            RecieverType = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.RECIEVER_TYPE));
+            SenderID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.SENDER_ID));
+            RecieverID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.RECIEVER_ID));
+            conversation.addMessage(new Message(RecieverID,RecieverType,Message,SenderType,SenderID));
+            cursor.moveToNext();
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
