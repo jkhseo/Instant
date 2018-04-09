@@ -93,6 +93,8 @@ public class HttpRequests {
                            msg.what = GlobalConstants.QRCODE;
                        if(responseObject.has("Restaurant_Name"))
                            msg.what = GlobalConstants.RESTAURANT_INFO;
+                       if(responseObject.has("Menu"))
+                           msg.what = GlobalConstants.UPDATE_FOOD;
                        if(responseObject.has("Order_Status"))
                            msg.what = GlobalConstants.UPDATE_STATUS;
                        //restaurantsearchresults

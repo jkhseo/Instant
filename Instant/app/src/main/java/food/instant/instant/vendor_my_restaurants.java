@@ -4,11 +4,13 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.*;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +39,7 @@ public class vendor_my_restaurants extends Fragment {
     private static String TAG = "vendor_my_restaurants";
     private ListView restaurants;
     private MyRestaurantsHandler handler;
+    private ProgressBar lpanel;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -81,6 +84,7 @@ public class vendor_my_restaurants extends Fragment {
         View view = inflater.inflate(R.layout.fragment_vendor_my_restaurants, container, false);
 
         restaurants = view.findViewById(R.id.lv_my_restaurants);
+        lpanel = view.findViewById(R.id.loadingPanel);
         handler = new MyRestaurantsHandler(vendor_my_restaurants.this);
         HttpGET("getRestaurantFromOwnerUserID?User_ID=" + SaveSharedPreference.getId(getContext()), handler);
         return view;
@@ -178,6 +182,7 @@ public class vendor_my_restaurants extends Fragment {
                         temp[i] = these_restaurants.get(i);
                     }
                     VendorRestaurantAdapter pendingAdapter = new VendorRestaurantAdapter(getContext(), temp);
+                    lpanel.setVisibility(View.GONE);
                     restaurants.setAdapter(pendingAdapter);
                     Log.d(TAG, "Request made.........................");
                     Log.d(TAG, response.toString());

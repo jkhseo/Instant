@@ -9,8 +9,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +22,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 
 import static food.instant.instant.HttpRequests.HttpGET;
 import static food.instant.instant.HttpRequests.HttpPost;
@@ -52,6 +56,8 @@ public class vendor_menu_details extends Fragment {
     private EditText foodTagsMain;
     private EditText foodTagsSec;
     private Button submit;
+    private ListView lvFoods;
+    private ProgressBar lpanel;
 
     private vendorMenuDetailsHandler handler;
 
@@ -95,7 +101,7 @@ public class vendor_menu_details extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.handler = new vendorMenuDetailsHandler(this);
-        HTTPGET("")
+        HttpGET("getMenu?Restaurant_ID=" + restaurant.getRest_ID(), handler);
 
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_vendor_menu_details, container, false);
@@ -105,6 +111,8 @@ public class vendor_menu_details extends Fragment {
         foodTagsMain = view.findViewById(R.id.et_food_tags_main);
         foodTagsSec = view.findViewById(R.id.et_food_tags_sec);
         submit = view.findViewById(R.id.bn_add);
+        lvFoods = view.findViewById(R.id.lv_details_food);
+        lpanel = view.findViewById(R.id.loading_bar_2);
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +130,8 @@ public class vendor_menu_details extends Fragment {
                 }
 
                 dPrice = Double.parseDouble(price);
-
+                InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                mgr.hideSoftInputFromWindow(foodDesc.getWindowToken(), 0);
                 HttpPost("addFood?Rest_ID=" + restaurant.getRest_ID() + "&Food_Name=" + name + "&Food_Price=" + dPrice + "&Food_Desc=" + desc + "&Menu_ID=1&Food_Tags_Main=" + mainTags +"&Food_Tags_Secondary=" + secTags, handler);
 
 
@@ -202,13 +211,44 @@ public class vendor_menu_details extends Fragment {
                 else{
                     Toast.makeText(getContext(), "Failed to add the food item!", Toast.LENGTH_SHORT).show();
                 }
+                HttpGET("getMenu?Restaurant_ID=" + restaurant.getRest_ID(), handler);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
            }
-            else if(msg.what == GlobalConstants.USERINFO)
+            else if(msg.what == GlobalConstants.UPDATE_FOOD)
            {
+               ArrayList<Food> foods = new ArrayList<Food>();
+               JSONArray response = null;
+               try {
+                   response = ((JSONObject) msg.obj).getJSONArray("Menu");
+                   for (int i = 0; i < response.length(); i++) {
+                       String name = (String) ((JSONObject) response.get(i)).get("Food_Name");
+                       int restID = (int) ((JSONObject) response.get(i)).get("Rest_ID");
+                       double price;
+                       try
+                       {
+                           price = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Food_Price"));
+                       }
+                       catch(java.lang.ClassCastException e)
+                       {
+                           price = new Double(Integer.parseInt((String)((JSONObject) response.get(i)).get("Food_Price")));
+                       }
+                       String desc = (String) ((JSONObject) response.get(i)).get("Food_Desc");
+                       int menuID = Integer.parseInt((String) ((JSONObject) response.get(i)).get("Menu_ID"));
+                       String tagsMain = (String) ((JSONObject) response.get(i)).get("Food_Tags_Main");
+                       String tagsSec = (String) ((JSONObject) response.get(i)).get("Food_Tags_Secondary");
+                       int foodID = (int) ((JSONObject) response.get(i)).get("Food_ID");
+                       Food toAdd = new Food(restID, name, price, desc, menuID, tagsMain, tagsSec, foodID);
+                       foods.add(toAdd);
+                   }
+                   food_adapter adapter = new food_adapter(getContext(), foods);
+                   lpanel.setVisibility(View.GONE);
+                   lvFoods.setAdapter(adapter);
 
+               } catch (JSONException e) {
+                   e.printStackTrace();
+               }
            }
         }
     }
