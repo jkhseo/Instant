@@ -187,6 +187,263 @@ public class DATABASE_POST
 
 		}
 	
+		/**
+		 * 
+		 * @param Rest_ID The restaurant with the food to be deleted
+		 * @param Food_ID The Food to delete
+		 * @return If success. 
+		 */
+		public static boolean Delete_Food(String Rest_ID, String Food_ID)
+		{ 
+			 try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		           
+		            String query = "DELETE FROM Food ";
+		            query += " WHERE ";
+		            query += "Rest_ID = '" + Rest_ID + "' AND ";
+		            query += "Food_ID = '" + Food_ID + "' ";
+
+		            System.out.println(query);
+		            Statement stmt=con.createStatement();
+		            stmt.executeUpdate(query);
+		            
+		        
+		            con.close();
+		            return true;
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		           return false;
+		      }
+
+		}
+		
+		
+		/**
+		 * 
+		 * @param order_ID
+		 * @param rest_ID
+		 * @param Status
+		 * @return
+		 * 
+		 * 
+		 */
+		public static boolean Update_Food(String Rest_ID, String Food_Name, String Food_Price,  String Food_Desc, String Menu_ID, String Food_Tags_Main, String Food_Tags_Secondary, String Food_ID)
+		{
+		
+			try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+			        
+		            String query = "UPDATE db309sd4.Food ";
+	
+		            query += " SET ";
+		            query += " Food_Name = '" + Food_Name + "' ";
+		            query += " ,Food_Price = '" + Food_Price + "' ";
+		            query += " ,Food_Desc = '" + Food_Desc + "' ";
+		            query += " ,Menu_ID = '" + Menu_ID + "' ";
+		            query += " ,Food_Tags_Main = '" + Food_Tags_Main + "' ";
+		            query += " ,Food_Tags_Secondary = '" + Food_Tags_Secondary + "' ";
+
+		            query += " Where Rest_ID = '" +  Rest_ID +"' AND ";
+		            query += " Food_ID = '" +  Food_ID +"' ";
+		       
+		            
+		           
+		            System.out.println(query);
+		            Statement stmt=con.createStatement();
+		            stmt.executeUpdate(query);
+		       
+		            con.close();
+		            return true;
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		           return false;
+		      }
+		}
+
+		 /**
+		  * 
+		  * @param Rest_Name The Restaurant Name
+		  * @param Rest_Coordinate_Lat Cord. Latt
+		  * @param Rest_Coordinate_Long Cord. Long
+		  * @param Rest_Address Restaurant Address
+		  * @param Rest_Rating Restaurant Rating
+		  * @param Rest_Type_Cuisine_Main Restaurant Cuisine Tag Main
+		  * @param Rest_Type_Cuisine_Secondary Restaurant Cuisine Tag Main
+		  * @param Rest_Keywords Keywords to describe the restaurant. 
+		  * @param User_ID The User ID of the owner of the restaurant. 
+		  * @return if add was successful. 
+		  */
+		public static boolean Add_Restaurant(String Rest_Name, String  Rest_Coordinate_Lat, String Rest_Coordinate_Long, String Rest_Address, String Rest_Rating, String Rest_Type_Cuisine_Main, String Rest_Type_Cuisine_Secondary, String Rest_Keywords, String User_ID)
+		{ 
+			 try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+
+		            String query = "INSERT INTO db309sd4.Restaurant (Rest_Name, Rest_Coordinate_Lat, Rest_Coordinate_Long, Rest_Address, Rest_Rating, Rest_Type_Cuisine_Main, Rest_Type_Cuisine_Secondary, Rest_Keywords, User_ID) "; 
+		            query += " VALUES ( ";
+		            query += "'" + Rest_Name + "', ";
+		            query += "'" + Rest_Coordinate_Lat + "', ";
+		            query += "'" + Rest_Coordinate_Long + "', ";
+		            query += "'" + Rest_Address + "', ";
+		            query += "'" + Rest_Rating  + "',";
+		            query += "'" + Rest_Type_Cuisine_Main + "', ";
+		            query += "'" + Rest_Type_Cuisine_Secondary + "', ";
+		            query += "'" + Rest_Keywords + "', ";
+		            query += "'" + User_ID + "'); ";
+		            
+		           
+		            System.out.println(query);
+		            Statement stmt=con.createStatement();
+		            stmt.executeUpdate(query);
+		            
+
+		            con.close();
+		            return true;
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		           return false;
+		      }
+
+		}
+		
+		/**
+		  * 
+		  * @param Rest_Name The Restaurant Name
+		  * @param Rest_Coordinate_Lat Cord. Latt
+		  * @param Rest_Coordinate_Long Cord. Long
+		  * @param Rest_Address Restaurant Address
+		  * @param Rest_Rating Restaurant Rating
+		  * @param Rest_Type_Cuisine_Main Restaurant Cuisine Tag Main
+		  * @param Rest_Type_Cuisine_Secondary Restaurant Cuisine Tag Main
+		  * @param Rest_Keywords Keywords to describe the restaurant. 
+		  * @param User_ID The User ID of the owner of the restaurant. 
+		  * @return if add was successful. 
+		  */
+		public static boolean Update_Restaurant(String Rest_ID, String Rest_Name, String  Rest_Coordinate_Lat, String Rest_Coordinate_Long, String Rest_Address, String Rest_Rating, String Rest_Type_Cuisine_Main, String Rest_Type_Cuisine_Secondary, String Rest_Keywords, String User_ID)
+		{ 
+			 try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		           
+	
+		            
+		            String query = "Update db309sd4.Restaurant "; 
+		            query += " SET  ";
+		            query += "Rest_Name = '" + Rest_Name + "', ";
+		            query += " Rest_Coordinate_Lat = '" + Rest_Coordinate_Lat + "', ";
+		            query += " Rest_Coordinate_Long = '" + Rest_Coordinate_Long + "', ";
+		            query += " Rest_Address = '" + Rest_Address + "', ";
+		            query += " Rest_Rating = '" + Rest_Rating  + "',";
+		            query += " Rest_Type_Cuisine_Main = '" + Rest_Type_Cuisine_Main + "', ";
+		            query += " Rest_Type_Cuisine_Secondary = '" + Rest_Type_Cuisine_Secondary + "', ";
+		            query += " Rest_Keywords = '" + Rest_Keywords + "', ";
+		            query += " User_ID = '" + User_ID + "' ";
+		           
+		            query += " Where Rest_ID = '" +  Rest_ID +"'";
+		       
+		            
+		           
+		            System.out.println(query);
+		            Statement stmt=con.createStatement();
+		            stmt.executeUpdate(query);
+		            
+
+		            con.close();
+		            return true;
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		           return false;
+		      }
+
+		}
+		
+		/**
+		 * 
+		 * @param Rest_ID The restaurant with the food to be deleted
+		 * @param Food_ID The Food to delete
+		 * @return If success. 
+		 */
+		public static boolean Delete_Restaurant(String Rest_ID)
+		{ 
+			 try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		           
+		            String query = "DELETE FROM Restaurant ";
+		            query += " WHERE ";
+		            query += "Rest_ID = '" + Rest_ID + "'  ";
+
+		            System.out.println(query);
+		            Statement stmt=con.createStatement();
+		            stmt.executeUpdate(query);
+		            
+		        
+		            con.close();
+		            return true;
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		           return false;
+		      }
+
+		}
+		
+		
+			/**
+			 * Adds a RSA public key for the world to see
+			 * @param n   The public Key
+			 * @param encryptionExponet The public exponent Key
+			 * 
+			 * @return True if success, false otherwise
+			 */
+			public static boolean Add_New_RSA_Key(int n, int encryptionExponet)
+			{ 
+				 try
+				 {  		
+				        Class.forName("com.mysql.jdbc.Driver");
+				        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+			           
+				        
+
+
+			            String query = "INSERT INTO Server_Keys ( Public_Key ,  Encyption_Exponet)";
+			            query += " VALUES ( ";
+			            query += "'" + n + "', ";
+			            query += "'" + encryptionExponet + "'); ";
+			            
+			           
+			            System.out.println(query);
+			            Statement stmt=con.createStatement();
+			            stmt.executeUpdate(query);
+			       
+			            con.close();
+			            return true;
+			        }
+			      catch(Exception e)
+			      {
+			           e.printStackTrace();
+			           return false;
+			      }
+
+			}
+		
+		
 	
 	/**
 	 * Adds a user to the database
@@ -238,87 +495,7 @@ public class DATABASE_POST
 	
 	
 	
-	/**
-	 * Adds a Restaurant to the database
-	 * @param Rest_Name
-	 * @param Rest_Coordinate_X  Latitude 
-	 * @param Rest_Coordinate_Y  Longitude
-	 * @param Rest_Address
-	 * @param Rest_Rating Restaurant rating
-	 * 
-	 * @return True if success, false otherwise
-	 *
-	 * //Written by Adam de Gala. Feel free to yell at me. 
-	 */
-	public static boolean Add_Restaurant(String Rest_Name, String Rest_Coordinate_X,  String Rest_Coordinate_Y, String Rest_Address,String Rest_Rating)
-	{ 
-		 try
-		 {  		
-		        Class.forName("com.mysql.jdbc.Driver");
-		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-	           
-	            String query = "INSERT INTO Restaurant ";
-	            query += " VALUES ( ";
-	            query += "'" + Scrubber(Rest_Name) + "', ";
-	            query += "'" + Rest_Coordinate_X + "', ";
-	            query += "'" + Rest_Coordinate_Y + "', ";
-	            query += "'" + Rest_Address + "', ";
-	            query += "'" + Rest_Rating + "'); ";
-	            
-	           
-	            System.out.println(query);
-	            Statement stmt=con.createStatement();
-	            stmt.executeUpdate(query);
-	            
-
-	            con.close();
-	            return true;
-	        }
-	      catch(Exception e)
-	      {
-	           e.printStackTrace();
-	           return false;
-	      }
-
-	}
 	
-		/**
-		 * Adds a RSA public key for the world to see
-		 * @param n   The public Key
-		 * @param encryptionExponet The public exponent Key
-		 * 
-		 * @return True if success, false otherwise
-		 */
-		public static boolean Add_New_RSA_Key(int n, int encryptionExponet)
-		{ 
-			 try
-			 {  		
-			        Class.forName("com.mysql.jdbc.Driver");
-			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-		           
-			        
-
-
-		            String query = "INSERT INTO Server_Keys ( Public_Key ,  Encyption_Exponet)";
-		            query += " VALUES ( ";
-		            query += "'" + n + "', ";
-		            query += "'" + encryptionExponet + "'); ";
-		            
-		           
-		            System.out.println(query);
-		            Statement stmt=con.createStatement();
-		            stmt.executeUpdate(query);
-		       
-		            con.close();
-		            return true;
-		        }
-		      catch(Exception e)
-		      {
-		           e.printStackTrace();
-		           return false;
-		      }
-
-		}
 		
 		/**
 		 * Adds a ESA Key Unique to a user. 
@@ -326,7 +503,7 @@ public class DATABASE_POST
 		 * @param ESA_Key The Key
 		 * @return True if success, false otherwise
 		 */
-		public static boolean Add_New_ESA_Key(String User_ID, String ESA_Key)
+		public static boolean Add_New_AES_Key(String User_ID, String AES_Key)
 		{ 
 			 try
 			 {  		
@@ -342,7 +519,7 @@ public class DATABASE_POST
 		            query = "INSERT INTO User_Keys ";
 		            query += " VALUES ( ";
 		            query += "'" + User_ID + "', ";
-		            query += "'" + ESA_Key + "'); ";
+		            query += "'" + AES_Key + "'); ";
 		            
 		           
 		            System.out.println(query);
@@ -359,4 +536,9 @@ public class DATABASE_POST
 		      }
 
 		}
+		
+		
+		
+		
+		
 }
