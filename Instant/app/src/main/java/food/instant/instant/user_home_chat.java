@@ -78,6 +78,9 @@ public class user_home_chat extends Fragment {
         conversation.addMessage(message);
         adapter.notifyDataSetChanged();
     }
+    public String getSenderInfo(){
+        return conversation.getType()+conversation.getId();
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,7 +120,7 @@ public class user_home_chat extends Fragment {
                 Message temp = new Message(conversation.getId(),conversation.getType(),messageBox.getText().toString(),SaveSharedPreference.getType(ref.getContext()).substring(0,5),Integer.parseInt(SaveSharedPreference.getId(ref.getContext())));
                 new ChatSocket().execute(temp);
                 (ref).addMessage(temp);
-                MessageDbHelper dbHelper = new MessageDbHelper(ref.getContext());
+                OrderDbHelper dbHelper = new OrderDbHelper(ref.getContext());
                 dbHelper.addMessage(temp,dbHelper.getWritableDatabase());
                 dbHelper.close();
             }
@@ -127,7 +130,7 @@ public class user_home_chat extends Fragment {
     }
 
     private void getMessages() {
-        MessageDbHelper dbHelper = new MessageDbHelper(getContext());
+        OrderDbHelper dbHelper = new OrderDbHelper(getContext());
         Cursor cursor = dbHelper.getRestMessages(dbHelper.getReadableDatabase(),conversation.getId(),conversation.getType());
         cursor.moveToFirst();
         String Message,SenderType,RecieverType;

@@ -1,5 +1,6 @@
 package food.instant.instant;
 
+import android.app.IntentService;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
@@ -24,55 +25,32 @@ import java.nio.Buffer;
  * Created by mpauk on 4/1/2018.
  */
 
-public class ChatService extends Service {
+public class ChatService extends IntentService {
     private static final int PORT_NUMBER = 2222;
     private static final String HOST_NAME = "10.36.18.4";
     private final IBinder binder = new ChatServiceBinder();
     private volatile boolean isRunning = true;
     private Messenger handler;
 
+    public ChatService() {
+        super("ChatService");
+    }
+
     /**
      * Creates a new thread that listens for input from the server and when it recieves
      * a message from the server it sends the data to the handler bound to this activity.
      */
-    @Override
+    //@Override
     public void onCreate(){
         final String ID = "ID:"+SaveSharedPreference.getType(this).substring(0,5)+SaveSharedPreference.getId(this);
-        Thread t = new Thread(new Runnable() {
+        /*Thread t = new Thread(new Runnable() {
             @Override
-            public void run() {
-                try {
-                    Message message;
-
-                    android.os.Message msg = new android.os.Message();
-                    Socket socket = new Socket(HOST_NAME,PORT_NUMBER);
-                    System.out.println("Connected");
-                    PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
-                    BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                    out.println(ID);
-                    out.flush();
-                    //out.close();
-                    while(isRunning){
-                        if (in.ready()){
-                            String text = in.readLine();
-                            System.out.println(text);
-                            message= new Message(text);
-                            msg.obj = message;
-                            handler.send(msg);
-                        }
-                    }
-                    in.close();
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-            }
+            public void run() {*/
+        super.onCreate();
+            /*}
         });
         t.setDaemon(true);
-        t.start();
+        t.start();*/
     }
 
     /**
@@ -97,6 +75,39 @@ public class ChatService extends Service {
         this.handler = messenger;
         return binder;
 
+    }
+
+    @Override
+    protected void onHandleIntent(@Nullable Intent intent) {
+        try {
+            Bundle extras = intent.getExtras();
+            this.handler = (Messenger) extras.get("Handler");
+            final String ID = "ID:"+SaveSharedPreference.getType(this).substring(0,5)+SaveSharedPreference.getId(this);
+            Message message;
+            Socket socket = new Socket(HOST_NAME,PORT_NUMBER);
+            System.out.println("Connected");
+            PrintWriter out = new PrintWriter(socket.getOutputStream(),true);
+            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out.println(ID);
+            out.flush();
+            //out.close();
+            while(isRunning){
+                if (in.ready()){
+                    android.os.Message msg = new android.os.Message();
+                    String text = in.readLine();
+                    System.out.println(text);
+                    message= new Message(text);
+                    msg.obj = message;
+                    handler.send(msg);
+                }
+            }
+            in.close();
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

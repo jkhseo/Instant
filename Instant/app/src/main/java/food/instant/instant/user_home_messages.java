@@ -34,6 +34,7 @@ public class user_home_messages extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    private messages_adapter adapter;
     private ArrayList<Conversation> conversations;
 
     private OnFragmentInteractionListener mListener;
@@ -60,7 +61,15 @@ public class user_home_messages extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    public void addMessage(Message message){
+        for(Conversation c : conversations){
+            if(c.getId()==message.getSenderID()){
+                c.addMessage(message);
+                break;
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,13 +87,13 @@ public class user_home_messages extends Fragment {
         ListView messageList = view.findViewById(R.id.messages_list);
 
         getAllMessages();
-        messages_adapter adapter = new messages_adapter(getContext(),conversations);
+        adapter = new messages_adapter(getContext(),conversations);
         messageList.setAdapter(adapter);
         messageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Conversation conversation = (Conversation) adapterView.getItemAtPosition(i);
-                new user_home_chat(conversation);
+                ((MainActivity)getActivity()).swapFragments(new user_home_chat(conversation));
 
             }
         });
@@ -94,10 +103,9 @@ public class user_home_messages extends Fragment {
     }
 
     private void getAllMessages() {
-        MessageDbHelper dbHelper = new MessageDbHelper(getContext());
+        OrderDbHelper dbHelper = new OrderDbHelper(getContext());
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = dbHelper.readMessages(database);
-        dbHelper.close();
         String Message,SenderType,RecieverType;
         int SenderID,RecieverID;
         Message temp;
@@ -129,7 +137,9 @@ public class user_home_messages extends Fragment {
 
                 }
             }
+            cursor.moveToNext();
         }
+        dbHelper.close();
 
     }
 

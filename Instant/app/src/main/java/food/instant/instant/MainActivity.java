@@ -102,6 +102,13 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                         close = false;
                         break;
                     case(R.id.nav_logout):
+                        if(serviceStarted) {
+                            stopService(new Intent(c, ChatService.class));
+                            OrderDbHelper dbHelper = new OrderDbHelper(c);
+                            dbHelper.deleteMessages(dbHelper.getWritableDatabase());
+                            dbHelper.close();
+                            serviceStarted=false;
+                        }
                         SaveSharedPreference.logout(c);
                         chooseNavDrawer(mNavigationView, c);
                         close = false;
@@ -152,9 +159,9 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         Messenger messenger = new Messenger(handler);
         Bundle bundle = new Bundle();
         bundle.putParcelable("Handler",messenger);
-        //bundle.putString("ID","ID:"+SaveSharedPreference.getType(this).substring(0,5)+SaveSharedPreference.getId(this));
         intent.putExtras(bundle);
-        bindService(intent,connection,Context.BIND_AUTO_CREATE);
+        startService(intent);
+        //bindService(intent,connection,Context.BIND);
     }
     @Override
     protected void onResume(){
@@ -171,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         super.onDestroy();
         if(serviceStarted) {
             stopService(new Intent(this, ChatService.class));
-            unbindService(connection);
+            //unbindService(connection);
             serviceStarted=false;
         }
     }
@@ -407,17 +414,24 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
             MainActivity activity = mainActivity.get();
             FragmentManager manager = activity.getSupportFragmentManager();
             List<Fragment> list = manager.getFragments();
+            Message temp = (Message)msg.obj;
+            System.out.println("Received"+list.size());
             if(list!=null&&list.size()==1){
                 if(list.get(0).getClass().getSimpleName().equals("user_home_chat")){
                     user_home_chat chat = (user_home_chat) list.get(0);
-                    chat.addMessage((Message)msg.obj);
-                }
-                MessageDbHelper dbHelper = new MessageDbHelper(activity);
-               SQLiteDatabase database =  dbHelper.getWritableDatabase();
-               dbHelper.addMessage((Message)msg.obj,database);
-               dbHelper.close();
-            }
+                    if(chat.getSenderInfo().equals(temp.getSenderType()+temp.getSenderID()))
+                        chat.addMessage((Message)msg.obj);
 
+                }
+                else if(list.get(0).getClass().getSimpleName().equals("user_home_messages")){
+                    user_home_messages messages = (user_home_messages)list.get(0);
+                    messages.addMessage(temp);
+                }
+            }
+            OrderDbHelper dbHelper = new OrderDbHelper(activity);
+            SQLiteDatabase database =  dbHelper.getWritableDatabase();
+            dbHelper.addMessage(temp,database);
+            dbHelper.close();
         }
     }
     @Override
