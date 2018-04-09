@@ -20,4 +20,6 @@ public class GlobalConstants {
     public static final int QRCODE = 109;
     public static final int RESTAURANT_INFO = 34;
     public static final int UPDATE_STATUS = 145;
+    public static final int ADD_FOOD = 146;
+    public static final int UPDATE_FOOD = 147;
 }

@@ -2,7 +2,12 @@ package food.instant.instant;
 
 import java.util.ArrayList;
 
-
+/**
+ * This class is represents part of an order that a user will submit to a restaurant.
+ * Any actual order may actually be made up of multiple Order classes with the same Order_ID
+ * It stores all the necessary information related to the who, what, when, and where
+ * of a user's order. It also has the necessary data required to make a database entry.
+ */
 public class Order {
     private int Order_ID;
     private char status;
@@ -21,7 +26,25 @@ public class Order {
     private Food food;
 
 
-
+    /**
+     * Constructor for Order to initialize it by passing all the data fields to it.
+     * Useful when creating Order objects out of Database query results
+     * @param Order_ID key to associate 'pieces' of an order together as a group
+     * @param User_ID uid the person who placed the order
+     * @param food the food object which the order is requesting
+     * @param comments additional comments about the order
+     * @param Food_Quantity quantity of current food item that this object references
+     * @param Restaurant_Name name of the restaurant that this order is being sent to
+     * @param status data field to hold whether this order is pending, confirmed, or completed
+     * @param Dummy_PK dummy primary key field that is needed for the database
+     * @param Order_Confirmation_Code unique code to verify that the correct person has picked up this order
+     * @param date_submitted the time when this order was sent from the phone
+     * @param date_pickedUp the time when this order will be picked up
+     * @param user_first_name first name of the person who sent this order
+     * @param user_last_name last name of the person who sent this order
+     * @param user_email username of the person who sent this order
+     * @param rest_id id of the restaurant to which this order is being sent
+     */
     public Order(int Order_ID,int User_ID, Food food,String comments,int Food_Quantity, String Restaurant_Name,char status, int Dummy_PK, int Order_Confirmation_Code, String date_submitted, String date_pickedUp, String user_first_name, String user_last_name, String user_email, int rest_id)
     {
         this.Order_ID = Order_ID;
@@ -40,6 +63,19 @@ public class Order {
         this.User_Email = user_email;
         this.Rest_ID = rest_id;
     }
+
+    /**
+     * Constructor for Order needed when user is adding food items before submitting
+     * their order.
+     * @param Order_ID key to associate 'pieces' of an order together as a group
+     * @param User_ID uid the person who placed the order
+     * @param food the food object which the order is requesting
+     * @param comments additional comments about the order
+     * @param Food_Quantity quantity of current food item that this object references
+     * @param Restaurant_Name name of the restaurant that this order is being sent to
+     * @param status data field to hold whether this order is pending, confirmed, or completed
+     * @param date_pickedUp the time when this order will be picked up
+     */
     public Order(int Order_ID,int User_ID, Food food,String comments,int Food_Quantity, String Restaurant_Name,char status, String date_pickedUp)
     {
         this.Order_ID = Order_ID;
@@ -52,6 +88,10 @@ public class Order {
         this.date_pickedUp = date_pickedUp;
     }
 
+    /**
+     * Constructor needed as part of the logic in storing the order into the sqlite database
+     * @param User_ID if of the user submitting this order
+     */
     public Order(int User_ID)
     {
         this.User_ID=User_ID;
