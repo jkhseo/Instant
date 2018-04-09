@@ -152,7 +152,7 @@ public class DATABASE_POST
 		 * 
 		 * @return True if success, false otherwise
 		 */
-		public static boolean Add_Food(String Rest_ID, String Food_Name, String Food_Price,  String Food_Desc, String Menu_ID,String Food_Tags_Main, String Food_Tags_Secondary)
+		public static boolean Add_Food(String Rest_ID, String Food_Name, String Food_Price,  String Food_Desc, String Menu_ID,String Food_Tags_Main, String Food_Tags_Secondary, String Food_ID)
 		{ 
 			 try
 			 {  		
@@ -167,14 +167,15 @@ public class DATABASE_POST
 		            query += "'" + Food_Desc + "', ";
 		            query += "'" + Menu_ID + "', ";
 		            query += "'" + Food_Tags_Main + "', ";
-		            query += "'" + Food_Tags_Secondary + "'); ";
+		            query += "'" + Food_Tags_Secondary + "', ";
+		            query += "'" + Food_ID + "'); ";
 		            
 		           
 		            System.out.println(query);
 		            Statement stmt=con.createStatement();
 		            stmt.executeUpdate(query);
 		            
-		            con.commit();
+		        
 		            con.close();
 		            return true;
 		        }

@@ -166,8 +166,8 @@ public class MainController {
 		    boolean added = DATABASE_POST.Update_Order_Status(Order_ID,Rest_ID, Order_Status);
 		    
 		    if(added)
-		    		return "{ \"Success\" : \"True\"}";
-		    return "{ \"Success\" : \"False\"}";
+		    		return "{ \"Update_Order_Status_Success\" : \"True\"}";
+		    return "{ \"Update_Order_Status_Success\" : \"False\"}";
 		}
 
 	
@@ -204,8 +204,8 @@ public class MainController {
 			}
 		
 		    if(added)
-		    		return "{ \"Success\" : \"True\"}";
-		    return "{ \"Success\" : \"False\"}";
+		    		return "{ \"Add_New_Order_Success\" : \"True\"}";
+		    return "{ \"Add_New_Order_Success\" : \"False\"}";
 		}
 	}
 	@GetMapping(path="/addFood") // Map ONLY GET Requests
@@ -214,11 +214,13 @@ public class MainController {
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
 		
-	    boolean added = DATABASE_POST.Add_Food(  Rest_ID,   Food_Name,   Food_Price,    Food_Desc,   Menu_ID,  Food_Tags_Main,   Food_Tags_Secondary);
-	    	
+		String newFoodID = "" + DATABASE_GET.getNextFoodID(Rest_ID);
+		
+	    boolean added = DATABASE_POST.Add_Food(  Rest_ID,   Food_Name,   Food_Price,    Food_Desc,   Menu_ID,  Food_Tags_Main,   Food_Tags_Secondary, newFoodID);
+	    
 	    if(added)
-	    		return "{ \"Success\" : \"True\"}";
-	    return "{ \"Success\" : \"False\"}";
+	    		return "{ \"Add_Food_Item_Success\" : \"True\"}";
+	    return "{ \"Add_Food_Item_Success\" : \"False\"}";
 	}
 	
 	@GetMapping(path="/addUser") // Map ONLY Post Requests
@@ -230,8 +232,8 @@ public class MainController {
 	    boolean added = DATABASE_POST.Add_User( User_Type,   First_Name,    Last_Name,   User_Address,  User_Birthday,   User_Email,   User_Password);
 		
 	    if(added)
-	    		return "{ \"Success\" : \"True\"}";
-	    return "{ \"Success\" : \"False\"}";
+	    		return "{ \"Add_New_User_Success\" : \"True\"}";
+	    return "{ \"Add_New_User_Success\" : \"False\"}";
 	}
 	
 	
@@ -244,8 +246,8 @@ public class MainController {
 		
 		boolean added = DATABASE_POST.Add_Restaurant(Rest_Name, Rest_Coordinate_X, Rest_Coordinate_Y, Rest_Address, Rest_Rating);
 	    if(added)
-    			return "{ \"Success\" : \"True\"}";
-	    return "{ \"Success\" : \"False\"}";
+    			return "{ \"Add_New_Restaurant\" : \"True\"}";
+	    return "{ \"Add_New_Restaurant\" : \"False\"}";
 	}
 	
 	@GetMapping(path="/getFuzzySearchRestaurants")
