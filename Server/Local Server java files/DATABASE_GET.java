@@ -545,9 +545,9 @@ public class DATABASE_GET
 
 	}
 
-	//A non JSON returning function that gets the next order number for a restaurant
+	//A non JSON returning function that gets the next food number for a restaurant
 	//Written by Adam de Gala. 
-	public static int getNextOrderID(String rest_ID)
+	public static int getNextFoodID(String rest_ID)
 	{
 		
 		int result = 1;
@@ -557,7 +557,7 @@ public class DATABASE_GET
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
 		        
 		        
-	            String query = "SELECT Order_ID from db309sd4.Order WHERE Rest_ID = '" + rest_ID + "' order by Order_ID DESC";
+	            String query = "SELECT Food_ID from db309sd4.Food WHERE Rest_ID = '" + rest_ID + "' order by Food_ID DESC";
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
@@ -566,7 +566,7 @@ public class DATABASE_GET
 
 	            if(rs.next())
 	            {
-	            		result = Integer.parseInt(rs.getString("Order_ID"));
+	            		result = Integer.parseInt(rs.getString("Food_ID"));
 	            		result++;
 	            }
 
@@ -579,10 +579,48 @@ public class DATABASE_GET
 	      }
 		  System.out.println("Next ID is " + result);
 		  return result;
-		
-
-
+	
 	}
+	
+		//A non JSON returning function that gets the next order number for a restaurant
+		//Written by Adam de Gala. 
+		public static int getNextOrderID(String rest_ID)
+		{
+			
+			int result = 1;
+			try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+			        
+			        
+		            String query = "SELECT Order_ID from db309sd4.Order WHERE Rest_ID = '" + rest_ID + "' order by Order_ID DESC";
+		           
+		            System.out.println(query);
+		            Statement stmt=con.createStatement();
+		            ResultSet rs = stmt.executeQuery(query);
+		            
+
+		            if(rs.next())
+		            {
+		            		result = Integer.parseInt(rs.getString("Order_ID"));
+		            		result++;
+		            }
+
+		            con.close();
+		          
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		      }
+			  System.out.println("Next ID is " + result);
+			  return result;
+			
+
+
+		}
+	
 	
 		//A non JSON returning function that gets the next order number for a restaurant
 		//Written by Adam de Gala. 
