@@ -33,6 +33,8 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".ForgotPassword" />
         <activity android:name=".SignUp"></activity>
+
+        <service android:name=".ChatService" />
     </application>
 
 </manifest>

@@ -3,6 +3,7 @@ package food.instant.instant;
 import java.util.Arrays;
 
 /**
+ * Food data object used to represent a food item belonging to a restaurant
  * Created by mpauk on 2/12/2018.
  * This class represents a food item that will either be part of an order
  * or a used as a list of objects to display a restaurant's menu.

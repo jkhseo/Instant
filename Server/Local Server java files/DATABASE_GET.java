@@ -350,6 +350,11 @@ public class DATABASE_GET
 
 
 	}
+	/**
+	 * 
+	 * @param Restaurant_ID The ID of the restaurant being retrieved. 
+	 * @return Returns all cancelled orders where the order's restaurant ID = Restaurant_ID. 
+	 */
 	
 	public static String getCancelledOrderForRestaurant(String Restaurant_ID)
 	{
@@ -384,7 +389,11 @@ public class DATABASE_GET
 
 
 	}
-	
+	/**
+	 * 
+	 * @param Restaurant_ID The ID of the restaurant being retrieved. 
+	 * @return Returns all completed  orders where the order's restaurant ID = Restaurant_ID. 
+	 */
 	public static String getCompletedOrderForRestaurant(String Restaurant_ID)
 	{
 		 JSONArray json = null;
@@ -418,6 +427,12 @@ public class DATABASE_GET
 
 	}
 	
+	/**
+	 * 
+	 * @param User_ID The ID of the user being retrieved.
+	 * @return Returns all orders under this user. 
+	 */
+	
 	public static String getAllOrdersForUser(String User_ID)
 	{
 		 JSONArray json = null;
@@ -427,7 +442,7 @@ public class DATABASE_GET
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
 		        String query = "SELECT db309sd4.Order.Rest_ID, Rest_Name, db309sd4.Order.Food_ID, Quantity, Food_Name, Food_Price, Comments, Order_Status, Order_ID, Order_Date_Pick_Up "
 		        		+ "FROM (db309sd4.Order JOIN db309sd4.Food JOIN db309sd4.Restaurant) "
-		        		+ "WHERE db309sd4.Order.User_ID = " + User_ID + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID "
+		        		+ "WHERE db309sd4.Order.User_ID = " + User_ID + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Order.Rest_ID = db309sd4.Food.Rest_ID "
 		        		+ "AND db309sd4.Order.Rest_ID = db309sd4.Restaurant.Rest_ID";
 	           
 	            System.out.println(query);
@@ -448,6 +463,11 @@ public class DATABASE_GET
 
 	}	
 	
+	/**
+	 * 
+	 * @param User_Email The email/username of the user 
+	 * @return Returns the password associated with the email/username in the databse.
+	 */
 	public static String getPassword(String User_Email)
 	{
 		 JSONArray json = null;
@@ -474,7 +494,14 @@ public class DATABASE_GET
 
 	}
 	
-	
+	/**
+	 * 
+	 * @param max_Lat The maximum latitude shown on the rectangle of the google map in the app.
+	 * @param max_Long The maximum longitude shown on the rectangle of the google map in the app.
+	 * @param min_Lat The minimum latitude shown on the rectangle of the google map in the app.
+	 * @param min_Long The minimum longitude shown on the rectangle of the google map in the app.
+	 * @return Returns every restaurant within the rectangle created by the 2 points. 
+	 */
 	public static String getRestaurantsInView(String max_Lat, String max_Long, String min_Lat, String min_Long)
 	{
 		 JSONArray json = null;
@@ -500,6 +527,14 @@ public class DATABASE_GET
 
 	}
 	
+	/**
+	 * 
+	 * @param latitude Latitude of the center point 
+	 * @param longitude Longitude of the center point
+	 * @param numOfRestaurants Number of restaurants desired by the user
+	 * @param rangeInKm The possible distance away from the center point the restaurants can be
+	 * @return Returns every restaurant that is within the range of the center point. 
+	 */
 	public static String getNearestRestaurants(float latitude, float longitude, String numOfRestaurants, String rangeInKm)
 	{
 		 JSONArray json = null;

@@ -25,10 +25,19 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 /**
+ * Contains static HTTP GET and POST requests made on the network using
+ * OkHttp network library.
+ *
  * Created by mpauk on 2/7/2018.
  */
 
 public class HttpRequests {
+    /**
+     * Makes requests to Google Maps API given a url and a handler reference that will be used to
+     * send the results back to the class where the method was called from.
+     * @param url - Google Maps API URL path
+     * @param handler - Handler reference used to pass results back to calling class
+     */
     public static void GoogleMapsGET(String url, final Handler handler){
         OkHttpClient client = new OkHttpClient();
         com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).build();
@@ -52,6 +61,12 @@ public class HttpRequests {
             }
         });
     }
+
+    /**
+     * Makes a GET request to the proj-309-sd-4 server
+     * @param path - path on the server of the SpringBoot GET method
+     * @param handler - reference to a handler where the results of the GET method will be sent
+     */
     public static void HttpGET(String path, final Handler handler) {
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
         String localurl = "http://10.26.12.74:8080/demo/"+path;
@@ -108,6 +123,12 @@ public class HttpRequests {
             }
         });
     }
+
+    /**
+     * Method to POST data to the proj-309 server.
+     * @param path - path of the POST method in the SpringBoot server code
+     * @param handler - handler reference used to send data back to the calling class.
+     */
     public static void HttpPost(String path, final Handler handler){
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
         //String url = "http://10.26.12.74:8080/demo/"+path;

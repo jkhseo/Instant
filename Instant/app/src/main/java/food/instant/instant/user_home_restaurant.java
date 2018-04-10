@@ -188,6 +188,7 @@ public class user_home_restaurant extends Fragment {
         expandableListView.requestLayout();
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -214,6 +215,19 @@ public class user_home_restaurant extends Fragment {
                                 "\t"+"Friday"+"\n"+
                                 "\t"+"Saturday"+"\n"+
                                 "\t"+"Sunday"+"\n");
+        Button chat = view.findViewById(R.id.chatButton);
+        chat.setTag(getActivity());
+        chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int user_id;
+                if(restaurant.getRest_ID()==20)
+                    user_id=10;
+                else
+                    user_id=13;
+                ((MainActivity)getActivity()).swapFragments(new user_home_chat("Vendo",user_id));
+            }
+        });
         RestaurantHandler handler = new RestaurantHandler(this);
         HttpGET("getMenu?Restaurant_ID="+restaurant.getRest_ID(),handler);
 
