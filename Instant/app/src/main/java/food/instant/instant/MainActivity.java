@@ -1,18 +1,26 @@
 package food.instant.instant;
 
+import android.content.ComponentName;
+import android.content.ServiceConnection;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.*;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import java.lang.ref.WeakReference;
+
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, user_home_food.OnFragmentInteractionListener, user_home_order.OnFragmentInteractionListener , VendorCompletedOrdersFragment.OnFragmentInteractionListener, VendorPendingOrdersFragment.OnFragmentInteractionListener, vendor_home_order.OnFragmentInteractionListener, VendorConfirmedOrdersFragment.OnFragmentInteractionListener,user_home_chat.OnFragmentInteractionListener, user_home_messages.OnFragmentInteractionListener, vendor_my_restaurants.OnFragmentInteractionListener, vendor_add_restaurant.OnFragmentInteractionListener, vendor_menu_details.OnFragmentInteractionListener{
@@ -22,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
     private Context c;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
+    private boolean serviceStarted = false;
     private static String TAG = "MainActivity";
 
     @Override
@@ -67,6 +76,13 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                         close = false;
                         break;
                     case(R.id.nav_logout):
+                        if(serviceStarted) {
+                            stopService(new Intent(c, ChatService.class));
+                            OrderDbHelper dbHelper = new OrderDbHelper(c);
+                            dbHelper.deleteMessages(dbHelper.getWritableDatabase());
+                            dbHelper.close();
+                            serviceStarted=false;
+                        }
                         SaveSharedPreference.logout(c);
                         chooseNavDrawer(mNavigationView, c);
                         close = false;
@@ -111,11 +127,34 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
         });
     }
 
+    public void bindService(){
+        Intent intent = new Intent(this,ChatService.class);
+        MainActivityHandler handler = new MainActivityHandler(this);
+        Messenger messenger = new Messenger(handler);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("Handler",messenger);
+        intent.putExtras(bundle);
+        startService(intent);
+        //bindService(intent,connection,Context.BIND);
+    }
     @Override
     protected void onResume(){
         super.onResume();
         final NavigationView mNavigationView = findViewById(R.id.nav_view);
         chooseNavDrawer(mNavigationView, c);
+        if(SaveSharedPreference.isLoggedIn(this)&&!(SaveSharedPreference.getType(this).equals("Admin"))) {
+            serviceStarted=true;
+            bindService();
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(serviceStarted) {
+            stopService(new Intent(this, ChatService.class));
+            //unbindService(connection);
+            serviceStarted=false;
+        }
     }
 
     @Override
@@ -338,7 +377,37 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                     .addToBackStack(null)
                     .commit();
     }
+    private static class MainActivityHandler extends Handler {
+        private final WeakReference<MainActivity> mainActivity;
+        public MainActivityHandler(MainActivity mainActivity) {
+            this.mainActivity = new WeakReference<MainActivity>(mainActivity);
+        }
+        /*** End Code***/
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            MainActivity activity = mainActivity.get();
+            FragmentManager manager = activity.getSupportFragmentManager();
+            List<Fragment> list = manager.getFragments();
+            Message temp = (Message)msg.obj;
+            System.out.println("Received"+list.size());
+            if(list!=null&&list.size()==1){
+                if(list.get(0).getClass().getSimpleName().equals("user_home_chat")){
+                    user_home_chat chat = (user_home_chat) list.get(0);
+                    if(chat.getSenderInfo().equals(temp.getSenderType()+temp.getSenderID()))
+                        chat.addMessage((Message)msg.obj);
 
+                }
+                else if(list.get(0).getClass().getSimpleName().equals("user_home_messages")){
+                    user_home_messages messages = (user_home_messages)list.get(0);
+                    messages.addMessage(temp);
+                }
+            }
+            OrderDbHelper dbHelper = new OrderDbHelper(activity);
+            SQLiteDatabase database =  dbHelper.getWritableDatabase();
+            dbHelper.addMessage(temp,database);
+            dbHelper.close();
+        }
+    }
     @Override
     public void onFragmentInteraction(Uri uri) {
         {}
