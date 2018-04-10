@@ -133,9 +133,7 @@ public class MainController {
 	    return DATABASE_GET.getRSAKEY();
 	}
 	
-
-		
-
+	
 
 	//USING RSA ENCRYPTION, POST A NEW AES KEY
 	@GetMapping(path="/postAESKEY") // Map ONLY GET Requests
@@ -157,7 +155,6 @@ public class MainController {
 	    return "{ \"Success\" : \"False\"}";
 	}
 		
-
 		
 		@GetMapping(path="/updateOrderStatus") // Map ONLY GET Requests
 		public @ResponseBody String updateOrderStatus(@RequestParam String Order_ID, @RequestParam String Rest_ID,  @RequestParam String Order_Status)
@@ -168,10 +165,8 @@ public class MainController {
 		    boolean added = DATABASE_POST.Update_Order_Status(Order_ID,Rest_ID, Order_Status);
 		    
 		    if(added)
-
 		    		return "{ \"Update_Order_Status_Success\" : \"True\"}";
 		    return "{ \"Update_Order_Status_Success\" : \"False\"}";
-
 		}
 
 	
@@ -207,6 +202,7 @@ public class MainController {
 				   added = false;
 			}
 		
+		    if(added)
 		    		return "{ \"Add_New_Order_Success\" : \"True\"}";
 		    return "{ \"Add_New_Order_Success\" : \"False\"}";
 		}
