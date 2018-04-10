@@ -3,10 +3,17 @@ package food.instant.instant;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -18,6 +25,7 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class vendor_restaurant_details extends Fragment {
+    private ViewPager viewPager;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -27,7 +35,40 @@ public class vendor_restaurant_details extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
     private OnFragmentInteractionListener mListener;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_vendor_restaurant_details, container, false);
+        //Setting ViewPager for each Tabs
+        ViewPager viewPager = view.findViewById(R.id.viewpager);
+        setupViewPager(viewPager);
+        //Set Tabs inside toolbar
+        TabLayout tabs = view.findViewById(R.id.result_tabs);
+        tabs.setupWithViewPager(viewPager);
+
+        // Inflate the layout for this fragment
+        return view;
+    }
+
+    //Add Fragments to tabs
+    private void setupViewPager(ViewPager viewPager)
+    {
+        Adapter adapter = new Adapter(getChildFragmentManager());
+        adapter.addFragment(new vendor_my_restaurants(), "My Restaurants");
+        adapter.addFragment(new vendor_add_restaurant(), "New Restuarant");
+        viewPager.setAdapter(adapter);
+    }
 
     public vendor_restaurant_details() {
         // Required empty public constructor
@@ -49,22 +90,6 @@ public class vendor_restaurant_details extends Fragment {
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_vendor_restaurant_details, container, false);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -89,6 +114,37 @@ public class vendor_restaurant_details extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    static class Adapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public Adapter(FragmentManager manager)
+        {
+            super(manager);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        public void addFragment(Fragment fragment, String title)
+        {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
     }
 
     /**

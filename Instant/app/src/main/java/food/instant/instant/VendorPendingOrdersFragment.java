@@ -88,7 +88,7 @@ public class VendorPendingOrdersFragment extends Fragment {
 
         lvPendingOrders = view.findViewById(R.id.lv_vendorPendingOrders);
         handler = new PendingOrdersHandler(VendorPendingOrdersFragment.this);
-        HttpGET("getRestaurantFromOwnerUserEmail?User_Email=" + SaveSharedPreference.getUserName(getContext()), handler);
+        HttpGET("getRestaurantFromOwnerUserID?User_ID=" + SaveSharedPreference.getId(getContext()), handler);
         // Inflate the layout for this fragment
         return view;
     }
@@ -154,8 +154,24 @@ public class VendorPendingOrdersFragment extends Fragment {
                         response = ((JSONObject) msg.obj).getJSONArray("Restaurant_From_OwnerUserEmail");
                         for(int i = 0; i < response.length(); i++)
                         {
-                            double latitude = (Double) ((JSONObject) response.get(i)).get("Rest_Coordinate_Lat");
-                            double longitude = (Double)  ((JSONObject) response.get(i)).get("Rest_Coordinate_Long");
+                            double latitude;
+                            double longitude;
+                            try
+                            {
+                                latitude = (Double) ((JSONObject) response.get(i)).get("Rest_Coordinate_Lat");
+                            }
+                            catch(java.lang.ClassCastException e)
+                            {
+                                latitude = new Double((Integer) ((JSONObject) response.get(i)).get("Rest_Coordinate_Lat"));
+                            }
+                            try
+                            {
+                                longitude = (Double) ((JSONObject) response.get(i)).get("Rest_Coordinate_Long");
+                            }
+                            catch(java.lang.ClassCastException e)
+                            {
+                                longitude = new Double((Integer) ((JSONObject) response.get(i)).get("Rest_Coordinate_Long"));
+                            }
                             String name = (String) ((JSONObject) response.get(i)).get("Rest_Name");
                             String address = (String) ((JSONObject) response.get(i)).get("Rest_Address");
                             double rating = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Rest_Rating"));

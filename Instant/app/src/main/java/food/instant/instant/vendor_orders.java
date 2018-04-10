@@ -46,6 +46,8 @@ public class vendor_orders extends Fragment {
         setRetainInstance(true);
     }
 
+    private OnFragmentInteractionListener mListener;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,8 +72,6 @@ public class vendor_orders extends Fragment {
         adapter.addFragment(new VendorCompletedOrdersFragment(), "Completed");
         viewPager.setAdapter(adapter);
     }
-
-    private OnFragmentInteractionListener mListener;
 
     public vendor_orders() {
         // Required empty public constructor

@@ -134,28 +134,30 @@ public class MainController {
 	}
 	
 
-
-		//USING RSA ENCRYPTION, POST A NEW ESA KEY
-		@GetMapping(path="/postESAKEY") // Map ONLY GET Requests
-		public @ResponseBody String postESAKey(@RequestParam String VersionNumber, @RequestParam String EncryptedCode, @RequestParam String User_ID)
-		{ 
-			// @ResponseBody means the returned String is the response, not a view name
-			// @RequestParam means it is a parameter from the GET or POST request
-			String JSONreturned = DATABASE_GET.getRSAKEY();
-			int Version = Integer.parseInt(JSONreturned.substring(JSONreturned.indexOf("Version") + 12, JSONreturned.indexOf("Encyption_Exponet")-4));
-			
-			if(Version != Integer.parseInt(VersionNumber))
-				return "{ \"Success\" : \"False\"}";
-			
-			BigInteger deycrptedCode = RSA.DecryptMessage(Integer.parseInt(EncryptedCode));
-			
-			boolean added = DATABASE_POST.Add_New_ESA_Key(User_ID, deycrptedCode.toString());
-			
-		    if(added)
-	    			return "{ \"Success\" : \"True\"}";
-		    return "{ \"Success\" : \"False\"}";
-		}
 		
+
+
+	//USING RSA ENCRYPTION, POST A NEW AES KEY
+	@GetMapping(path="/postAESKEY") // Map ONLY GET Requests
+	public @ResponseBody String postAESKey(@RequestParam String VersionNumber, @RequestParam String EncryptedCode, @RequestParam String User_ID)
+	{ 
+		// @ResponseBody means the returned String is the response, not a view name
+		// @RequestParam means it is a parameter from the GET or POST request
+		String JSONreturned = DATABASE_GET.getRSAKEY();
+		int Version = Integer.parseInt(JSONreturned.substring(JSONreturned.indexOf("Version") + 12, JSONreturned.indexOf("Encyption_Exponet")-4));
+		
+		if(Version != Integer.parseInt(VersionNumber))
+			return "{ \"Success\" : \"False\"}";
+		
+		BigInteger deycrptedCode = RSA.DecryptMessage(Integer.parseInt(EncryptedCode));
+		boolean added = DATABASE_POST.Add_New_AES_Key(User_ID, deycrptedCode.toString());
+		
+	    if(added)
+    			return "{ \"Success\" : \"True\"}";
+	    return "{ \"Success\" : \"False\"}";
+	}
+		
+
 		
 		@GetMapping(path="/updateOrderStatus") // Map ONLY GET Requests
 		public @ResponseBody String updateOrderStatus(@RequestParam String Order_ID, @RequestParam String Rest_ID,  @RequestParam String Order_Status)
@@ -166,8 +168,10 @@ public class MainController {
 		    boolean added = DATABASE_POST.Update_Order_Status(Order_ID,Rest_ID, Order_Status);
 		    
 		    if(added)
-		    		return "{ \"Success\" : \"True\"}";
-		    return "{ \"Success\" : \"False\"}";
+
+		    		return "{ \"Update_Order_Status_Success\" : \"True\"}";
+		    return "{ \"Update_Order_Status_Success\" : \"False\"}";
+
 		}
 
 	
@@ -203,9 +207,8 @@ public class MainController {
 				   added = false;
 			}
 		
-		    if(added)
-		    		return "{ \"Success\" : \"True\"}";
-		    return "{ \"Success\" : \"False\"}";
+		    		return "{ \"Add_New_Order_Success\" : \"True\"}";
+		    return "{ \"Add_New_Order_Success\" : \"False\"}";
 		}
 	}
 	@GetMapping(path="/addFood") // Map ONLY GET Requests
@@ -214,11 +217,39 @@ public class MainController {
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
 		
-	    boolean added = DATABASE_POST.Add_Food(  Rest_ID,   Food_Name,   Food_Price,    Food_Desc,   Menu_ID,  Food_Tags_Main,   Food_Tags_Secondary);
-	    	
+		String newFoodID = "" + DATABASE_GET.getNextFoodID(Rest_ID);
+		
+	    boolean added = DATABASE_POST.Add_Food(  Rest_ID,   Food_Name,   Food_Price,    Food_Desc,   Menu_ID,  Food_Tags_Main,   Food_Tags_Secondary, newFoodID);
+	    
 	    if(added)
-	    		return "{ \"Success\" : \"True\"}";
-	    return "{ \"Success\" : \"False\"}";
+	    		return "{ \"Add_Food_Item_Success\" : \"True\"}";
+	    return "{ \"Add_Food_Item_Success\" : \"False\"}";
+	}
+	
+	@GetMapping(path="/updateFood") // Map ONLY GET Requests
+	public @ResponseBody String updateFood(@RequestParam String Rest_ID, @RequestParam String Food_Name, @RequestParam String Food_Price,  @RequestParam String Food_Desc, @RequestParam String Menu_ID,@RequestParam String Food_Tags_Main, @RequestParam String Food_Tags_Secondary, @RequestParam String Food_ID)
+	{ 
+		// @ResponseBody means the returned String is the response, not a view name
+		// @RequestParam means it is a parameter from the GET or POST request
+		
+
+	    boolean added = DATABASE_POST.Update_Food(  Rest_ID,   Food_Name,   Food_Price,    Food_Desc,   Menu_ID,  Food_Tags_Main,   Food_Tags_Secondary, Food_ID);
+	    
+	    if(added)
+	    		return "{ \"Add_Food_Item_Success\" : \"True\"}";
+	    return "{ \"Add_Food_Item_Success\" : \"False\"}";
+	}
+	
+	@GetMapping(path="/deleteFood") // Map ONLY GET Requests
+	public @ResponseBody String deleteFood( @RequestParam String Rest_ID, @RequestParam String Food_ID)
+	{
+		// @ResponseBody means the returned String is the response, not a view name
+		// @RequestParam means it is a parameter from the GET or POST request
+		
+		boolean added = DATABASE_POST.Delete_Food(Rest_ID, Food_ID);
+	    if(added)
+    			return "{ \"Delete_Food\" : \"True\"}";
+	    return "{ \"Delete_Food\" : \"False\"}";
 	}
 	
 	@GetMapping(path="/addUser") // Map ONLY Post Requests
@@ -230,23 +261,57 @@ public class MainController {
 	    boolean added = DATABASE_POST.Add_User( User_Type,   First_Name,    Last_Name,   User_Address,  User_Birthday,   User_Email,   User_Password);
 		
 	    if(added)
-	    		return "{ \"Success\" : \"True\"}";
-	    return "{ \"Success\" : \"False\"}";
+	    		return "{ \"Add_New_User_Success\" : \"True\"}";
+	    return "{ \"Add_New_User_Success\" : \"False\"}";
 	}
 	
 	
 	@GetMapping(path="/addRestaurant") // Map ONLY GET Requests
 	public @ResponseBody String addNewRestaurants ( @RequestParam String Rest_Name,
-			@RequestParam String Rest_Address, @RequestParam String Rest_Coordinate_X, @RequestParam String Rest_Coordinate_Y, @RequestParam String Rest_Rating) 
+			@RequestParam String Rest_Coordinate_Lat, @RequestParam String Rest_Coordinate_Long, @RequestParam String Rest_Address, @RequestParam String Rest_Rating,  @RequestParam String Rest_Type_Cuisine_Main,  @RequestParam String Rest_Type_Cuisine_Secondary ,  @RequestParam String Rest_Keywords,  @RequestParam String User_ID) 
 	{
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
 		
-		boolean added = DATABASE_POST.Add_Restaurant(Rest_Name, Rest_Coordinate_X, Rest_Coordinate_Y, Rest_Address, Rest_Rating);
+			
+		
+		boolean added = DATABASE_POST.Add_Restaurant( Rest_Name,   Rest_Coordinate_Lat,  Rest_Coordinate_Long,  Rest_Address,  Rest_Rating,  Rest_Type_Cuisine_Main,  Rest_Type_Cuisine_Secondary,  Rest_Keywords,  User_ID);
+				
 	    if(added)
-    			return "{ \"Success\" : \"True\"}";
-	    return "{ \"Success\" : \"False\"}";
+    			return "{ \"Add_New_Restaurant\" : \"True\"}";
+	    return "{ \"Add_New_Restaurant\" : \"False\"}";
 	}
+	
+	@GetMapping(path="/updateRestaurant") // Map ONLY GET Requests
+	public @ResponseBody String updateRestaurant (  @RequestParam String Rest_ID, @RequestParam String Rest_Name,
+			@RequestParam String Rest_Coordinate_Lat, @RequestParam String Rest_Coordinate_Long, @RequestParam String Rest_Address, @RequestParam String Rest_Rating,  @RequestParam String Rest_Type_Cuisine_Main,  @RequestParam String Rest_Type_Cuisine_Secondary ,  @RequestParam String Rest_Keywords,  @RequestParam String User_ID) 
+	{
+		// @ResponseBody means the returned String is the response, not a view name
+		// @RequestParam means it is a parameter from the GET or POST request
+		
+			
+		
+		boolean added = DATABASE_POST.Update_Restaurant(Rest_ID,  Rest_Name,   Rest_Coordinate_Lat,  Rest_Coordinate_Long,  Rest_Address,  Rest_Rating,  Rest_Type_Cuisine_Main,  Rest_Type_Cuisine_Secondary,  Rest_Keywords,  User_ID);
+				
+	    if(added)
+    			return "{ \"Update_Restaurant\" : \"True\"}";
+	    return "{ \"Update_Restaurant\" : \"False\"}";
+	}
+	
+	
+	
+	@GetMapping(path="/deleteRestaurant") // Map ONLY GET Requests
+	public @ResponseBody String deleteRestaurant ( @RequestParam String Rest_ID)
+	{
+		// @ResponseBody means the returned String is the response, not a view name
+		// @RequestParam means it is a parameter from the GET or POST request
+		
+		boolean added = DATABASE_POST.Delete_Restaurant(Rest_ID);
+	    if(added)
+    			return "{ \"Delete_Restaurant\" : \"True\"}";
+	    return "{ \"Delete_Restaurant\" : \"False\"}";
+	}
+	
 	
 	@GetMapping(path="/getFuzzySearchRestaurants")
 	public @ResponseBody String getFuzzySearch(@RequestParam String restaurantName) 

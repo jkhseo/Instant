@@ -93,6 +93,8 @@ public class HttpRequests {
                            msg.what = GlobalConstants.QRCODE;
                        if(responseObject.has("Restaurant_Name"))
                            msg.what = GlobalConstants.RESTAURANT_INFO;
+                       if(responseObject.has("Menu"))
+                           msg.what = GlobalConstants.UPDATE_FOOD;
                        if(responseObject.has("Order_Status"))
                            msg.what = GlobalConstants.UPDATE_STATUS;
                        //restaurantsearchresults
@@ -123,8 +125,11 @@ public class HttpRequests {
             public void onResponse(Response response) throws IOException {
                 try {
                     Message msg = handler.obtainMessage();
-                    msg.what = GlobalConstants.ORDER_SUBMISSION_RESPONSE;
                     JSONObject responseObject = new JSONObject(response.body().string());
+                    if(responseObject.has("Add_Food_Item_Success"))
+                        msg.what = GlobalConstants.ADD_FOOD;
+                    else
+                        msg.what = GlobalConstants.ORDER_SUBMISSION_RESPONSE;
                     msg.obj = responseObject;
                     handler.sendMessage(msg);
                 } catch (JSONException e) {
