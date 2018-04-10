@@ -13,13 +13,20 @@ public class RSA_Encyption
 	KeySet keys = null;	
 	static ArrayList<Integer> primes = new ArrayList<Integer>();
 
+	/**
+	 *  Generates new RSA Encryption keys and posts them to the database
+	 */
 	public RSA_Encyption()
 	{
 		GenerateKeys();
 		DATABASE_POST.Add_New_RSA_Key(keys.n, keys.EncryptionExponet);
 	}
 	
-	
+	/**
+	 * 
+	 * @param message Encrypted Message
+	 * @return The decrypted message
+	 */
 	public BigInteger DecryptMessage(int message)
 	{
 		String strMessage = ""+message;
@@ -35,6 +42,12 @@ public class RSA_Encyption
 		return ans;	
 	}
 	
+	
+	/**
+	 * 
+	 * @param The decrypted message
+	 * @return Encrypted Message
+	 */
 	public BigInteger EncryptMessage(int message)
 	{
 		String strMessage = ""+message;
@@ -52,9 +65,12 @@ public class RSA_Encyption
 		
 	}
 	
+	/**
+	 * Generate Keys
+	 */
 	public void GenerateKeys()
 	{
-		System.out.println("Generating RSA KEYS ... ");
+		System.out.println("Generating RSA KEYS ... Size = " + SIZE);
 		long StartTime = System.currentTimeMillis();
 		
 		addPrimes(SIZE);
@@ -76,7 +92,7 @@ public class RSA_Encyption
 		BigInteger s = new BigInteger("2");
 		while(!gcd_Big_Integer(s,m).equals(new BigInteger("1")))
 		{
-			System.out.println(gcd_Big_Integer(s,m));
+			//System.out.println(gcd_Big_Integer(s,m));
 			s = new BigInteger("" + ((int) (Math.random() * (intN-4))) + 3);
 		}
 		//T is the decryption exponent
@@ -140,7 +156,7 @@ public class RSA_Encyption
 		}
 	}
 	
-	public static void removePrimes(double amount)
+	private static void removePrimes(double amount)
 	{
 		int limit = (int) (amount * primes.size());
 		for(int i=0; i<limit; i++)
