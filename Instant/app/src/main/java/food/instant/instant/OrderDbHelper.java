@@ -12,7 +12,6 @@ import java.util.ArrayList;
 /**
  * Created by Peter on 2/13/18.
  */
-
 public class OrderDbHelper extends SQLiteOpenHelper{
 
     public static final String DATABASE_NAME = "order_db";

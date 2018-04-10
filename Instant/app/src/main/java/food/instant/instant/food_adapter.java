@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.w3c.dom.Text;
@@ -17,10 +18,14 @@ import java.util.ArrayList;
 
 public class food_adapter extends BaseAdapter{
     private ArrayList<Food> foods;
+    private vendor_menu_details parent_fragment;
     private Context context;
-    public food_adapter(Context context, ArrayList<Food> foods){
+    private vendor_menu_details.vendorMenuDetailsHandler handler;
+    public food_adapter(Context context, ArrayList<Food> foods, vendor_menu_details parent, vendor_menu_details.vendorMenuDetailsHandler handler){
         this.foods = foods;
         this.context = context;
+        this.parent_fragment = parent;
+        this.handler = handler;
     }
 
     @Override
@@ -46,10 +51,18 @@ public class food_adapter extends BaseAdapter{
         TextView foodDesc = view.findViewById(R.id.tv_food_desc);
         TextView foodTags = view.findViewById(R.id.tv_tags_main);
         TextView foodPrice = view.findViewById(R.id.tv_food_price);
+        Button delete = view.findViewById(R.id.bn_delete);
         foodName.setText(food.getFood_Name());
         foodDesc.setText("Description: \n" + food.getFood_Desc());
         foodTags.setText("Main Tags:\n" + food.getFood_Tags_Main());
         foodPrice.setText("Price: " + food.getFood_Price());
+
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
         return view;
     }
 }

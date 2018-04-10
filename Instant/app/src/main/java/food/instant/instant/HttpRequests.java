@@ -128,6 +128,8 @@ public class HttpRequests {
                     JSONObject responseObject = new JSONObject(response.body().string());
                     if(responseObject.has("Add_Food_Item_Success"))
                         msg.what = GlobalConstants.ADD_FOOD;
+                    if(responseObject.has("Delete_Food"))
+                        msg.what = GlobalConstants.DELETE_FOOD;
                     else
                         msg.what = GlobalConstants.ORDER_SUBMISSION_RESPONSE;
                     msg.obj = responseObject;

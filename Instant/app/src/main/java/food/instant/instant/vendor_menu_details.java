@@ -58,6 +58,7 @@ public class vendor_menu_details extends Fragment {
     private Button submit;
     private ListView lvFoods;
     private ProgressBar lpanel;
+    private vendor_menu_details this_fragment = this;
 
     private vendorMenuDetailsHandler handler;
 
@@ -101,7 +102,6 @@ public class vendor_menu_details extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.handler = new vendorMenuDetailsHandler(this);
-        HttpGET("getMenu?Restaurant_ID=" + restaurant.getRest_ID(), handler);
 
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_vendor_menu_details, container, false);
@@ -139,6 +139,10 @@ public class vendor_menu_details extends Fragment {
         });
 
         return view;
+    }
+
+    public void update_foods(vendor_menu_details.vendorMenuDetailsHandler handler){
+        HttpGET("getMenu?Restaurant_ID=" + restaurant.getRest_ID(), handler);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -180,7 +184,7 @@ public class vendor_menu_details extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private class vendorMenuDetailsHandler extends Handler {
+    public class vendorMenuDetailsHandler extends Handler {
         /***************************************************************************************
          *    Title: Stack Overflow Answer to Question about static handlers
          *    Author: Tomasz Niedabylski
@@ -242,7 +246,7 @@ public class vendor_menu_details extends Fragment {
                        Food toAdd = new Food(restID, name, price, desc, menuID, tagsMain, tagsSec, foodID);
                        foods.add(toAdd);
                    }
-                   food_adapter adapter = new food_adapter(getContext(), foods);
+                   food_adapter adapter = new food_adapter(getContext(), foods, this_fragment, handler);
                    lpanel.setVisibility(View.GONE);
                    lvFoods.setAdapter(adapter);
 

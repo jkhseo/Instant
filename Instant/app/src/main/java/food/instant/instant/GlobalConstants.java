@@ -22,4 +22,5 @@ public class GlobalConstants {
     public static final int UPDATE_STATUS = 145;
     public static final int ADD_FOOD = 146;
     public static final int UPDATE_FOOD = 147;
+    public static final int DELETE_FOOD = 148;
 }
