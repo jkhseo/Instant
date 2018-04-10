@@ -27,11 +27,13 @@ import java.nio.Buffer;
 
 public class ChatService extends IntentService {
     private static final int PORT_NUMBER = 2222;
-    private static final String HOST_NAME = "10.36.18.4";
-    private final IBinder binder = new ChatServiceBinder();
+    private static final String HOST_NAME = "10.26.53.208";
     private volatile boolean isRunning = true;
     private Messenger handler;
 
+    /**
+     * Default Constructor.
+     */
     public ChatService() {
         super("ChatService");
     }
@@ -43,14 +45,8 @@ public class ChatService extends IntentService {
     //@Override
     public void onCreate(){
         final String ID = "ID:"+SaveSharedPreference.getType(this).substring(0,5)+SaveSharedPreference.getId(this);
-        /*Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {*/
         super.onCreate();
-            /*}
-        });
-        t.setDaemon(true);
-        t.start();*/
+
     }
 
     /**
@@ -62,21 +58,11 @@ public class ChatService extends IntentService {
         isRunning=false;
     }
 
+
     /**
-     *Overriden Method from superclass that is called when the activity
-     * binds with this service
-     * @param intent intent that contains a handler and user ID
-     * @return Binder object
+     * Handles intent information passed from Activity.
+     * @param intent contains information for task to be performed
      */
-    @Override
-    public IBinder onBind(Intent intent){
-        Bundle extras = intent.getExtras();
-        Messenger messenger = (Messenger) extras.get("Handler");
-        this.handler = messenger;
-        return binder;
-
-    }
-
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         try {
@@ -90,7 +76,6 @@ public class ChatService extends IntentService {
             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             out.println(ID);
             out.flush();
-            //out.close();
             while(isRunning){
                 if (in.ready()){
                     android.os.Message msg = new android.os.Message();
@@ -110,17 +95,5 @@ public class ChatService extends IntentService {
         }
     }
 
-    /**
-     *Local Binder Class
-     */
-    public class ChatServiceBinder extends Binder {
-        /**
-         * Gets the ChatService associated with this Binder Class
-         * @return ChatService object
-         */
-        ChatService getService(){
-            return ChatService.this;
-        }
-    }
 
 }

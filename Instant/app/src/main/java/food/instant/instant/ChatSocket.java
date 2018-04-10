@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class ChatSocket extends AsyncTask<Message,Void,Void>{
     private static final int PORT_NUMBER = 2222;
-    private static final String HOST_NAME = "10.36.18.4";
+    private static final String HOST_NAME = "10.26.53.208";
     private PrintWriter out;
     @SuppressLint("NewApi")
     @Override

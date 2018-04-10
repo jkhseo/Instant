@@ -45,18 +45,6 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private boolean serviceStarted = false;
-    private ChatService service;
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder Binder) {
-            service = ((ChatService.ChatServiceBinder)Binder).getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            service=null;
-        }
-    };
     private static String TAG = "MainActivity";
 
     @Override
