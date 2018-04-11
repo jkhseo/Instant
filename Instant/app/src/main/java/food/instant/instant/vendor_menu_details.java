@@ -102,7 +102,7 @@ public class vendor_menu_details extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         this.handler = new vendorMenuDetailsHandler(this);
-
+        this.update_foods(handler);
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_vendor_menu_details, container, false);
         foodName = view.findViewById(R.id.et_food_name);
@@ -143,6 +143,22 @@ public class vendor_menu_details extends Fragment {
 
     public void update_foods(vendor_menu_details.vendorMenuDetailsHandler handler){
         HttpGET("getMenu?Restaurant_ID=" + restaurant.getRest_ID(), handler);
+    }
+
+    public void delete_food(vendor_menu_details.vendorMenuDetailsHandler handler, Food food){
+        HttpPost("deleteFood?Rest_ID=" + food.getRest_ID() + "&Food_ID=" + food.getFood_ID(), handler);
+    }
+
+    public void add_food(vendor_menu_details.vendorMenuDetailsHandler handler, Food food){
+        int restId = food.getRest_ID();
+        String name = food.getFood_Name();
+        double price = food.getFood_Price();
+        String desc = food.getFood_Desc();
+        int menu_id = food.getMenu_Id();
+        String tags_main = food.getFood_Tags_Main();
+        String tags_sec = food.getFood_Tags_Secondary();
+        int food_id = food.getFood_ID();
+        HttpPost("updateFood?Rest_ID=" + restId + "&Food_Name=" + name + "&Food_Price=" + price + "&Food_Desc=" + desc + "&Menu_ID=" + menu_id + "&Food_Tags_Main=" + tags_main + "&Food_Tags_Secondary=" + tags_sec + "&Food_ID=" + food_id, handler);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -199,8 +215,8 @@ public class vendor_menu_details extends Fragment {
         @Override
         public void handleMessage(android.os.Message msg) {
            if(msg.what == GlobalConstants.ADD_FOOD) {
-                JSONObject response = null;
-                    response = ((JSONObject) msg.obj);
+               JSONObject response = null;
+               response = ((JSONObject) msg.obj);
             try {
                 String isSuccess = (String)response.get("Add_Food_Item_Success");
                 Log.d(TAG, "Request made.........................");
@@ -250,6 +266,23 @@ public class vendor_menu_details extends Fragment {
                    lpanel.setVisibility(View.GONE);
                    lvFoods.setAdapter(adapter);
 
+               } catch (JSONException e) {
+                   e.printStackTrace();
+               }
+           }
+           else if(msg.what == GlobalConstants.DELETE_FOOD){
+               JSONObject response = null;
+               response = ((JSONObject) msg.obj);
+               try {
+                   String isSuccess = (String)response.get("Delete_Food");
+                   Log.d(TAG, "Request made.........................");
+                   if(isSuccess.equals("True")){
+                       Toast.makeText(getContext(), "Food deleted successfully!", Toast.LENGTH_SHORT).show();
+                   }
+                   else{
+                       Toast.makeText(getContext(), "Failed to delete the food item!", Toast.LENGTH_SHORT).show();
+                   }
+                   HttpGET("getMenu?Restaurant_ID=" + restaurant.getRest_ID(), handler);
                } catch (JSONException e) {
                    e.printStackTrace();
                }

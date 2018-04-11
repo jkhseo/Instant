@@ -147,12 +147,15 @@ public class HttpRequests {
                 try {
                     Message msg = handler.obtainMessage();
                     JSONObject responseObject = new JSONObject(response.body().string());
-                    if(responseObject.has("Add_Food_Item_Success"))
+                    if(responseObject.has("Add_Food_Item_Success")) {
                         msg.what = GlobalConstants.ADD_FOOD;
-                    if(responseObject.has("Delete_Food"))
+                    }
+                    else if(responseObject.has("Delete_Food")) {
                         msg.what = GlobalConstants.DELETE_FOOD;
-                    else
+                    }
+                    else {
                         msg.what = GlobalConstants.ORDER_SUBMISSION_RESPONSE;
+                    }
                     msg.obj = responseObject;
                     handler.sendMessage(msg);
                 } catch (JSONException e) {
