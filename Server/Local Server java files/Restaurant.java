@@ -16,7 +16,17 @@ public class Restaurant implements Comparable
 	public String[] keywords;
 	
 	public int rank = 0;//Rank for searching purposes
-	
+	/**
+	 * 
+	 * @param name
+	 * @param ID
+	 * @param cuisine_main
+	 * @param cuisine_secondary
+	 * @param Rest_Address
+	 * @param Rest_Coordinate_Lat
+	 * @param Rest_Coordinate_Long
+	 * @param keywords
+	 */
 	public Restaurant(String name, int ID, String cuisine_main, String cuisine_secondary, String Rest_Address, String Rest_Coordinate_Lat, String Rest_Coordinate_Long, String[] keywords) 
 	{
 		this.name = name;
