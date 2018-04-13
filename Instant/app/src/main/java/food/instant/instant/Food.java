@@ -32,10 +32,15 @@ public class Food {
      * ID of Menu for this Food
      */
     private int Menu_Id;
+
+
+
     /**
      * Main Tag associated with this Food
      */
     private String Food_Tags_Main;
+
+
     /**
      * Secondary Tag associated with this Food
      */
@@ -131,6 +136,10 @@ public class Food {
      */
     public int getFood_ID() {
         return Food_ID;
+    }
+
+    public String getFood_Tags_Main() {
+        return Food_Tags_Main;
     }
 
 }

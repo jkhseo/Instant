@@ -11,7 +11,5 @@ public class KeyContract {
     {
         public static final String TABLE_NAME = "key_table";
         public static final String SESSION_KEY_VALUE = "session_key_value";
-
-
     }
 }

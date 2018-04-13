@@ -27,7 +27,7 @@ import java.nio.Buffer;
 
 public class ChatService extends IntentService {
     private static final int PORT_NUMBER = 2222;
-    private static final String HOST_NAME = "10.26.53.208";
+    private static final String HOST_NAME = "proj-309-sd-4.cs.iastate.edu";
     private volatile boolean isRunning = true;
     private Messenger handler;
 

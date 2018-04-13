@@ -3,18 +3,25 @@ package food.instant.instant;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.text.Layout;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ImageSwitcher;
+import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -228,9 +235,12 @@ public class user_home_restaurant extends Fragment {
                 ((MainActivity)getActivity()).swapFragments(new user_home_chat("Vendo",user_id));
             }
         });
+        ViewPager pager = view.findViewById(R.id.viewPager);
+
+        new GetServerImages(pager,getContext()).execute("http://proj-309-sd-4.cs.iastate.edu/UDCC1.jpg");
         RestaurantHandler handler = new RestaurantHandler(this);
         HttpGET("getMenu?Restaurant_ID="+restaurant.getRest_ID(),handler);
-
+        //HttpGET("get",handler);
         return view;
 
     }
