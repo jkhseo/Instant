@@ -1,8 +1,9 @@
 <!Doctype html> 
 <html>
 <head>
-<script src='jquery-1.11.2.min.js'> </script>
-	<title> Instant HomePage </title> 
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script src='googlemap.js'> </script>
+	<title> Map </title> 
    <meta charset="utf-8">
    	<link rel="stylesheet" href="css/normalize.css"> 
 	<link rel="stylesheet" href="css/skeleton.css">
@@ -26,13 +27,25 @@
     table{
     width:100%;
     }
+    #map{
+    height:400px;
+    width:100%;
+    }
 	}
 </style>
 </head>
 <body>
 
 <?php
-
+// 	
+// 	require_once 'login.php';
+// 	$connect = new mysqli($hostname, $username, $password, $database);
+// 	$query = "SELECT * FROM db309sd4.Restaurant WHERE Rest_ID = 1";
+// 
+// 	if ($connect->connect_error) {
+// 	die("Connection failed: ". $connect->connect_error);
+// 	}
+// 	$result = $connect->query($query);
 session_start();
 $json_array = file_get_contents("http://proj-309-sd-4.cs.iastate.edu:8080/demo/getAllUserInfo?User_Email=".$_SESSION['Username']); 
 $json_data=json_decode($json_array,true);
@@ -43,7 +56,7 @@ echo <<<_HTML
 	<div class="container border"> 
 		<div class="row">
 			<div class="twelve columns center">
-				<h1 class="logo">  $fullname's Order Status </h1>
+				<h1 class="logo"> Welcome to Instant $fullname </h1>
 			</div>
 		</div>
 	</div>
@@ -65,49 +78,42 @@ echo <<<_HTML
 				</div>									
 			</div>
 	</div>
-_HTML
-
-?>
-<?php 
-echo "<h1 align = 'center'> Orders </h1>";
-$user_ID = $json_data['All_User_Info'][0]['User_ID'];
-$json_array = file_get_contents("http://proj-309-sd-4.cs.iastate.edu:8080/demo/getAllOrdersForUser?User_ID=".$user_ID);
-$json_data=json_decode($json_array,true);
-$count = count($json_data['All_Orders_For_User']);
-for ($i = 0; $i < $count; $i++) {
-	$orderNum = $i+1;
-	$temp_array = $json_data['All_Orders_For_User'][$i];
-	$space = ' ';
-	echo <<<HTML
-	<div class = "row">
-		<div class = "tweleve columns">
-				<table>
-				<tr>
-				<td width=100 style="text-align:center"> Order # $orderNum <br> </td>
-				<td style="text-align:left"> Restaurant: {$temp_array['Rest_Name']} <br>
-				 Food Name: {$temp_array['Food_Name']} <br> 
-				 Food Price: {$temp_array['Food_Price']} <br>
-				 Order Status: {$temp_array['Order_Status']} <br>
-				 Order Pick Up Date: {$temp_array['Order_Date_Pick_Up']} 
-				 </td>
-				</tr>
-				<table>
-		</div> 
-	</div> 
-HTML;
-				
-}
-?> 
-<?php
-echo <<<_HTML
+	
+	
+		</div>
 	</div>
+</div>
+
+<div class="container">	
+
+<div id="map"> </div>
 </div>
 
 </body>
 
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTHLxyrImyn45wgP5aqzUKg7NxO732NiM&callback=initMap">
+</script>
+<script>
+
+$.getJSON("http://proj-309-sd-4.cs.iastate.edu:8080/demo/getRestaurantsInView?max_Lat=42.0597&max_Long=-93.399&min_Lat=41.8919&min_Long=-93.88", function(data){
+	for(var key in data) {
+		var length = data[key].length;
+		for(var i = 0; i < length; i++){
+		//alert(JSON.stringify(data[key][0]["Rest_Coordinate_Long"]));
+		var long = parseFloat(JSON.stringify(data[key][i]["Rest_Coordinate_Long"]));
+		var lat = parseFloat(JSON.stringify(data[key][i]["Rest_Coordinate_Lat"]));
+		addMarkertoMap({lat: lat, lng: long}); 
+		}
+	} 
+	console.log(data);
+
+});
+
+
+</script>
 </html> 
 _HTML
-
 ?>
  <!-- footer -->
 <div class="container">

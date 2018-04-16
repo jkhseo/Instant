@@ -1,7 +1,7 @@
 <!Doctype html> 
 <html>
 <head>
-<script src='jquery-1.11.2.min.js'> </script>
+<script type="text/javascript" src='jquery-1.11.2.min.js'> </script>
 	<title> Instant HomePage </title> 
    <meta charset="utf-8">
    	<link rel="stylesheet" href="css/normalize.css"> 
@@ -66,7 +66,7 @@ echo <<<_HTML
 					<p class="button">  <a href=OrderStatus.php> Order Status </a> </p>
 				</div>
 				<div class="three columns center">
-					<p class="button">  <a href=lounge2.html> Order Food </a> </p>
+					<p class="button">  <a href=Map.php> Order Food </a> </p>
 				</div>
 				<div class="three columns center">
 					<p class="button">  <a href=LogInPage.php> Logout </a> </p>
@@ -85,7 +85,7 @@ _HTML
 ?>
  <!-- footer -->
 <div class="container">
-  <div class="row">
+  <div class="row" align='center'>
       <p>© Instant</p>
   </div>
 </div>
