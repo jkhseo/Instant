@@ -580,8 +580,13 @@ public class DATABASE_GET
 
 	}
 
-	//A non JSON returning function that gets the next food number for a restaurant
-	//Written by Adam de Gala. 
+	/**
+	 * A non JSON returning function that gets the next food number for a restaurant
+	 * @param rest_ID
+	 * @return Next Food Number
+	 * 
+	 * Written by Adam de Gala.
+	 */ 
 	public static int getNextFoodID(String rest_ID)
 	{
 		
@@ -617,8 +622,13 @@ public class DATABASE_GET
 	
 	}
 	
-		//A non JSON returning function that gets the next order number for a restaurant
-		//Written by Adam de Gala. 
+		/**
+		 * A non JSON returning function that gets the next order number for a restaurant
+		 * @param rest_ID
+		 * @return Next order number
+		 * 
+		 * Written by Adam de Gala. 
+		 */
 		public static int getNextOrderID(String rest_ID)
 		{
 			
@@ -704,8 +714,12 @@ public class DATABASE_GET
 		}
 	
 	
-	//Method to FuzzySearch for Restaurant 
-	//Written by Adam de Gala
+	/**
+	 * Method to FuzzySearch for Restaurant 
+	 * @param stringStart The start of the search
+	 * @return JSON of restuarants matching
+	 * //Written by Adam de Gala
+	 */
 	public static String fuzzySearchRestaurant(String stringStart)
 	{
 		 String result = "";
@@ -745,8 +759,13 @@ public class DATABASE_GET
 		  return result;
 	}
 	
-		//Method to Search for Restaurant
-		//Written by Adam de Gala. 
+		/**
+		 * Method to Search for Restaurant
+		 * @param searching_Keywords Keywords to search for, delimited by commas
+		 * @return JSON return of Restaurant
+		 * 
+		 * Written by Adam de Gala. 
+		 */
 		public static String searchRestaurant_KeyWords(String searching_Keywords)
 		{
 			 String result = "";

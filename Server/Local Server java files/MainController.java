@@ -18,6 +18,10 @@ public class MainController {
 	RSA_Encyption RSA = null;
 	public static final int QRCODE_SIZE = 10000;
 	
+	/**
+	 * 
+	 * @return All Restaurants
+	 */
 	@GetMapping(path="/getRestaurants")
 	public @ResponseBody String getAllRestaurants() 
 	{
@@ -25,12 +29,14 @@ public class MainController {
 		return DATABASE_GET.getAllRestaurant();
 	}
 	
+
 	@GetMapping(path="/getPassword")
 	public @ResponseBody String getPassword(@RequestParam String User_Email) 
 	{
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getPassword(User_Email);
 	}
+	
 	@GetMapping(path="/getAllUserInfo")
 	public @ResponseBody String getAllUserInfo(@RequestParam String User_Email) 
 	{
@@ -38,12 +44,23 @@ public class MainController {
 		return DATABASE_GET.getAllUserInfo(User_Email);
 	}
 	
+	/**
+	 * 
+	 * @param Restaurant_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getMenu")
 	public @ResponseBody String getMenu(@RequestParam String Restaurant_ID) 
 	{
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getMenu(Restaurant_ID);
 	}
+	
+	/**
+	 * 
+	 * @param User_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getRestaurantFromOwnerUserID")
 	public @ResponseBody String getRestaurantFromOwnerUserID(@RequestParam String User_ID) 
 	{
@@ -51,6 +68,12 @@ public class MainController {
 		return DATABASE_GET.getRestaurantFromOwnerUserID(User_ID);
 	}
 	
+	/**
+	 * 
+	 * @param Rest_ID
+	 * @param Order_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getOrderStatus")
 	public @ResponseBody String getOrderStatus(@RequestParam String Rest_ID,@RequestParam String Order_ID ) 
 	{
@@ -58,6 +81,11 @@ public class MainController {
 		return DATABASE_GET.getOrderStatus(Order_ID, Rest_ID);
 	}
 	
+	/**
+	 * 
+	 * @param Restaurant_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getPendingOrderForRestaurant")
 	public @ResponseBody String getPendingOrderForRestaurant(@RequestParam String Restaurant_ID) 
 	{
@@ -65,12 +93,23 @@ public class MainController {
 		return DATABASE_GET.getPendingOrderForRestaurant(Restaurant_ID);
 	}
 	
+	/**
+	 * 
+	 * @param Restaurant_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getCompletedOrderForRestaurant")
 	public @ResponseBody String getCompletedOrderForRestaurant(@RequestParam String Restaurant_ID) 
 	{
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getCompletedOrderForRestaurant(Restaurant_ID);
 	}
+	
+	/**
+	 * 
+	 * @param Restaurant_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getConfirmedOrderForRestaurant")
 	public @ResponseBody String getConfirmedOrderForRestaurant(@RequestParam String Restaurant_ID) 
 	{
@@ -78,6 +117,11 @@ public class MainController {
 		return DATABASE_GET.getConfirmedOrderForRestaurant(Restaurant_ID);
 	}
 	
+	/**
+	 * 
+	 * @param Restaurant_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getCancelledOrderForRestaurant")
 	public @ResponseBody String getCancelledOrderForRestaurant(@RequestParam String Restaurant_ID) 
 	{
@@ -85,7 +129,14 @@ public class MainController {
 		return DATABASE_GET.getCancelledOrderForRestaurant(Restaurant_ID);
 	}
 	
-	
+	/**
+	 * 
+	 * @param latitude
+	 * @param longitude
+	 * @param numOfRestaurants
+	 * @param rangeInKm
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getNearestRestaurants")
 	public @ResponseBody String getNearestRestaurants(@RequestParam float latitude, @RequestParam float longitude, @RequestParam 
 			String numOfRestaurants, @RequestParam String rangeInKm) 
@@ -93,6 +144,15 @@ public class MainController {
 		// This returns a JSON or XML with the users
 		return DATABASE_GET.getNearestRestaurants(latitude, longitude, numOfRestaurants, rangeInKm);
 	}
+	
+	/**
+	 * 
+	 * @param max_Lat
+	 * @param min_Lat
+	 * @param max_Long
+	 * @param min_Long
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getRestaurantsInView")
 	public @ResponseBody String getRestaurantsInView(@RequestParam String max_Lat, @RequestParam String min_Lat, @RequestParam String max_Long, @RequestParam String min_Long) 
 	{
@@ -100,6 +160,11 @@ public class MainController {
 		return DATABASE_GET.getRestaurantsInView(max_Lat, max_Long, min_Lat, min_Long);
 	}
 	
+	/**
+	 * 
+	 * @param User_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getAllOrdersForUser")		
 	public @ResponseBody String getAllOrdersForUser(@RequestParam String User_ID) 		
 	{		
@@ -107,13 +172,23 @@ public class MainController {
 		return DATABASE_GET.getAllOrdersForUser(User_ID);		
 	}
 	
+	/**
+	 * 
+	 * @param Order_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getConfirmationCode")		
 	public @ResponseBody String getConfirmationCode(@RequestParam String Order_ID)		
 	{		
 		// This returns a JSON or XML with the users		
 		return DATABASE_GET.getConfirmationCode(Order_ID);		
 	}		
-					
+				
+	/**
+	 * 
+	 * @param Rest_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getRestaurantFromID")		
 	public @ResponseBody String getRestaurantFromID(@RequestParam String Rest_ID)		
 	{		
@@ -121,6 +196,11 @@ public class MainController {
 		return DATABASE_GET.getRestaurantFromID(Rest_ID);		
 	}
 	
+	
+	/**
+	 * 
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getRSAPublicKey") // Map ONLY GET Requests
 	public @ResponseBody String getRSAPublicKey()
 	{ 
@@ -134,7 +214,13 @@ public class MainController {
 	}
 	
 	
-
+	/**
+	 * 
+	 * @param VersionNumber
+	 * @param EncryptedCode
+	 * @param User_ID
+	 * @return JSON Return
+	 */
 	//USING RSA ENCRYPTION, POST A NEW AES KEY
 	@GetMapping(path="/postAESKEY") // Map ONLY GET Requests
 	public @ResponseBody String postAESKey(@RequestParam String VersionNumber, @RequestParam String EncryptedCode, @RequestParam String User_ID)
@@ -156,6 +242,13 @@ public class MainController {
 	}
 		
 		
+	/**
+	 * 
+	 * @param Order_ID
+	 * @param Rest_ID
+	 * @param Order_Status to be updated to
+	 * @return JSON Return
+	 */
 		@GetMapping(path="/updateOrderStatus") // Map ONLY GET Requests
 		public @ResponseBody String updateOrderStatus(@RequestParam String Order_ID, @RequestParam String Rest_ID,  @RequestParam String Order_Status)
 		{ 
@@ -170,6 +263,16 @@ public class MainController {
 		}
 
 	
+		/**
+		 * 
+		 * @param Rest_ID
+		 * @param User_ID
+		 * @param Food
+		 * @param Comments
+		 * @param Quantity
+		 * @param Order_Date_Pick_Up
+		 * @return JSON Return
+		 */
 	@GetMapping(path="/addOrder") // Map ONLY Post Requests
 	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity, @RequestParam String Order_Date_Pick_Up)
 	{ 
@@ -207,6 +310,18 @@ public class MainController {
 		    return "{ \"Add_New_Order_Success\" : \"False\"}";
 		}
 	}
+	
+	/**
+	 * 
+	 * @param Rest_ID
+	 * @param Food_Name
+	 * @param Food_Price
+	 * @param Food_Desc
+	 * @param Menu_ID
+	 * @param Food_Tags_Main
+	 * @param Food_Tags_Secondary
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/addFood") // Map ONLY GET Requests
 	public @ResponseBody String addNewFood(@RequestParam String Rest_ID, @RequestParam String Food_Name, @RequestParam String Food_Price,  @RequestParam String Food_Desc, @RequestParam String Menu_ID,@RequestParam String Food_Tags_Main, @RequestParam String Food_Tags_Secondary)
 	{ 
@@ -222,6 +337,18 @@ public class MainController {
 	    return "{ \"Add_Food_Item_Success\" : \"False\"}";
 	}
 	
+	/**
+	 * 
+	 * @param Rest_ID
+	 * @param Food_Name
+	 * @param Food_Price
+	 * @param Food_Desc
+	 * @param Menu_ID
+	 * @param Food_Tags_Main
+	 * @param Food_Tags_Secondary
+	 * @param Food_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/updateFood") // Map ONLY GET Requests
 	public @ResponseBody String updateFood(@RequestParam String Rest_ID, @RequestParam String Food_Name, @RequestParam String Food_Price,  @RequestParam String Food_Desc, @RequestParam String Menu_ID,@RequestParam String Food_Tags_Main, @RequestParam String Food_Tags_Secondary, @RequestParam String Food_ID)
 	{ 
@@ -232,10 +359,16 @@ public class MainController {
 	    boolean added = DATABASE_POST.Update_Food(  Rest_ID,   Food_Name,   Food_Price,    Food_Desc,   Menu_ID,  Food_Tags_Main,   Food_Tags_Secondary, Food_ID);
 	    
 	    if(added)
-	    		return "{ \"Add_Food_Item_Success\" : \"True\"}";
-	    return "{ \"Add_Food_Item_Success\" : \"False\"}";
+	    		return "{ \"Update_Food_Item_Success\" : \"True\"}";
+	    return "{ \"Update_Food_Item_Success\" : \"False\"}";
 	}
 	
+	/**
+	 * 
+	 * @param Rest_ID
+	 * @param Food_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/deleteFood") // Map ONLY GET Requests
 	public @ResponseBody String deleteFood( @RequestParam String Rest_ID, @RequestParam String Food_ID)
 	{
@@ -248,6 +381,17 @@ public class MainController {
 	    return "{ \"Delete_Food\" : \"False\"}";
 	}
 	
+	/**
+	 * 
+	 * @param User_Type
+	 * @param First_Name
+	 * @param Last_Name
+	 * @param User_Address
+	 * @param User_Birthday
+	 * @param User_Email
+	 * @param User_Password
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/addUser") // Map ONLY Post Requests
 	public @ResponseBody String addNewUser( @RequestParam String  User_Type, @RequestParam String  First_Name,  @RequestParam String  Last_Name, @RequestParam String  User_Address,@RequestParam String  User_Birthday, @RequestParam String  User_Email, @RequestParam String  User_Password)
 	{ 
@@ -261,7 +405,19 @@ public class MainController {
 	    return "{ \"Add_New_User_Success\" : \"False\"}";
 	}
 	
-	
+	/**
+	 * 
+	 * @param Rest_Name
+	 * @param Rest_Coordinate_Lat
+	 * @param Rest_Coordinate_Long
+	 * @param Rest_Address
+	 * @param Rest_Rating
+	 * @param Rest_Type_Cuisine_Main
+	 * @param Rest_Type_Cuisine_Secondary
+	 * @param Rest_Keywords
+	 * @param User_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/addRestaurant") // Map ONLY GET Requests
 	public @ResponseBody String addNewRestaurants ( @RequestParam String Rest_Name,
 			@RequestParam String Rest_Coordinate_Lat, @RequestParam String Rest_Coordinate_Long, @RequestParam String Rest_Address, @RequestParam String Rest_Rating,  @RequestParam String Rest_Type_Cuisine_Main,  @RequestParam String Rest_Type_Cuisine_Secondary ,  @RequestParam String Rest_Keywords,  @RequestParam String User_ID) 
@@ -278,6 +434,20 @@ public class MainController {
 	    return "{ \"Add_New_Restaurant\" : \"False\"}";
 	}
 	
+	/**
+	 * 
+	 * @param Rest_ID
+	 * @param Rest_Name
+	 * @param Rest_Coordinate_Lat
+	 * @param Rest_Coordinate_Long
+	 * @param Rest_Address
+	 * @param Rest_Rating
+	 * @param Rest_Type_Cuisine_Main
+	 * @param Rest_Type_Cuisine_Secondary
+	 * @param Rest_Keywords
+	 * @param User_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/updateRestaurant") // Map ONLY GET Requests
 	public @ResponseBody String updateRestaurant (  @RequestParam String Rest_ID, @RequestParam String Rest_Name,
 			@RequestParam String Rest_Coordinate_Lat, @RequestParam String Rest_Coordinate_Long, @RequestParam String Rest_Address, @RequestParam String Rest_Rating,  @RequestParam String Rest_Type_Cuisine_Main,  @RequestParam String Rest_Type_Cuisine_Secondary ,  @RequestParam String Rest_Keywords,  @RequestParam String User_ID) 
@@ -295,7 +465,11 @@ public class MainController {
 	}
 	
 	
-	
+	/**
+	 * 
+	 * @param Rest_ID
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/deleteRestaurant") // Map ONLY GET Requests
 	public @ResponseBody String deleteRestaurant ( @RequestParam String Rest_ID)
 	{
@@ -308,7 +482,11 @@ public class MainController {
 	    return "{ \"Delete_Restaurant\" : \"False\"}";
 	}
 	
-	
+	/**
+	 * 
+	 * @param restaurantName
+	 * @return JSON Return
+	 */
 	@GetMapping(path="/getFuzzySearchRestaurants")
 	public @ResponseBody String getFuzzySearch(@RequestParam String restaurantName) 
 	{
