@@ -236,6 +236,23 @@ public class vendor_menu_details extends Fragment {
                 e.printStackTrace();
             }
            }
+            else if(msg.what == GlobalConstants.EDIT_FOOD) {
+                JSONObject response = null;
+                response = ((JSONObject) msg.obj);
+                try {
+                    String isSuccess = (String)response.get("Update_Food_Item_Success");
+                    Log.d(TAG, "Request made.........................");
+                    if(isSuccess.equals("True")){
+                        Toast.makeText(getContext(), "Food updated successfully!", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        Toast.makeText(getContext(), "Failed to update the food item!", Toast.LENGTH_SHORT).show();
+                    }
+                    HttpGET("getMenu?Restaurant_ID=" + restaurant.getRest_ID(), handler);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
             else if(msg.what == GlobalConstants.UPDATE_FOOD)
            {
                ArrayList<Food> foods = new ArrayList<Food>();

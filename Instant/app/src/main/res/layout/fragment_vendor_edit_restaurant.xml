@@ -1,0 +1,241 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="food.instant.instant.vendor_edit_restaurant">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/tv_rest_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="rest name"
+        android:textSize="36sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_address_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Address:"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_rest_name" />
+
+    <TextView
+        android:id="@+id/tv_address_label2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Address:"
+        android:textSize="24sp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_rest_name" />
+
+    <TextView
+        android:id="@+id/tv_address_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="some_address"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/tv_address_label"
+        app:layout_constraintTop_toBottomOf="@+id/tv_address_label" />
+
+    <RatingBar
+        android:id="@+id/rb_rest_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="@+id/tv_rating_label"
+        app:layout_constraintTop_toBottomOf="@+id/tv_rating_label" />
+
+    <RatingBar
+        android:id="@+id/rb_rest_rating2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/tv_rating_label2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_rating_label2" />
+
+    <TextView
+        android:id="@+id/tv_cuisine_main_label"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Main Cuisine Type:"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_address_data" />
+
+    <TextView
+        android:id="@+id/tv_cuisine_main_label2"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:text="Main Cuisine Type:"
+        android:textSize="24sp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/tv_address_label2"
+        app:layout_constraintTop_toBottomOf="@+id/et_rest_address" />
+
+    <TextView
+        android:id="@+id/tv_cuisine_main_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="some_type"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/tv_cuisine_main_label"
+        app:layout_constraintTop_toBottomOf="@+id/tv_cuisine_main_label" />
+
+    <TextView
+        android:id="@+id/tv_cuisine_sec_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Secondary Cuisine Type:"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_cuisine_main_data" />
+
+    <TextView
+        android:id="@+id/tv_cuisine_sec_label2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Secondary Cuisine Type:"
+        android:textSize="24sp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/tv_cuisine_main_label2"
+        app:layout_constraintTop_toBottomOf="@+id/et_rest_main" />
+
+    <TextView
+        android:id="@+id/tv_cuisine_sec_data"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="some_type"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/tv_cuisine_sec_label"
+        app:layout_constraintTop_toBottomOf="@+id/tv_cuisine_sec_label" />
+
+    <TextView
+        android:id="@+id/tv_rating_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Rating"
+        android:textSize="24sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_cuisine_sec_data" />
+
+    <TextView
+        android:id="@+id/tv_rating_label2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Rating"
+        android:textSize="24sp"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/tv_cuisine_sec_label2"
+        app:layout_constraintTop_toBottomOf="@+id/et_rest_sec" />
+
+    <Button
+        android:id="@+id/bn_edit_rest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:text="Edit Restaurant"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/bn_delete_rest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/holo_red_light"
+        android:text="Delete Restaurant"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/bn_submit_edit_rest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:color/holo_green_light"
+        android:text="Submit Changes"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/bn_cancel_edit_rest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginStart="8dp"
+        android:text="Cancel"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/et_rest_address"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/tv_address_label2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_address_label2" />
+
+    <EditText
+        android:id="@+id/et_rest_main"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/tv_cuisine_main_label2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_cuisine_main_label2" />
+
+    <EditText
+        android:id="@+id/et_rest_sec"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:visibility="invisible"
+        app:layout_constraintStart_toStartOf="@+id/tv_cuisine_sec_label2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_cuisine_sec_label2" />
+
+</android.support.constraint.ConstraintLayout>

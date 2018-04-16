@@ -12,6 +12,8 @@ public class Restaurant {
     private String address;
     private double rating;
     private double distance;
+    private String cuisineMain;
+    private String cuisineSec;
     private int Rest_ID;
 
     /**
@@ -32,6 +34,18 @@ public class Restaurant {
         this.address = address;
         this.distance = -1;
         this.Rest_ID = Rest_ID;
+    }
+
+    public Restaurant(int Rest_ID,String name, double lat, double longitude, String address, double rating, String mainCuisine, String secCuisine){
+        this.rating = rating;
+        this.latitude = lat;
+        this.longitude = longitude;
+        this.name = name;
+        this.address = address;
+        this.distance = -1;
+        this.Rest_ID = Rest_ID;
+        this.cuisineMain = mainCuisine;
+        this.cuisineSec = secCuisine;
     }
 
     /**
@@ -55,6 +69,10 @@ public class Restaurant {
     public double getLatitude() {
         return latitude;
     }
+
+    public String getCuisineMain() { return cuisineMain; }
+
+    public String getCuisineSec() { return cuisineSec; }
 
     /**
      * accessor for the longitude
