@@ -141,11 +141,8 @@ public class vendor_edit_restaurant extends Fragment {
         cancel = view.findViewById(R.id.bn_cancel_edit_rest);
         submit = view.findViewById(R.id.bn_submit_edit_rest);
         delete = view.findViewById(R.id.bn_delete_rest);
-        name.setText(restaurant.getName());
-        address.setText(restaurant.getAddress());
-        mainCuisine.setText(restaurant.getCuisineMain());
-        secCuisine.setText(restaurant.getCuisineSec());
-        rating.setRating((float)restaurant.getRating());
+
+        HttpGET("getRestaurantFromID?Rest_ID=" + restaurant.getRest_ID(), handler);
 
         editRest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,7 +208,7 @@ public class vendor_edit_restaurant extends Fragment {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HttpGET("getRestaurantFromID?Rest_ID=" + restaurant.getRest_ID(), handler);
+                HttpPost("deleteRestaurant?Rest_ID=" + restaurant.getRest_ID(), handler);
             }
         });
 
@@ -343,7 +340,7 @@ public class vendor_edit_restaurant extends Fragment {
                         HttpGET("getRestaurantFromID?Rest_ID=" + restaurant.getRest_ID(), handler);
                     }
                     else{
-                        Toast.makeText(getContext(), "Failed to update the food restaurant!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Failed to update the restaurant!", Toast.LENGTH_SHORT).show();
                     }
                     submit.setVisibility(View.GONE);
                     cancel.setVisibility(View.GONE);
@@ -367,6 +364,25 @@ public class vendor_edit_restaurant extends Fragment {
                     rating.setVisibility(View.VISIBLE);
                     ratLab.setVisibility(View.VISIBLE);
                     HttpGET("getMenu?Restaurant_ID=" + restaurant.getRest_ID(), handler);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            else if(msg.what == GlobalConstants.DELETE_REST){
+                JSONObject response = null;
+                response = ((JSONObject) msg.obj);
+                try {
+                    String isSuccess = (String)response.get("Delete_Restaurant");
+                    Log.d(TAG, "Request made.........................");
+                    if(isSuccess.equals("True")){
+                        Toast.makeText(getContext(), "Restaurant deleted successfully!", Toast.LENGTH_SHORT).show();
+                        HttpGET("getRestaurantFromID?Rest_ID=" + restaurant.getRest_ID(), handler);
+                        getFragmentManager().popBackStackImmediate();
+                    }
+                    else{
+                        Toast.makeText(getContext(), "Failed to delete the food restaurant!", Toast.LENGTH_SHORT).show();
+                    }
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

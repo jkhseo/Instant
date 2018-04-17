@@ -11,8 +11,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 /**
@@ -67,7 +65,7 @@ public class food_adapter extends BaseAdapter{
         final Button delete = view.findViewById(R.id.bn_delete);
         final Button edit = view.findViewById(R.id.bn_edit_food);
         final Button submit = view.findViewById(R.id.bn_update_food);
-        final Button cancel = view.findViewById(R.id.bn_cancel);
+        final Button cancel = view.findViewById(R.id.bn_cancel_add_rest);
         foodName.setText(food.getFood_Name());
         foodDesc.setText("Description: \n" + food.getFood_Desc());
         foodTags.setText("Main Tags:\n" + food.getFood_Tags_Main());

@@ -81,4 +81,5 @@ public class GlobalConstants {
     public static final int EDIT_FOOD = 149;
     public static final int UPDATE_REST = 151;
     public static final int REFRESH_REST = 152;
+    public static final int DELETE_REST = 153;
 }

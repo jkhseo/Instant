@@ -196,7 +196,7 @@
             app:layout_constraintVertical_bias="0.499" />
 
         <Button
-            android:id="@+id/bn_cancel"
+            android:id="@+id/bn_cancel_add_rest"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -219,8 +219,8 @@
             android:text="Submit"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/bn_cancel"
-            app:layout_constraintTop_toTopOf="@+id/bn_cancel" />
+            app:layout_constraintStart_toEndOf="@+id/bn_cancel_add_rest"
+            app:layout_constraintTop_toTopOf="@+id/bn_cancel_add_rest" />
 
     </android.support.constraint.ConstraintLayout>
 

@@ -161,6 +161,9 @@ public class HttpRequests {
                     else if(responseObject.has("Update_Restaurant")){
                         msg.what = GlobalConstants.UPDATE_REST;
                     }
+                    else if(responseObject.has("Delete_Restaurant")){
+                        msg.what = GlobalConstants.DELETE_REST;
+                    }
                     else {
                         msg.what = GlobalConstants.ORDER_SUBMISSION_RESPONSE;
                     }
