@@ -579,6 +579,41 @@ public class DATABASE_GET
 		  return " {\"Nearest_Restaurants\":" + json.toString() + "}";
 
 	}
+	
+	public static String getPrime(int downList)
+	{
+
+		try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        
+		        
+	            String query = "SELECT Prime from db309sd4.Prime_Numbers order by Number DESC";
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	            ResultSet rs = stmt.executeQuery(query);
+	            
+
+	            while(rs.next() && downList > 0)
+	            {
+	            		downList--;
+	            }
+	            if(rs.next())
+	            		return rs.getString("Prime");
+	            else
+	            		return "Null";
+	         
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	           return "Null";
+	      }
+	
+	}
 
 	/**
 	 * A non JSON returning function that gets the next food number for a restaurant
@@ -690,9 +725,9 @@ public class DATABASE_GET
 		            		String version = rs.getString("Version");
 		            		String Encyption_Exponet = rs.getString("Encyption_Exponet");
 		            		
-		            		result = "{ \"Public_Key\" : \"" + publicKey + "\",";
+		            		result = "{ \"Keys\" : [ { \"Public_Key\" : \"" + publicKey + "\",";
 		            		result += " \"Version\" : \"" + version + "\",";
-		            		result += " \"Encyption_Exponet\" : \"" + Encyption_Exponet + "\"}";
+		            		result += " \"Encyption_Exponet\" : \"" + Encyption_Exponet + "\"  } ] }";
 		            		
 		            		
 		            }

@@ -18,6 +18,57 @@ public class MainController {
 	RSA_Encyption RSA = null;
 	public static final int QRCODE_SIZE = 10000;
 	
+	public String StringToInt(String message)
+	{
+		String integer = new BigInteger(message.getBytes()).toString();
+		return integer;
+	}
+	
+	public String IntToString(String integer)
+	{
+		String message = new String(new BigInteger(integer).toByteArray());
+		return message;
+	}
+	
+	/**
+	 * 
+	 * @return All Restaurants
+	 */
+	@GetMapping(path="/verifyLogin")
+	public @ResponseBody String getAllRestaurants(@RequestParam String VersionNumber, @RequestParam String User_Email, @RequestParam String User_Password_Encrypted) 
+	{
+		// This returns a JSON or XML with the users
+		try
+		{
+		System.out.println("Trying to verify Login... ");
+		String JSONreturned = DATABASE_GET.getRSAKEY();
+		int Version = Integer.parseInt(JSONreturned.substring(JSONreturned.indexOf("Version") + 12, JSONreturned.indexOf("Encyption_Exponet")-4));
+		
+		if(Version != Integer.parseInt(VersionNumber))
+			return "{ \"Login_Success\" : \"Version_Number_Wrong\"}";
+				
+		System.out.println("Encyrpted Number Recieved is " + User_Password_Encrypted);
+		
+		BigInteger decrypted = RSA.DecryptMessage_BigInteger(new BigInteger(User_Password_Encrypted));
+		System.out.println("Decyrpyed Number is " + decrypted);
+		
+		String password = DATABASE_UTILS.IntToString(decrypted);
+		System.out.println("Number to String yeilds " + password);
+		
+		
+		if(DATABASE_UTILS.Verfiy_Login(User_Email, password))
+			return "{ \"Login_Success\" : \"True\"}";
+		else
+			return "{ \"Login_Success\" : \"Wrong_Password\"}";
+		}
+		catch(Exception e)
+		{
+			System.out.println("GASP! Something went wrong. " + e.getMessage());
+			return "{ \"Login_Success\" : \""+  e.getMessage() +"\"}";
+		}
+	
+	}
+	
 	/**
 	 * 
 	 * @return All Restaurants
@@ -207,6 +258,7 @@ public class MainController {
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
 	
+		System.out.println("Getting RSA Keys");
 		if(RSA == null)
 			RSA = new RSA_Encyption();
 		
@@ -231,7 +283,7 @@ public class MainController {
 		int Version = Integer.parseInt(JSONreturned.substring(JSONreturned.indexOf("Version") + 12, JSONreturned.indexOf("Encyption_Exponet")-4));
 		
 		if(Version != Integer.parseInt(VersionNumber))
-			return "{ \"Success\" : \"False\"}";
+			return "{ \"Success\" : \"Version_Number_Wrong\"}";
 		
 		BigInteger deycrptedCode = RSA.DecryptMessage(Integer.parseInt(EncryptedCode));
 		boolean added = DATABASE_POST.Add_New_AES_Key(User_ID, deycrptedCode.toString());
