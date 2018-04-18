@@ -8,9 +8,26 @@ public class RSA_Encyption
 {
 	public static final int SIZE = 5000; //backup version
 	public static final int SPREAD = 1000; //Max difference maximum prime 
+	boolean pullLargePrime = true;
+	
 	KeySet keys = null;	
 	static ArrayList<Integer> primes = new ArrayList<Integer>();
 
+	String[] largePrime = {
+			"671998030559713968361666935769",
+			"282174488599599500573849980909",
+			"521419622856657689423872613771",
+			"362736035870515331128527330659",
+			"115756986668303657898962467957",
+			"590872612825179551336102196593",
+			"564819669946735512444543556507",
+			"513821217024129243948411056803",
+			"416064700201658306196320137931",
+			"280829369862134719390036617067"
+	};
+	
+	
+	
 	/**
 	 *  Generates new RSA Encryption keys and posts them to the database
 	 */
@@ -121,25 +138,40 @@ public class RSA_Encyption
 		BigInteger p;
 		BigInteger q;
 		
-		//if the database is down, do it the old way.
-		if(prime1.equalsIgnoreCase("Null") || prime2.equalsIgnoreCase("Null"))
-		{
-			//Old Way
-			addPrimes(SIZE);
-			primes.remove(0);
-			removePrimes(.95); //Remove the first 95% of primes. 
-			
-			int firstPrime = (int) (Math.random() * primes.size());
-			p = new BigInteger("" + primes.get(firstPrime));
-			primes.remove(firstPrime);
-			
-			q = new BigInteger("" + primes.get((int) (Math.random() * primes.size())));
 		
+		if(pullLargePrime)
+		{
+			 random1 = (int) (Math.random() * 10);
+			 random2 = (int) (Math.random() * 10);
+			
+			while(random1 == random2)
+				random2 = (int) (Math.random() * 10);
+			
+			p = new BigInteger(largePrime[random1]);
+			q = new BigInteger(largePrime[random2]);
 		}
 		else
 		{
-			p = new BigInteger(prime1);
-			q = new BigInteger(prime2);
+			//if the database is down, do it the old way.
+			if(prime1.equalsIgnoreCase("Null") || prime2.equalsIgnoreCase("Null"))
+			{
+				//Old Way
+				addPrimes(SIZE);
+				primes.remove(0);
+				removePrimes(.95); //Remove the first 95% of primes. 
+				
+				int firstPrime = (int) (Math.random() * primes.size());
+				p = new BigInteger("" + primes.get(firstPrime));
+				primes.remove(firstPrime);
+				
+				q = new BigInteger("" + primes.get((int) (Math.random() * primes.size())));
+			
+			}
+			else
+			{
+				p = new BigInteger(prime1);
+				q = new BigInteger(prime2);
+			}
 		}
 		
 		BigInteger n = p.multiply(q);	

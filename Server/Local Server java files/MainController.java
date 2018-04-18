@@ -47,11 +47,20 @@ public class MainController {
 		if(Version != Integer.parseInt(VersionNumber))
 			return "{ \"Login_Success\" : \"Version_Number_Wrong\"}";
 				
-		System.out.println("Encyrpted Number Recieved is " + User_Password_Encrypted);
+		//Simulated Encyrpyion 
+		System.out.println("Simualtion of Ecyption");
+		String passwordz = "gocyclones";
+		String passTest = DATABASE_UTILS.StringToInt(passwordz);
+		System.out.println("Password " + passwordz + " int rep " + passTest);
+		BigInteger encyrpted = RSA.EncryptMessage_Big_Integer(new BigInteger(passTest));
+		System.out.println("Encyrpted " + encyrpted);
+		System.out.println("Decrypted " + RSA.DecryptMessage_BigInteger(encyrpted));
 		
+		//Test for system
+		System.out.println("Actual data");
+		System.out.println("Encyrpted Number Recieved is " + User_Password_Encrypted);
 		BigInteger decrypted = RSA.DecryptMessage_BigInteger(new BigInteger(User_Password_Encrypted));
 		System.out.println("Decyrpyed Number is " + decrypted);
-		
 		String password = DATABASE_UTILS.IntToString(decrypted);
 		System.out.println("Number to String yeilds " + password);
 		
