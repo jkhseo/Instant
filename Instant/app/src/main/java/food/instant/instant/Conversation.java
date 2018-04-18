@@ -11,14 +11,17 @@ public class Conversation {
     private ArrayList<Message> messages;
     private String type;
     private int id;
-    public Conversation(String type,int id){
+    private int Rest_ID;
+    public Conversation(String type,int id, int Rest_ID){
         this.type = type;
         this.id = id;
+        this.Rest_ID = Rest_ID;
     }
-    public Conversation(ArrayList<Message> messages,String type, int id){
+    public Conversation(ArrayList<Message> messages,String type, int id,int Rest_ID){
         this.messages=messages;
         this.type=type;
         this.id=id;
+        this.Rest_ID= Rest_ID;
 
     }
 
@@ -52,5 +55,8 @@ public class Conversation {
 
     public void setMessages(ArrayList<Message> messages) {
         this.messages = messages;
+    }
+    public int getRest_ID() {
+        return Rest_ID;
     }
 }

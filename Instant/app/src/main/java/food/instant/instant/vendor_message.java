@@ -1,16 +1,17 @@
 package food.instant.instant;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -20,28 +21,33 @@ import java.util.HashMap;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link user_home_messages.OnFragmentInteractionListener} interface
+ * {@link vendor_message.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link user_home_messages#newInstance} factory method to
+ * Use the {@link vendor_message#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class user_home_messages extends Fragment {
+public class vendor_message extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private ArrayList<Conversation> conversations;
+    private int Rest_ID;
+    private messages_adapter adapter;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-    private messages_adapter adapter;
-    private ArrayList<Conversation> conversations;
 
     private OnFragmentInteractionListener mListener;
 
-    public user_home_messages() {
-        // Required empty public constructor
+    public vendor_message() {
         conversations = new ArrayList<>();
+
+    }
+    @SuppressLint("ValidFragment")
+    public vendor_message(int Rest_ID){
+        this.Rest_ID=Rest_ID;
     }
 
     /**
@@ -50,17 +56,27 @@ public class user_home_messages extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment user_home_messages.
+     * @return A new instance of fragment vender_message.
      */
     // TODO: Rename and change types and number of parameters
-    public static user_home_messages newInstance(String param1, String param2) {
-        user_home_messages fragment = new user_home_messages();
+    public static vendor_message newInstance(String param1, String param2) {
+        vendor_message fragment = new vendor_message();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+    }
+
     public void addMessage(Message message){
         for(Conversation c : conversations){
             if(c.getId()==message.getSenderID()){
@@ -69,14 +85,6 @@ public class user_home_messages extends Fragment {
             }
         }
         adapter.notifyDataSetChanged();
-    }
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
@@ -105,7 +113,7 @@ public class user_home_messages extends Fragment {
     private void getAllMessages() {
         OrderDbHelper dbHelper = new OrderDbHelper(getContext());
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        Cursor cursor = dbHelper.readMessages(database);
+        Cursor cursor = dbHelper.getRestMessages(database,Rest_ID);
         String Message,SenderType,RecieverType;
         int SenderID,RecieverID,Rest_ID;
         Message temp;
@@ -143,6 +151,7 @@ public class user_home_messages extends Fragment {
         dbHelper.close();
 
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

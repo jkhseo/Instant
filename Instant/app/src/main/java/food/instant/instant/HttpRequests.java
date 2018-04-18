@@ -23,6 +23,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigInteger;
+import java.util.ArrayList;
+
+import static food.instant.instant.EncryptionHelper.AES_EncryptionHelper;
 
 /**
  * Contains static HTTP GET and POST requests made on the network using
@@ -68,8 +72,10 @@ public class HttpRequests {
      * @param handler - reference to a handler where the results of the GET method will be sent
      */
     public static void HttpGET(String path, final Handler handler) {
+
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
-        String localurl = "http://10.26.12.74:8080/demo/"+path;
+        String localurl = "http://10.26.180.46:8080/demo/"+path;
+        //AES_EncryptionHelper(path);
         OkHttpClient client = new OkHttpClient();
         com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
@@ -92,7 +98,7 @@ public class HttpRequests {
                            msg.what = GlobalConstants.RESTAURANT_SEARCH_CODE;
                        if (responseObject.has("Fuzzy_Search_Results"))
                            msg.what = GlobalConstants.FUZZY_SEARCH_CODE;
-                       if(responseObject.has("Get_Password"))
+                       if(responseObject.has("Login_Success"))
                            msg.what = GlobalConstants.PASSWORD;
                        if(responseObject.has("All_User_Info"))
                            msg.what = GlobalConstants.USERINFO;
@@ -112,7 +118,9 @@ public class HttpRequests {
                            msg.what = GlobalConstants.UPDATE_FOOD;
                        if(responseObject.has("Order_Status"))
                            msg.what = GlobalConstants.UPDATE_STATUS;
-                       //restaurantsearchresults
+                       if(responseObject.has("Keys")){
+                           msg.what = GlobalConstants.RSA_KEY;
+                       }
                        msg.obj = responseObject;
                        handler.sendMessage(msg);
                    }

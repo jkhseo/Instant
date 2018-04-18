@@ -1,6 +1,9 @@
 package food.instant.instant;
 
+import android.content.Context;
+
 import java.math.BigInteger;
+import java.util.Random;
 
 /**
  * Created by mpauk on 4/10/2018.
@@ -8,22 +11,52 @@ import java.math.BigInteger;
 
 public class EncryptionHelper {
     /**
-     *The
-     * @param message decrypted message
+     *
+     * @param message The decrypted message
      * @return Encrypted Message
      */
-    public BigInteger EncryptMessage(int message)
+    public static BigInteger EncryptMessage_Big_Integer(BigInteger message,BigInteger RSA_KEY,BigInteger Exponent)
     {
-        /*String strMessage = ""+message;
-        String strN = ""+ keys.n;
-        String strEncryptionExponet = "" + keys.EncryptionExponet;
+        System.out.println("RSA_KEY"+RSA_KEY);
+        System.out.println("Exponent"+Exponent);
+        String strN = RSA_KEY.toString();
+        String strEncryptionExponet = Exponent.toString();
         BigInteger nBIG = new BigInteger(strN);
         BigInteger encryptionExponetBIG = new BigInteger(strEncryptionExponet);
-        BigInteger ans = new BigInteger(strMessage);
-        System.out.println(ans + " ^ " + encryptionExponetBIG + " % " + nBIG);
-        ans = ans.modPow(encryptionExponetBIG, nBIG);
-        return ans;*/
+        message = message.modPow(encryptionExponetBIG, nBIG);
+        return message;
+    }
+    public static String AES_EncryptionHelper(String path){
+        String[] unencryptedData = path.replaceAll("&","=").split("=");
+        BigInteger[] numberRepresentation = new BigInteger[unencryptedData.length];
+        for(int i=0;i<unencryptedData.length;i++){
+            numberRepresentation[i] = new BigInteger(stringToInt(unencryptedData[i]));
+        }
+        for(int i=0;i<unencryptedData.length;i++){
+            path = path.replace(unencryptedData[i],numberRepresentation[i].toString());
+        }
+        return path;
+    }
+    public static BigInteger AES_Encrypt_Message(BigInteger message, int AESKEY){
         return null;
+    }
+
+    public static String stringToInt(String text){
+        return new BigInteger(text.getBytes()).toString();
+    }
+    public static String intToString(String integer){
+        return new String(new BigInteger(integer).toByteArray());
+    }
+    public static void main(String[] args){
+        System.out.println(stringToInt("password"));
+    }
+    //string
+    //integer
+    //encrypted integer
+
+    public static int generateAESKEY(){
+        Random random = new Random();
+        return random.nextInt(10000)+10000;
 
     }
 

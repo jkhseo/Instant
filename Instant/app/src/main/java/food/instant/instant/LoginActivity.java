@@ -2,6 +2,7 @@ package food.instant.instant;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -26,7 +28,11 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.math.BigInteger;
 
+import static food.instant.instant.EncryptionHelper.EncryptMessage_Big_Integer;
+import static food.instant.instant.EncryptionHelper.intToString;
+import static food.instant.instant.EncryptionHelper.stringToInt;
 import static food.instant.instant.HttpRequests.HttpGET;
 
 public class LoginActivity extends AppCompatActivity {
@@ -90,9 +96,25 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    OrderDbHelper dbHelper = new OrderDbHelper(c);
+                    Cursor c  = dbHelper.getRSAInfo(dbHelper.getReadableDatabase());
+                    c.moveToFirst();
+                    String RSA_KEY = c.getString(c.getColumnIndex(KeyContract.KeyEntry.SESSION_KEY_VALUE));
+                    String Exponent = c.getString(c.getColumnIndex(KeyContract.KeyEntry.ENCRYPTION_EXPONENT));
+                    int version = c.getInt(c.getColumnIndex(KeyContract.KeyEntry.VERSION));
+                    System.out.println(password);
+                    String integerRep = stringToInt(password);
+                    System.out.println("Integer Rep Unencrypted: "+integerRep);
+                    System.out.println("String Rep"+ intToString(integerRep));
+                    BigInteger encrypted = EncryptMessage_Big_Integer(new BigInteger(integerRep),new BigInteger(RSA_KEY),new BigInteger(Exponent));
+                    System.out.println("Integer Rep Encrypted: "+ encrypted);
                     handler = new LoginHandler(LoginActivity.this, password);
-                    HttpGET("getPassword?User_Email=" + username, handler);
+                    String path = "verifyLogin?VersionNumber="+version+"&User_Email="+username+"&User_Password_Encrypted="+encrypted;
+                    //String path = "getPassword?User_Email=" + username;
+                    System.out.println(path);
+                    HttpGET(path, handler);
                 }
+                //VersionNumber, User_Email, User_Password_Encrypted
             }
         });
 
@@ -134,24 +156,28 @@ public class LoginActivity extends AppCompatActivity {
             if(msg.what == GlobalConstants.PASSWORD) {
                 LoginActivity login = loginActivity.get();
                 if (login != null) {
-                    JSONArray response = null;
+                    JSONObject response = null;
                     String gottenPass = "";
-
+                    //version number wrong
                     //Get the stupid json and store the password in the String
                     try {
-                        response = ((JSONObject) msg.obj).getJSONArray("Get_Password");
-                        gottenPass = (String) ((JSONObject) response.get(0)).get("User_Password");
+                        response = (JSONObject) msg.obj;
+                        gottenPass = (String) response.get("Login_Success");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                     //check if login credentials were correct
-                    if (gottenPass.equals(password)) {
+                    if (gottenPass.equals("True")) {
                         HttpGET("getAllUserInfo?User_Email=" + username, login.handler);
-                    } else {
+                    }
+                    else if(gottenPass.equals("Wrong_Password")) {
                         Toast.makeText(c, "Invalid username/password", Toast.LENGTH_SHORT).show();
                         etUsername.setText("");
                         etPassword.setText("");
+                    }
+                    else{
+                        System.out.println(gottenPass);
                     }
                     //Log.d(TAG, response.toString());
                 }

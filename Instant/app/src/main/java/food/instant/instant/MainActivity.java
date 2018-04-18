@@ -18,18 +18,26 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
 
+import java.security.interfaces.RSAKey;
 import java.util.List;
 
+import static food.instant.instant.HttpRequests.HttpGET;
 
-public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, user_home_food.OnFragmentInteractionListener, user_home_order.OnFragmentInteractionListener , VendorCompletedOrdersFragment.OnFragmentInteractionListener, VendorPendingOrdersFragment.OnFragmentInteractionListener, vendor_home_order.OnFragmentInteractionListener, VendorConfirmedOrdersFragment.OnFragmentInteractionListener,user_home_chat.OnFragmentInteractionListener, user_home_messages.OnFragmentInteractionListener, vendor_my_restaurants.OnFragmentInteractionListener, vendor_add_restaurant.OnFragmentInteractionListener, vendor_menu_details.OnFragmentInteractionListener{
+
+public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, user_home_food.OnFragmentInteractionListener, user_home_order.OnFragmentInteractionListener , VendorCompletedOrdersFragment.OnFragmentInteractionListener, VendorPendingOrdersFragment.OnFragmentInteractionListener, vendor_home_order.OnFragmentInteractionListener, VendorConfirmedOrdersFragment.OnFragmentInteractionListener,user_home_chat.OnFragmentInteractionListener, user_home_messages.OnFragmentInteractionListener, vendor_my_restaurants.OnFragmentInteractionListener, vendor_add_restaurant.OnFragmentInteractionListener, vendor_menu_details.OnFragmentInteractionListener, vendor_messages.OnFragmentInteractionListener{
 
 
 
     private Context c;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
+    private MainActivityHandler handler;
     private boolean serviceStarted = false;
     private static String TAG = "MainActivity";
 
@@ -68,7 +76,15 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                 switch (item.getItemId())
                 {
                     case(R.id.nav_messages):
-                        swapFragments(new user_home_messages());
+                        if(SaveSharedPreference.getType(c).equals("Vendor")){
+                            swapFragments(new vendor_messages());
+                        }
+                        else{
+                            swapFragments(new user_home_messages());
+                        }
+                        break;
+                    case(R.id.nav_home_user):
+                        swapFragments(new user_home());
                         break;
                     case(R.id.nav_login):
                         Intent loginIntent = new Intent(c, LoginActivity.class);
@@ -129,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
 
     public void bindService(){
         Intent intent = new Intent(this,ChatService.class);
-        MainActivityHandler handler = new MainActivityHandler(this);
         Messenger messenger = new Messenger(handler);
         Bundle bundle = new Bundle();
         bundle.putParcelable("Handler",messenger);
@@ -146,6 +161,12 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
             serviceStarted=true;
             bindService();
         }
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        handler = new MainActivityHandler(this);
+        HttpGET("getRSAPublicKey",handler);
     }
     @Override
     protected void onDestroy() {
@@ -388,24 +409,43 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
             MainActivity activity = mainActivity.get();
             FragmentManager manager = activity.getSupportFragmentManager();
             List<Fragment> list = manager.getFragments();
-            Message temp = (Message)msg.obj;
-            System.out.println("Received"+list.size());
-            if(list!=null&&list.size()==1){
-                if(list.get(0).getClass().getSimpleName().equals("user_home_chat")){
-                    user_home_chat chat = (user_home_chat) list.get(0);
-                    if(chat.getSenderInfo().equals(temp.getSenderType()+temp.getSenderID()))
-                        chat.addMessage((Message)msg.obj);
+            if(msg.what== GlobalConstants.RSA_KEY) {
+                String RSA_KEY;
+                String EncryptionExponent;
+                int Version;
+                try {
+                    JSONArray object = ((JSONObject)msg.obj).getJSONArray("Keys");
+                    RSA_KEY = ((String)((JSONObject)object.get(0)).get("Public_Key"));
+                    Version = Integer.parseInt((String)((JSONObject)object.get(0)).get("Version"));
+                    EncryptionExponent = ((String) ((JSONObject)object.get(0)).get("Encyption_Exponet"));
+                    OrderDbHelper dbHelper = new OrderDbHelper(activity);
+                    dbHelper.insertRSAInfo(dbHelper.getWritableDatabase(),RSA_KEY,EncryptionExponent,Version);
+                    dbHelper.close();
 
-                }
-                else if(list.get(0).getClass().getSimpleName().equals("user_home_messages")){
-                    user_home_messages messages = (user_home_messages)list.get(0);
-                    messages.addMessage(temp);
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
-            OrderDbHelper dbHelper = new OrderDbHelper(activity);
-            SQLiteDatabase database =  dbHelper.getWritableDatabase();
-            dbHelper.addMessage(temp,database);
-            dbHelper.close();
+            else {
+                Message temp = (Message) msg.obj;
+                System.out.println("Received" + list.size());
+                if (list != null && list.size() == 1) {
+                    if (list.get(0).getClass().getSimpleName().equals("user_home_chat")) {
+                        user_home_chat chat = (user_home_chat) list.get(0);
+                        if (chat.getSenderInfo().equals(temp.getSenderType() + temp.getSenderID()))
+                            chat.addMessage((Message) msg.obj);
+
+                    } else if (list.get(0).getClass().getSimpleName().equals("user_home_messages")) {
+                        user_home_messages messages = (user_home_messages) list.get(0);
+                        messages.addMessage(temp);
+                    }
+                }
+                OrderDbHelper dbHelper = new OrderDbHelper(activity);
+                SQLiteDatabase database = dbHelper.getWritableDatabase();
+                dbHelper.addMessage(temp, database);
+                dbHelper.close();
+            }
+
         }
     }
     @Override

@@ -3,10 +3,12 @@ package food.instant.instant;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 /**
  * Created by mpauk on 4/12/2018.
@@ -27,14 +29,14 @@ public class ImageAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
-        return false;
+        return view == (object);
     }
     @Override
     public Object instantiateItem(ViewGroup viewGroup, int position){
         View view =  LayoutInflater.from(context).inflate(R.layout.view_pager_element, null);
         ImageView imageView = view.findViewById(R.id.restaurant_image);
         imageView.setImageBitmap(bitmaps[position]);
-        viewGroup.addView(imageView);
+        ((ViewPager)viewGroup).addView(view);
         return view;
     }
 }

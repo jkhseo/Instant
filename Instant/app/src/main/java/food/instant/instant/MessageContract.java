@@ -15,7 +15,6 @@ public class MessageContract {
         public static final String RECIEVER_ID = "rec_id";
         public static final String SENDER_TYPE = "send_type";
         public static final String SENDER_ID = "send_id";
-
-
+        public static final String REST_ID = "rest_id";
     }
 }

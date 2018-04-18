@@ -232,12 +232,12 @@ public class user_home_restaurant extends Fragment {
                     user_id=10;
                 else
                     user_id=13;
-                ((MainActivity)getActivity()).swapFragments(new user_home_chat("Vendo",user_id));
+                ((MainActivity)getActivity()).swapFragments(new user_home_chat("Vendo",user_id,restaurant.getRest_ID()));
             }
         });
         ViewPager pager = view.findViewById(R.id.viewPager);
 
-        new GetServerImages(pager,getContext()).execute("http://proj-309-sd-4.cs.iastate.edu/UDCC1.jpg");
+        new GetServerImages(pager,getContext()).execute("http://proj-309-sd-4.cs.iastate.edu/Images/UDCC1.jpg","http://proj-309-sd-4.cs.iastate.edu/Images/UDCC2.jpg");
         RestaurantHandler handler = new RestaurantHandler(this);
         HttpGET("getMenu?Restaurant_ID="+restaurant.getRest_ID(),handler);
         //HttpGET("get",handler);

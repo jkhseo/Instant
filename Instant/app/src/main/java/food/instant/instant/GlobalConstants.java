@@ -76,4 +76,6 @@ public class GlobalConstants {
      * Response for updating a Food POST Request
      */
     public static final int UPDATE_FOOD = 147;
+
+    public static final int RSA_KEY= 999;
 }
