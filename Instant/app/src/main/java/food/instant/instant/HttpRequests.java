@@ -25,10 +25,19 @@ import org.json.JSONObject;
 import java.io.IOException;
 
 /**
+ * Contains static HTTP GET and POST requests made on the network using
+ * OkHttp network library.
+ *
  * Created by mpauk on 2/7/2018.
  */
 
 public class HttpRequests {
+    /**
+     * Makes requests to Google Maps API given a url and a handler reference that will be used to
+     * send the results back to the class where the method was called from.
+     * @param url - Google Maps API URL path
+     * @param handler - Handler reference used to pass results back to calling class
+     */
     public static void GoogleMapsGET(String url, final Handler handler){
         OkHttpClient client = new OkHttpClient();
         com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).build();
@@ -52,6 +61,12 @@ public class HttpRequests {
             }
         });
     }
+
+    /**
+     * Makes a GET request to the proj-309-sd-4 server
+     * @param path - path on the server of the SpringBoot GET method
+     * @param handler - reference to a handler where the results of the GET method will be sent
+     */
     public static void HttpGET(String path, final Handler handler) {
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
         String localurl = "http://10.26.12.74:8080/demo/"+path;
@@ -97,6 +112,8 @@ public class HttpRequests {
                            msg.what = GlobalConstants.UPDATE_FOOD;
                        if(responseObject.has("Order_Status"))
                            msg.what = GlobalConstants.UPDATE_STATUS;
+                       if(responseObject.has("Restaurant_Name"))
+                           msg.what = GlobalConstants.REFRESH_REST;
                        //restaurantsearchresults
                        msg.obj = responseObject;
                        handler.sendMessage(msg);
@@ -108,6 +125,12 @@ public class HttpRequests {
             }
         });
     }
+
+    /**
+     * Method to POST data to the proj-309 server.
+     * @param path - path of the POST method in the SpringBoot server code
+     * @param handler - handler reference used to send data back to the calling class.
+     */
     public static void HttpPost(String path, final Handler handler){
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
         //String url = "http://10.26.12.74:8080/demo/"+path;
@@ -126,10 +149,24 @@ public class HttpRequests {
                 try {
                     Message msg = handler.obtainMessage();
                     JSONObject responseObject = new JSONObject(response.body().string());
-                    if(responseObject.has("Add_Food_Item_Success"))
+                    if(responseObject.has("Add_Food_Item_Success")) {
                         msg.what = GlobalConstants.ADD_FOOD;
-                    else
+                    }
+                    else if(responseObject.has("Delete_Food")) {
+                        msg.what = GlobalConstants.DELETE_FOOD;
+                    }
+                    else if(responseObject.has("Update_Food_Item_Success")){
+                        msg.what = GlobalConstants.EDIT_FOOD;
+                    }
+                    else if(responseObject.has("Update_Restaurant")){
+                        msg.what = GlobalConstants.UPDATE_REST;
+                    }
+                    else if(responseObject.has("Delete_Restaurant")){
+                        msg.what = GlobalConstants.DELETE_REST;
+                    }
+                    else {
                         msg.what = GlobalConstants.ORDER_SUBMISSION_RESPONSE;
+                    }
                     msg.obj = responseObject;
                     handler.sendMessage(msg);
                 } catch (JSONException e) {

@@ -579,9 +579,49 @@ public class DATABASE_GET
 		  return " {\"Nearest_Restaurants\":" + json.toString() + "}";
 
 	}
+	
+	public static String getPrime(int downList)
+	{
 
-	//A non JSON returning function that gets the next food number for a restaurant
-	//Written by Adam de Gala. 
+		try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        
+		        
+	            String query = "SELECT Prime from db309sd4.Prime_Numbers order by Number DESC";
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	            ResultSet rs = stmt.executeQuery(query);
+	            
+
+	            while(rs.next() && downList > 0)
+	            {
+	            		downList--;
+	            }
+	            if(rs.next())
+	            		return rs.getString("Prime");
+	            else
+	            		return "Null";
+	         
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	           return "Null";
+	      }
+	
+	}
+
+	/**
+	 * A non JSON returning function that gets the next food number for a restaurant
+	 * @param rest_ID
+	 * @return Next Food Number
+	 * 
+	 * Written by Adam de Gala.
+	 */ 
 	public static int getNextFoodID(String rest_ID)
 	{
 		
@@ -617,8 +657,13 @@ public class DATABASE_GET
 	
 	}
 	
-		//A non JSON returning function that gets the next order number for a restaurant
-		//Written by Adam de Gala. 
+		/**
+		 * A non JSON returning function that gets the next order number for a restaurant
+		 * @param rest_ID
+		 * @return Next order number
+		 * 
+		 * Written by Adam de Gala. 
+		 */
 		public static int getNextOrderID(String rest_ID)
 		{
 			
@@ -680,9 +725,9 @@ public class DATABASE_GET
 		            		String version = rs.getString("Version");
 		            		String Encyption_Exponet = rs.getString("Encyption_Exponet");
 		            		
-		            		result = "{ \"Public_Key\" : \"" + publicKey + "\",";
+		            		result = "{ \"Keys\" : [ { \"Public_Key\" : \"" + publicKey + "\",";
 		            		result += " \"Version\" : \"" + version + "\",";
-		            		result += " \"Encyption_Exponet\" : \"" + Encyption_Exponet + "\"}";
+		            		result += " \"Encyption_Exponet\" : \"" + Encyption_Exponet + "\"  } ] }";
 		            		
 		            		
 		            }
@@ -704,8 +749,12 @@ public class DATABASE_GET
 		}
 	
 	
-	//Method to FuzzySearch for Restaurant 
-	//Written by Adam de Gala
+	/**
+	 * Method to FuzzySearch for Restaurant 
+	 * @param stringStart The start of the search
+	 * @return JSON of restuarants matching
+	 * //Written by Adam de Gala
+	 */
 	public static String fuzzySearchRestaurant(String stringStart)
 	{
 		 String result = "";
@@ -745,8 +794,13 @@ public class DATABASE_GET
 		  return result;
 	}
 	
-		//Method to Search for Restaurant
-		//Written by Adam de Gala. 
+		/**
+		 * Method to Search for Restaurant
+		 * @param searching_Keywords Keywords to search for, delimited by commas
+		 * @return JSON return of Restaurant
+		 * 
+		 * Written by Adam de Gala. 
+		 */
 		public static String searchRestaurant_KeyWords(String searching_Keywords)
 		{
 			 String result = "";

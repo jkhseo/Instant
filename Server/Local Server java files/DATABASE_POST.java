@@ -1,8 +1,8 @@
 package hello;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -152,7 +152,6 @@ public class DATABASE_POST
 		 * 
 		 * @return True if success, false otherwise
 		 */
-
 		public static boolean Add_Food(String Rest_ID, String Food_Name, String Food_Price,  String Food_Desc, String Menu_ID,String Food_Tags_Main, String Food_Tags_Secondary, String Food_ID)
 		{ 
 			 try
@@ -413,7 +412,7 @@ public class DATABASE_POST
 			 * 
 			 * @return True if success, false otherwise
 			 */
-			public static boolean Add_New_RSA_Key(int n, int encryptionExponet)
+			public static boolean Add_New_RSA_Key(BigInteger n, BigInteger encryptionExponet)
 			{ 
 				 try
 				 {  		
@@ -425,8 +424,8 @@ public class DATABASE_POST
 
 			            String query = "INSERT INTO Server_Keys ( Public_Key ,  Encyption_Exponet)";
 			            query += " VALUES ( ";
-			            query += "'" + n + "', ";
-			            query += "'" + encryptionExponet + "'); ";
+			            query += "'" + n.toString() + "', ";
+			            query += "'" + encryptionExponet.toString() + "'); ";
 			            
 			           
 			            System.out.println(query);
@@ -494,7 +493,9 @@ public class DATABASE_POST
 
 	}
 	
-
+	
+	
+	
 		
 		/**
 		 * Adds a ESA Key Unique to a user. 
@@ -502,7 +503,6 @@ public class DATABASE_POST
 		 * @param ESA_Key The Key
 		 * @return True if success, false otherwise
 		 */
-
 		public static boolean Add_New_AES_Key(String User_ID, String AES_Key)
 		{ 
 			 try

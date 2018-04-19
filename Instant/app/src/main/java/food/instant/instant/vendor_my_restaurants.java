@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
 import static food.instant.instant.HttpRequests.HttpGET;
@@ -171,9 +172,14 @@ public class vendor_my_restaurants extends Fragment {
                         }
                         String name = (String) ((JSONObject) response.get(i)).get("Rest_Name");
                         String address = (String) ((JSONObject) response.get(i)).get("Rest_Address");
+                        String mainCuis = (String) ((JSONObject) response.get(i)).get("Rest_Type_Cuisine_Main");
+                        String secCuis = "";
+                        if(((JSONObject) response.get(i)).has("Rest_Type_Cuisine_Secondary")) {
+                            secCuis = (String) ((JSONObject) response.get(i)).get("Rest_Type_Cuisine_Secondary");
+                        }
                         double rating = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Rest_Rating"));
                         int Rest_ID = (int) ((JSONObject) response.get(i)).get("Rest_ID");
-                        these_restaurants.add(new Restaurant(Rest_ID, name, latitude, longitude, address, rating));
+                        these_restaurants.add(new Restaurant(Rest_ID, name, latitude, longitude, address, rating, mainCuis, secCuis));
                     }
                     // + these_restaurants.get(0).getRest_ID()
                     Restaurant[] temp = new Restaurant[these_restaurants.size()];

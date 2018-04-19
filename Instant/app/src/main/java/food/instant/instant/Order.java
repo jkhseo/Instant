@@ -90,7 +90,7 @@ public class Order {
 
     /**
      * Constructor needed as part of the logic in storing the order into the sqlite database
-     * @param User_ID if of the user submitting this order
+     * @param User_ID id of the user submitting this order
      */
     public Order(int User_ID)
     {
@@ -98,61 +98,141 @@ public class Order {
         this.comments="";
     }
 
+    /**
+     * Accessor for this order's user id
+     * @return user id
+     */
     public int getUser_ID() { return this.User_ID;}
 
+    /**
+     * Accessor for this order's food object
+     * @return food object
+     */
     public Food getFood() {return this.food;}
 
+    /**
+     * Accessor for this order's comments
+     * @return comments
+     */
     public String getComments() {return this.comments;}
 
+    /**
+     * Accessor for this order's restaurant name
+     * @return restaurant name
+     */
     public String getRestaurant_Name() {
         return Restaurant_Name;
     }
 
+    /**
+     * Method to set the restaurant name of an order
+     * @param restaurant_Name new restaurant name
+     */
     public void setRestaurant_Name(String restaurant_Name) {
         Restaurant_Name = restaurant_Name;
     }
 
+    /**
+     * Method to set the food object for this order
+     * @param food new food to set it to
+     */
     public void setFood(Food food) {
         this.food = food;
     }
 
+    /**
+     * Accessor for the food quantity of this order
+     * @return the food quantity
+     */
     public int getFood_Quantity() {
         return Food_Quantity;
     }
 
+    /**
+     * Method to set the food quantity on this order
+     * @param food_Quantity the food quantity to set it to
+     */
     public void setFood_Quantity(int food_Quantity) {
         Food_Quantity = food_Quantity;
     }
 
+    /**
+     * Accessor to get the order id of this order
+     * @return the order id
+     */
     public int getOrder_ID() {
         return Order_ID;
     }
 
+    /**
+     * Method to set the order id of this order
+     * @param order_ID new order id to which this is being set
+     */
     public void setOrder_ID(int order_ID) {
         Order_ID = order_ID;
     }
 
+    /**
+     * Accessor to get the current status of this order
+     * @return the order status
+     */
     public char getStatus() {
         return status;
     }
 
+    /**
+     * Method to set the status of this order
+     * @param status status to which this order is being set
+     */
     public void setStatus(char status) {
         this.status = status;
     }
 
+    /**
+     * Accessor to get the Dummy Primary Key of this order
+     * @return the Dummy Primary Key
+     */
     public int getDummyPK(){ return this.Dummy_PK; }
 
+    /**
+     * Accessor to get the confirmation code of this order
+     * @return this order's confirmation code
+     */
     public int getOrder_Confirmation_Code(){ return this.Order_Confirmation_Code; }
 
+    /**
+     * Accessor to get the date that this order was submitted
+     * @return the date that this order was submitted
+     */
     public String getDate_submitted(){ return this.date_submitted; }
 
+    /**
+     * Accessor to get the time when this order will be picked up
+     * @return when this order will be picked up
+     */
     public String getDate_pickedUp(){ return this.date_pickedUp; }
 
+    /**
+     * Accessor to get the first name of the user that is associated with this order
+     * @return this order's user's first name
+     */
     public String getUser_First_Name(){ return this.User_First_Name; }
 
+    /**
+     * Accessor to get the last name of the user that is associated with this order
+     * @return this order's user's last name
+     */
     public String getUser_Last_Name(){ return this.User_Last_Name; }
 
+    /**
+     * Accessor to get the email of the user that is associated with this order
+     * @return this order's user's email
+     */
     public String getUser_Email(){ return this.User_Email; }
 
+    /**
+     * Accessor to get the restaurant id associated with this order
+     * @return this order's restaurant id
+     */
     public int getRest_ID(){ return this.Rest_ID; }
 }

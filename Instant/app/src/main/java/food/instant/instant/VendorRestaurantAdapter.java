@@ -35,6 +35,13 @@ public class VendorRestaurantAdapter extends ArrayAdapter<Restaurant> {
             }
         });
 
+        editRestaurant.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) context).swapFragments(new vendor_edit_restaurant(restaurant));
+            }
+        });
+
         return view;
     }
 }

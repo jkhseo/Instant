@@ -1,9 +1,10 @@
 package hello;
 
+import java.math.BigInteger;
 
-	public class KeySet 
+public class KeySet 
 	{
-		public int EncryptionExponet;
-		public int DecryptionExponet;
-		public int n;
+		public BigInteger EncryptionExponet;
+		public BigInteger DecryptionExponet;
+		public BigInteger n;
 	}
