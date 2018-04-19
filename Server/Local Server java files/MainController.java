@@ -89,6 +89,54 @@ public class MainController {
 		return DATABASE_GET.getAllRestaurant();
 	}
 	
+	@GetMapping(path="/getFullName")
+	public @ResponseBody String getFullName(@RequestParam String User_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getFullName(User_ID);
+	}
+	
+	@GetMapping(path="/getOwnerUserID")
+	public @ResponseBody String getOwnerUserID(@RequestParam String Rest_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getOwnerUserID(Rest_ID);
+	}
+
+	@GetMapping(path="/getImageURL")
+	public @ResponseBody String getImageURL(@RequestParam String Rest_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getImageURL(Rest_ID);
+	}
+
+	@GetMapping(path="/getAllRestaurantsWCompletedOrderForOwner")
+	public @ResponseBody String getAllRestaurantsWCompletedOrderForOwner(@RequestParam String User_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getAllRestaurantsWCompletedOrderForOwner(User_ID);
+	}
+	
+	@GetMapping(path="/getAllRestaurantsWConfirmedOrderForOwner")
+	public @ResponseBody String getAllRestaurantsWConfirmedOrderForOwner(@RequestParam String User_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getAllRestaurantsWConfirmedOrderForOwner(User_ID);
+	}
+
+	@GetMapping(path="/getAllRestaurantsWCancelledOrderForOwner")
+	public @ResponseBody String getAllRestaurantsWCancelledOrderForOwner(@RequestParam String User_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getAllRestaurantsWCancelledOrderForOwner(User_ID);
+	}
+	@GetMapping(path="/getAllRestaurantsWPendingOrderForOwner")
+	public @ResponseBody String getAllRestaurantsWPendingOrderForOwner(@RequestParam String User_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getAllRestaurantsWPendingOrderForOwner(User_ID);
+	}
+
 
 	@GetMapping(path="/getPassword")
 	public @ResponseBody String getPassword(@RequestParam String User_Email) 
