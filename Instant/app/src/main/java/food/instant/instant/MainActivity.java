@@ -17,6 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.lang.ref.WeakReference;
 
@@ -377,6 +381,15 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                     .addToBackStack(null)
                     .commit();
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+        fragment.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+
     private static class MainActivityHandler extends Handler {
         private final WeakReference<MainActivity> mainActivity;
         public MainActivityHandler(MainActivity mainActivity) {

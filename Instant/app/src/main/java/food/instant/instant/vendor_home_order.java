@@ -3,6 +3,7 @@ package food.instant.instant;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -21,6 +22,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +47,7 @@ import static food.instant.instant.HttpRequests.HttpPost;
  * create an instance of this fragment.
  */
 public class vendor_home_order extends Fragment {
-    private static class OrderHandler extends Handler {
+    private class OrderHandler extends Handler {
         /***************************************************************************************
          *    Title: Stack Overflow Answer to Question about static handlers
          *    Author: Tomasz Niedabylski
@@ -66,10 +71,10 @@ public class vendor_home_order extends Fragment {
                         OrderDbHelper dbHelper = new OrderDbHelper(order.getContext());
                         dbHelper.removePendingOrders(dbHelper.getWritableDatabase());
                         dbHelper.close();
-                        order.showPopup("Order Submitted Successfully");
+                        Toast.makeText(getContext(), "Order Confirmation Success!", Toast.LENGTH_SHORT).show();
                         ((MainActivity)order.getActivity()).swapFragments(new user_home());
                     } else {
-                        order.showPopup("Order Submission Failed");
+                        Toast.makeText(getContext(), "Order Confirmation Failed!", Toast.LENGTH_SHORT).show();
                     }
                 }
             } catch (JSONException e) {
@@ -94,6 +99,7 @@ public class vendor_home_order extends Fragment {
     private EditText totalPrice;
     private OrderHandler handler;
     private Calendar orderDT;
+    private static String TAG = "vendor_home_order";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -201,10 +207,39 @@ public class vendor_home_order extends Fragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                HttpPost("updateOrderStatus?Order_ID=" + order.get(0).getOrder_ID() + "&Rest_ID=" + order.get(0).getRest_ID() + "&Order_Status=Confirmed", handler);
+                IntentIntegrator integrator = new IntentIntegrator(getActivity());
+                integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+                integrator.setPrompt("Scan Code");
+                integrator.setCameraId(0);
+                integrator.setBeepEnabled(true);
+                integrator.setBarcodeImageEnabled(false);
+                integrator.initiateScan();
+
             }
         });
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(intentResult != null) {
+            if(intentResult.getContents() == null) {
+                Log.d("MainActivity", "Cancelled");
+                Toast.makeText(getContext(), "Cancelled", Toast.LENGTH_LONG).show();
+
+            } else {
+                Log.d("MainActivity", "Scanned");
+                int code = Integer.parseInt(intentResult.getContents());
+                if(code == order.get(0).getOrder_Confirmation_Code()) {
+                    Toast.makeText(getContext(), "Order Confirmation Success!", Toast.LENGTH_SHORT).show();
+                    HttpPost("updateOrderStatus?Order_ID=" + order.get(0).getOrder_ID() + "&Rest_ID=" + order.get(0).getRest_ID() + "&Order_Status=Confirmed", handler);
+                }
+                else{
+                    Toast.makeText(getContext(), "Invalid Code!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
