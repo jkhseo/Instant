@@ -74,7 +74,7 @@ public class HttpRequests {
     public static void HttpGET(String path, final Handler handler) {
 
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
-        String localurl = "http://10.26.180.46:8080/demo/"+path;
+        String localurl = "http://10.29.206.9:8080/demo/"+path;
         //AES_EncryptionHelper(path);
         OkHttpClient client = new OkHttpClient();
         com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).build();

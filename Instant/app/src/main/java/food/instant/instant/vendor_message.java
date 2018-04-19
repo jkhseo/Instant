@@ -48,6 +48,7 @@ public class vendor_message extends Fragment {
     @SuppressLint("ValidFragment")
     public vendor_message(int Rest_ID){
         this.Rest_ID=Rest_ID;
+        conversations = new ArrayList<>();
     }
 
     /**
@@ -85,6 +86,9 @@ public class vendor_message extends Fragment {
             }
         }
         adapter.notifyDataSetChanged();
+    }
+    public int getRest_ID(){
+        return this.Rest_ID;
     }
 
     @Override

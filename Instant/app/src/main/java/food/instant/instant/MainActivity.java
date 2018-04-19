@@ -25,12 +25,13 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 
 import java.security.interfaces.RSAKey;
+import java.util.Collections;
 import java.util.List;
 
 import static food.instant.instant.HttpRequests.HttpGET;
 
 
-public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, user_home_food.OnFragmentInteractionListener, user_home_order.OnFragmentInteractionListener , VendorCompletedOrdersFragment.OnFragmentInteractionListener, VendorPendingOrdersFragment.OnFragmentInteractionListener, vendor_home_order.OnFragmentInteractionListener, VendorConfirmedOrdersFragment.OnFragmentInteractionListener,user_home_chat.OnFragmentInteractionListener, user_home_messages.OnFragmentInteractionListener, vendor_my_restaurants.OnFragmentInteractionListener, vendor_add_restaurant.OnFragmentInteractionListener, vendor_menu_details.OnFragmentInteractionListener, vendor_messages.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements user_home_maps.OnFragmentInteractionListener, user_home_orders.OnFragmentInteractionListener, user_home.OnFragmentInteractionListener,user_home_restaurant.OnFragmentInteractionListener, user_home_search.OnFragmentInteractionListener, admin_home.OnFragmentInteractionListener, vendor_analytics.OnFragmentInteractionListener, vendor_edit_menu.OnFragmentInteractionListener, vendor_home.OnFragmentInteractionListener, vendor_orders.OnFragmentInteractionListener, vendor_restaurant_details.OnFragmentInteractionListener, user_home_food.OnFragmentInteractionListener, user_home_order.OnFragmentInteractionListener , VendorCompletedOrdersFragment.OnFragmentInteractionListener, VendorPendingOrdersFragment.OnFragmentInteractionListener, vendor_home_order.OnFragmentInteractionListener, VendorConfirmedOrdersFragment.OnFragmentInteractionListener,user_home_chat.OnFragmentInteractionListener, user_home_messages.OnFragmentInteractionListener, vendor_my_restaurants.OnFragmentInteractionListener, vendor_add_restaurant.OnFragmentInteractionListener, vendor_menu_details.OnFragmentInteractionListener, vendor_messages.OnFragmentInteractionListener,vendor_message.OnFragmentInteractionListener{
 
 
 
@@ -429,15 +430,23 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
             else {
                 Message temp = (Message) msg.obj;
                 System.out.println("Received" + list.size());
-                if (list != null && list.size() == 1) {
-                    if (list.get(0).getClass().getSimpleName().equals("user_home_chat")) {
-                        user_home_chat chat = (user_home_chat) list.get(0);
-                        if (chat.getSenderInfo().equals(temp.getSenderType() + temp.getSenderID()))
+                if (list != null) {
+                    list.removeAll(Collections.singleton(null));
+                    int index = list.size()-1;
+                    if (list.get(index).getClass().getSimpleName().equals("user_home_chat")) {
+                        user_home_chat chat = (user_home_chat) list.get(index);
+                        if (chat.getRestID()==temp.getRest_ID())
                             chat.addMessage((Message) msg.obj);
 
-                    } else if (list.get(0).getClass().getSimpleName().equals("user_home_messages")) {
-                        user_home_messages messages = (user_home_messages) list.get(0);
+                    } else if (list.get(index).getClass().getSimpleName().equals("user_home_messages")) {
+                        user_home_messages messages = (user_home_messages) list.get(index);
                         messages.addMessage(temp);
+                    }
+                    else if(list.get(index).getClass().getSimpleName().equals("vendor_message")){
+                        vendor_message message = (vendor_message)list.get(index);
+                        if(message.getRest_ID()==temp.getRest_ID()){
+                            message.addMessage(temp);
+                        }
                     }
                 }
                 OrderDbHelper dbHelper = new OrderDbHelper(activity);

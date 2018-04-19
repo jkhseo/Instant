@@ -34,7 +34,7 @@ public class OrderDbHelper extends SQLiteOpenHelper{
     public static final String CREATE_MESSAGE_TABLE = "create table " + MessageContract.MessageEntry.TABLE_NAME +
             "(" + MessageContract.MessageEntry.MESSAGE + " text," + MessageContract.MessageEntry.RECIEVER_TYPE + " text,"+
             MessageContract.MessageEntry.RECIEVER_ID + " number,"+ MessageContract.MessageEntry.SENDER_TYPE + " text,"+ MessageContract.MessageEntry.SENDER_ID
-            +" number,"+ MessageContract.MessageEntry.REST_ID + " number);";
+            +" number,"+ MessageContract.MessageEntry.REST_ID + " number,"+ MessageContract.MessageEntry.READ+" number);";
     /**
      * Key Table Creation
      */
@@ -234,5 +234,10 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         String[] columns = {KeyContract.KeyEntry.SESSION_KEY_VALUE, KeyContract.KeyEntry.ENCRYPTION_EXPONENT, KeyContract.KeyEntry.VERSION};
         Cursor cursor = database.query(KeyContract.KeyEntry.TABLE_NAME,columns,null,null,null,null,null);
         return cursor;
+    }
+    public void updateReadStatus(SQLiteDatabase database,int Rest_ID){
+        String query = "UPDATE " + MessageContract.MessageEntry.TABLE_NAME + " SET "+ MessageContract.MessageEntry.READ+"="+1;
+        System.out.println(query);
+        database.rawQuery(query,null);
     }
 }

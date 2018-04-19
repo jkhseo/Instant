@@ -78,6 +78,9 @@ public class user_home_chat extends Fragment {
         conversation.addMessage(message);
         adapter.notifyDataSetChanged();
     }
+    public int getRestID(){
+        return conversation.getRest_ID();
+    }
     public String getSenderInfo(){
         return conversation.getType()+conversation.getId();
     }
@@ -131,7 +134,7 @@ public class user_home_chat extends Fragment {
 
     private void getMessages() {
         OrderDbHelper dbHelper = new OrderDbHelper(getContext());
-        Cursor cursor = dbHelper.getUserMessages(dbHelper.getReadableDatabase(),conversation.getId(),conversation.getType());
+        Cursor cursor = dbHelper.getRestMessages(dbHelper.getReadableDatabase(),conversation.getRest_ID());
         cursor.moveToFirst();
         String Message,SenderType,RecieverType;
         int SenderID,RecieverID,Rest_ID;

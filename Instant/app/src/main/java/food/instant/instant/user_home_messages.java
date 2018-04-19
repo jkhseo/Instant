@@ -63,7 +63,7 @@ public class user_home_messages extends Fragment {
     }
     public void addMessage(Message message){
         for(Conversation c : conversations){
-            if(c.getId()==message.getSenderID()){
+            if(c.getRest_ID()==message.getRest_ID()){
                 c.addMessage(message);
                 break;
             }
@@ -109,7 +109,7 @@ public class user_home_messages extends Fragment {
         String Message,SenderType,RecieverType;
         int SenderID,RecieverID,Rest_ID;
         Message temp;
-        HashMap<String,Integer> conversationMap = new HashMap<String,Integer>();
+        HashMap<Integer,Integer> conversationMap = new HashMap<Integer,Integer>();
         cursor.moveToFirst();
         while(!cursor.isAfterLast()){
             Message = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.MESSAGE));
@@ -119,23 +119,18 @@ public class user_home_messages extends Fragment {
             RecieverID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.RECIEVER_ID));
             Rest_ID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.REST_ID));
             temp = new Message(RecieverID,RecieverType,Message,SenderType,SenderID,Rest_ID);
-            if(conversationMap.containsKey(RecieverType+RecieverID)){
-                conversations.get(conversationMap.get(RecieverType+RecieverID)).addMessage(temp);
-            }
-            else if(conversationMap.containsKey(SenderType+SenderID)){
-                conversations.get(conversationMap.get(SenderType+SenderID)).addMessage(temp);
+            if(conversationMap.containsKey(Rest_ID)){
+                conversations.get(conversationMap.get(Rest_ID)).addMessage(temp);
             }
             else{
                 ArrayList<Message> list = new ArrayList<>();
                 list.add(temp);
-                if(RecieverType.equals(SaveSharedPreference.getType(getContext()).substring(0,5))){
-                    conversationMap.put(SenderType+SenderID,conversations.size());
-                    conversations.add(new Conversation(list,SenderType,SenderID,Rest_ID));
+                conversationMap.put(Rest_ID,conversations.size());
+                if(SenderType.equals(SaveSharedPreference.getType(getContext()).substring(0,5))) {
+                    conversations.add(new Conversation(list, RecieverType,RecieverID, Rest_ID));
                 }
-                else {
-                    conversationMap.put(RecieverType+RecieverID,conversations.size());
-                    conversations.add(new Conversation(list, RecieverType, RecieverID,Rest_ID));
-
+                else{
+                    conversations.add(new Conversation(list,SenderType,SenderID,Rest_ID));
                 }
             }
             cursor.moveToNext();

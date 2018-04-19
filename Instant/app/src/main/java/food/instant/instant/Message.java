@@ -4,6 +4,8 @@ package food.instant.instant;
  * Created by mpauk on 3/20/2018.
  */
 
+import java.util.regex.Pattern;
+
 /**
  * Data object that represents a message, used for chat system
  */
@@ -59,9 +61,10 @@ public class Message {
         this.recieverID = Integer.parseInt(formattedMessage.substring(5,beginMessage));
         int endMessage = formattedMessage.lastIndexOf("::");
         String message = formattedMessage.substring(formattedMessage.indexOf("::")+2,endMessage);
-        String[] rest_ID = message.split("$^$");
+        String[] rest_ID = message.split(Pattern.quote("$^$"));
         this.Rest_ID = Integer.parseInt(rest_ID[rest_ID.length-1]);
-        this.message = message.substring(0,message.lastIndexOf("$^$",message.length()-2));
+        message = message.substring(0,message.lastIndexOf("$^$"));
+        this.message = message.substring(0,message.lastIndexOf("$^$"));
         this.senderType = formattedMessage.substring(endMessage+2,endMessage+7);
         this.senderID = Integer.parseInt(formattedMessage.substring(endMessage+7));
     }

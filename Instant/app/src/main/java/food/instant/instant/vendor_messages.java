@@ -55,7 +55,7 @@ public class vendor_messages extends Fragment {
         /*** End Code***/
         @Override
         public void handleMessage(android.os.Message msg) {
-            vendor_messages messages = vendorMessages.get();
+            final vendor_messages messages = vendorMessages.get();
             try {
                 JSONArray array = ((JSONObject)msg.obj).getJSONArray("Restaurant_From_OwnerUserEmail");
                 String Rest_Name;
@@ -69,12 +69,11 @@ public class vendor_messages extends Fragment {
                 ListView listView = messages.getView().findViewById(R.id.vendor_messages);
                 ArrayAdapter adapter = new ArrayAdapter(messages.getContext(),R.layout.vendor_messages_listelement,messages.rest_names);
                 listView.setAdapter(adapter);
-                listView.setTag(messages);
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                         int rest_id = ((vendor_messages)view.getTag()).rest_IDs.get(i);
-                        ((MainActivity)((vendor_message)view.getTag()).getActivity()).swapFragments(new vendor_message(rest_id));
+                         int rest_id = messages.rest_IDs.get(i);
+                        ((MainActivity)messages.getActivity()).swapFragments(new vendor_message(rest_id));
                     }
                 });
             } catch (JSONException e) {
@@ -87,7 +86,8 @@ public class vendor_messages extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     public vendor_messages() {
-        // Required empty public constructor
+        rest_IDs = new ArrayList<>();
+        rest_names = new ArrayList<>();
     }
 
     /**
@@ -123,7 +123,8 @@ public class vendor_messages extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_vendor_messages, container, false);
         VendorMessageHandler handler = new VendorMessageHandler(this);
-        HttpGET("getRestaurantFromOwnerUserID?UserID="+SaveSharedPreference.getId(getContext()),handler);
+        HttpGET("getRestaurantFromOwnerUserID?User_ID="+SaveSharedPreference.getId(getContext()),handler);
+        System.out.println("getRestaurantFromOwnerUserID?User_ID="+SaveSharedPreference.getId(getContext()));
         return view;
     }
 
