@@ -73,7 +73,7 @@ public class vendor_home_order extends Fragment {
                     Log.d(TAG, "Request made.........................");
                     if(isSuccess.equals("True")){
                         Toast.makeText(getContext(), "Order Update Success!", Toast.LENGTH_SHORT).show();
-                        getFragmentManager().popBackStackImmediate();
+                        ((MainActivity) order.getActivity()).swapFragments(new vendor_orders());
                     }
                     else{
                         Toast.makeText(getContext(), "Order Update Failed!", Toast.LENGTH_SHORT).show();
@@ -220,7 +220,7 @@ public class vendor_home_order extends Fragment {
             public void onClick(View view) {
                 if(order.get(0).getStatus() == 'p'){
                     //updateOrderStatus?Order_ID=" + order.get(0).getOrder_ID() + "&Rest_ID=" + order.get(0).getRest_ID() + "&Order_Status=Confirmed
-                    HttpPost("updateOrderStatus?Order_ID=22&Rest_ID=7&Order_Status=Confirmed", handler);
+                    HttpPost("updateOrderStatus?Order_ID=" + order.get(0).getOrder_ID() + "&Rest_ID=" + order.get(0).getRest_ID() + "&Order_Status=Confirmed", handler);
                 }else {
                     IntentIntegrator integrator = new IntentIntegrator(getActivity());
                     integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
