@@ -4,6 +4,8 @@ package food.instant.instant;
  * Created by mpauk on 3/20/2018.
  */
 
+import java.util.regex.Pattern;
+
 /**
  * Data object that represents a message, used for chat system
  */
@@ -29,6 +31,10 @@ public class Message {
      */
     private String senderType;
 
+
+    private int Rest_ID;
+
+    private int Read;
     /**
      * Constructor for Message Object containing all fields.
      * @param recieverID ID of the reciever of the message
@@ -37,14 +43,16 @@ public class Message {
      * @param senderType Type of the sender of the message, either Vendor or Customer
      * @param senderID ID of the sender of the message
      */
-    public Message(int recieverID,String recieverType, String message,String senderType,int senderID){
+    public Message(int recieverID,String recieverType, String message,String senderType,int senderID, int Rest_ID, int read){
         this.recieverID=recieverID;
         this.recieverType=recieverType;
         this.message=message;
         this.senderType = senderType;
         this.senderID = senderID;
+        this.Rest_ID = Rest_ID;
+        this.Read=read;
     }
-
+    //custo7::message$^$7$^$::vendo:10
     /**
      * Alternate Constructor where formatted message is given as input and parsed to
      * provide values for all of the fields
@@ -52,9 +60,14 @@ public class Message {
      */
     public Message(String formattedMessage){
         this.recieverType = formattedMessage.substring(0,5);
-        this.recieverID = Integer.parseInt(formattedMessage.substring(5,formattedMessage.indexOf("::")));
+        int beginMessage = formattedMessage.indexOf("::");
+        this.recieverID = Integer.parseInt(formattedMessage.substring(5,beginMessage));
         int endMessage = formattedMessage.lastIndexOf("::");
-        this.message= formattedMessage.substring(formattedMessage.indexOf("::")+2,endMessage);
+        String message = formattedMessage.substring(formattedMessage.indexOf("::")+2,endMessage);
+        String[] rest_ID = message.split(Pattern.quote("$^$"));
+        this.Rest_ID = Integer.parseInt(rest_ID[rest_ID.length-1]);
+        message = message.substring(0,message.lastIndexOf("$^$"));
+        this.message = message.substring(0,message.lastIndexOf("$^$"));
         this.senderType = formattedMessage.substring(endMessage+2,endMessage+7);
         this.senderID = Integer.parseInt(formattedMessage.substring(endMessage+7));
     }
@@ -64,7 +77,7 @@ public class Message {
      * @return formatted message
      */
     public String getFormattedMessage(){
-        return recieverType+recieverID+"::"+message+"::"+senderType+senderID;
+        return recieverType+recieverID+"::"+message+"$^$"+Rest_ID+"$^$::"+senderType+senderID;
     }
 
     /**
@@ -107,5 +120,16 @@ public class Message {
         return senderType;
     }
 
+    public int getRest_ID() {
+        return Rest_ID;
+    }
 
+
+    public int getRead() {
+        return this.Read;
+    }
+
+    public void setRead(int read){
+        this.Read=read;
+    }
 }

@@ -40,10 +40,12 @@ public class Food {
      */
     private int Menu_Id;
 
+
     /**
      * Stores the main food tags of this food instance
      */
     private String Food_Tags_Main;
+
 
     /**
      * Stores the secondary food tags of this food instance

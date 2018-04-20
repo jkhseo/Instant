@@ -276,8 +276,13 @@ public class user_home_maps extends Fragment implements OnMapReadyCallback, Goog
                     Restaurant temp;
                     for(int i=0;i<response.length();i++){
                         Rest_ID = (int)((JSONObject)response.get(i)).get("Rest_ID");
-                        latitude = (double)((JSONObject)response.get(i)).get("Rest_Coordinate_Lat");
-                        longitude = (double)((JSONObject)response.get(i)).get("Rest_Coordinate_Long");
+                        try {
+                            latitude = (double) ((JSONObject) response.get(i)).get("Rest_Coordinate_Lat");
+                            longitude = (double) ((JSONObject) response.get(i)).get("Rest_Coordinate_Long");
+                        }catch(ClassCastException e){
+                            latitude = new Double((Integer) ((JSONObject) response.get(i)).get("Rest_Coordinate_Lat"));
+                            longitude = new Double((Integer) ((JSONObject) response.get(i)).get("Rest_Coordinate_Long"));
+                        }
                         address = (String)((JSONObject)response.get(i)).get("Rest_Address");
                         name = (String)((JSONObject)response.get(i)).get("Rest_Name");
                         rating = ((String)((JSONObject)response.get(i)).get("Rest_Rating"));

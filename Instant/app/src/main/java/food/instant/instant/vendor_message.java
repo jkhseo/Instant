@@ -3,87 +3,72 @@ package food.instant.instant;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashMap;
 
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link user_home_chat.OnFragmentInteractionListener} interface
+ * {@link vendor_message.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link user_home_chat#newInstance} factory method to
+ * Use the {@link vendor_message#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class user_home_chat extends Fragment {
+public class vendor_message extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private chat_adapter adapter;
-    private Conversation conversation;
+
+    private ArrayList<Conversation> conversations;
+    private int Rest_ID;
+    private messages_adapter adapter;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    public user_home_chat() {
-        // Required empty public constructor
+    public vendor_message() {
+        conversations = new ArrayList<>();
+
     }
     @SuppressLint("ValidFragment")
-    public user_home_chat(String sendAddress, int sendID,int Rest_ID){
-        this.conversation = new Conversation(sendAddress,sendID,Rest_ID);
+    public vendor_message(int Rest_ID){
+        this.Rest_ID=Rest_ID;
+        conversations = new ArrayList<>();
     }
-    @SuppressLint("ValidFragment")
-    public user_home_chat(Conversation conversation){
-        this.conversation = conversation;
-    }
+
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment user_home_chat.
+     * @return A new instance of fragment vender_message.
      */
     // TODO: Rename and change types and number of parameters
-    public static user_home_chat newInstance(String param1, String param2) {
-        user_home_chat fragment = new user_home_chat();
+    public static vendor_message newInstance(String param1, String param2) {
+        vendor_message fragment = new vendor_message();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
-    public void addMessage(Message message){
-        conversation.addMessage(message);
-        adapter.notifyDataSetChanged();
-    }
-    public int getRestID(){
-        return conversation.getRest_ID();
-    }
-    public String getSenderInfo(){
-        return conversation.getType()+conversation.getId();
-    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,60 +78,51 @@ public class user_home_chat extends Fragment {
         }
     }
 
+    public void addMessage(Message message){
+        for(Conversation c : conversations){
+            if(c.getId()==message.getSenderID()){
+                c.addMessage(message);
+                break;
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
+    public int getRest_ID(){
+        return this.Rest_ID;
+    }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if(conversation.getMessages()==null){
-            getMessages();
-        }
-        OrderDbHelper dbHelper = new OrderDbHelper(getContext());
-        if(SaveSharedPreference.getType(getContext()).equals("Vendor")){
-            dbHelper.updateReadStatusRestaurant(dbHelper.getWritableDatabase(),conversation.getId(),conversation.getType());
-        }
-        else{
-            dbHelper.updateReadStatusUser(dbHelper.getWritableDatabase(),conversation.getRest_ID());
-        }
-        dbHelper.close();
-        View view = inflater.inflate(R.layout.fragment_user_home_chat, container, false);
-        Button sendMessage = view.findViewById(R.id.sendButton);
-        adapter = new chat_adapter(getContext(),conversation.getMessages());
-        ListView listView = view.findViewById(R.id.chatView);
-        listView.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
-        listView.setAdapter(adapter);
-        final EditText messageBox = view.findViewById(R.id.chatBox);
-        final InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        messageBox.setOnClickListener(new View.OnClickListener() {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_user_home_messages, container, false);
+        ListView messageList = view.findViewById(R.id.messages_list);
+
+        getAllMessages();
+        adapter = new messages_adapter(getContext(),conversations);
+        messageList.setAdapter(adapter);
+        messageList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                imm.showSoftInput(messageBox,InputMethodManager.SHOW_IMPLICIT);
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Conversation conversation = (Conversation) adapterView.getItemAtPosition(i);
+                ((MainActivity)getActivity()).swapFragments(new user_home_chat(conversation));
+
             }
         });
-        final int id = Integer.parseInt(SaveSharedPreference.getId(getContext()));
-        final String type = SaveSharedPreference.getType(getContext()).substring(0,5);
-        sendMessage.setTag(this);
-        sendMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                user_home_chat ref = (user_home_chat) view.getTag();
-                Message temp = new Message(conversation.getId(),conversation.getType(),messageBox.getText().toString(),SaveSharedPreference.getType(ref.getContext()).substring(0,5),Integer.parseInt(SaveSharedPreference.getId(ref.getContext())),conversation.getRest_ID(),1);
-                new ChatSocket().execute(temp);
-                (ref).addMessage(temp);
-                OrderDbHelper dbHelper = new OrderDbHelper(ref.getContext());
-                dbHelper.addMessage(temp,dbHelper.getWritableDatabase());
-                dbHelper.close();
-            }
-        });
+
 
         return view;
     }
 
-    private void getMessages() {
+    private void getAllMessages() {
         OrderDbHelper dbHelper = new OrderDbHelper(getContext());
-        Cursor cursor = dbHelper.getRestMessages(dbHelper.getReadableDatabase(),conversation.getRest_ID());
-        cursor.moveToFirst();
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor cursor = dbHelper.getRestMessages(database,Rest_ID);
         String Message,SenderType,RecieverType;
         int SenderID,RecieverID,Rest_ID,Read;
-        conversation.setMessages(new ArrayList<Message>());
+        Message temp;
+        HashMap<String,Integer> conversationMap = new HashMap<String,Integer>();
+        cursor.moveToFirst();
         while(!cursor.isAfterLast()){
             Message = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.MESSAGE));
             SenderType = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.SENDER_TYPE));
@@ -155,10 +131,32 @@ public class user_home_chat extends Fragment {
             RecieverID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.RECIEVER_ID));
             Rest_ID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.REST_ID));
             Read = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.READ));
-            conversation.addMessage(new Message(RecieverID,RecieverType,Message,SenderType,SenderID,Rest_ID,Read));
+            temp = new Message(RecieverID,RecieverType,Message,SenderType,SenderID,Rest_ID,Read);
+            if(conversationMap.containsKey(RecieverType+RecieverID)){
+                conversations.get(conversationMap.get(RecieverType+RecieverID)).addMessage(temp);
+            }
+            else if(conversationMap.containsKey(SenderType+SenderID)){
+                conversations.get(conversationMap.get(SenderType+SenderID)).addMessage(temp);
+            }
+            else{
+                ArrayList<Message> list = new ArrayList<>();
+                list.add(temp);
+                if(RecieverType.equals(SaveSharedPreference.getType(getContext()).substring(0,5))){
+                    conversationMap.put(SenderType+SenderID,conversations.size());
+                    conversations.add(new Conversation(list,SenderType,SenderID,Rest_ID));
+                }
+                else {
+                    conversationMap.put(RecieverType+RecieverID,conversations.size());
+                    conversations.add(new Conversation(list, RecieverType, RecieverID,Rest_ID));
+
+                }
+            }
             cursor.moveToNext();
         }
+        dbHelper.close();
+
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {

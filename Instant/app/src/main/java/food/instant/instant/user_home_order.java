@@ -105,11 +105,10 @@ public class user_home_order extends Fragment {
                 }
                 if (msg.what == GlobalConstants.ORDER_SUBMISSION_RESPONSE) {
                     JSONObject success = (JSONObject) msg.obj;
-                    if (success.get("Success").equals("True")) {
+                    if (success.get("Add_New_Order_Success").equals("True")) {
                         OrderDbHelper dbHelper = new OrderDbHelper(order.getContext());
                         SQLiteDatabase database = dbHelper.getWritableDatabase();
-                        for(Order o : order.order)
-                            dbHelper.removeOrder(o.getOrder_ID(),database);
+                            dbHelper.removeOrder(order.order.get(0).getFood().getRest_ID(),database);
                         dbHelper.close();
                         order.showPopup("Order Submitted Successfully");
                         ((MainActivity) order.getActivity()).swapFragments(new user_home());
