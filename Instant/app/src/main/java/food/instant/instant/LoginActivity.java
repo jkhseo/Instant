@@ -2,6 +2,7 @@ package food.instant.instant;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
@@ -9,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewDebug;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -26,8 +28,14 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.math.BigInteger;
+import java.security.interfaces.RSAKey;
 
+import static food.instant.instant.EncryptionHelper.EncryptMessage_Big_Integer;
+import static food.instant.instant.EncryptionHelper.intToString;
+import static food.instant.instant.EncryptionHelper.stringToInt;
 import static food.instant.instant.HttpRequests.HttpGET;
+import static food.instant.instant.HttpRequests.HttpPost;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -90,9 +98,25 @@ public class LoginActivity extends AppCompatActivity {
                 }
                 else
                 {
+                    OrderDbHelper dbHelper = new OrderDbHelper(c);
+                    Cursor c  = dbHelper.getRSAInfo(dbHelper.getReadableDatabase());
+                    c.moveToFirst();
+                    String RSA_KEY = c.getString(c.getColumnIndex(KeyContract.KeyEntry.SESSION_KEY_VALUE));
+                    String Exponent = c.getString(c.getColumnIndex(KeyContract.KeyEntry.ENCRYPTION_EXPONENT));
+                    int version = c.getInt(c.getColumnIndex(KeyContract.KeyEntry.VERSION));
+                    System.out.println(password);
+                    String integerRep = stringToInt(password);
+                    System.out.println("Integer Rep Unencrypted: "+integerRep);
+                    System.out.println("String Rep"+ intToString(integerRep));
+                    BigInteger encrypted = EncryptMessage_Big_Integer(new BigInteger(integerRep),new BigInteger(RSA_KEY),new BigInteger(Exponent));
+                    System.out.println("Integer Rep Encrypted: "+ encrypted);
                     handler = new LoginHandler(LoginActivity.this, password);
-                    HttpGET("getPassword?User_Email=" + username, handler);
+                    String path = "verifyLogin?VersionNumber="+version+"&User_Email="+username+"&User_Password_Encrypted="+encrypted;
+                    //String path = "getPassword?User_Email=" + username;
+                    System.out.println(path);
+                    HttpGET(path, handler);
                 }
+                //VersionNumber, User_Email, User_Password_Encrypted
             }
         });
 
@@ -134,24 +158,30 @@ public class LoginActivity extends AppCompatActivity {
             if(msg.what == GlobalConstants.PASSWORD) {
                 LoginActivity login = loginActivity.get();
                 if (login != null) {
-                    JSONArray response = null;
+                    JSONObject response = null;
                     String gottenPass = "";
-
+                    //version number wrong
                     //Get the stupid json and store the password in the String
                     try {
-                        response = ((JSONObject) msg.obj).getJSONArray("Get_Password");
-                        gottenPass = (String) ((JSONObject) response.get(0)).get("User_Password");
+                        response = (JSONObject) msg.obj;
+                        gottenPass = (String) response.get("Login_Success");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
 
                     //check if login credentials were correct
-                    if (gottenPass.equals(password)) {
+                    if (gottenPass.equals("True")) {
+
+                        //postAESKEY?VersionNumber=&EncryptedCode=&User_ID=
                         HttpGET("getAllUserInfo?User_Email=" + username, login.handler);
-                    } else {
+                    }
+                    else if(gottenPass.equals("Wrong_Password")) {
                         Toast.makeText(c, "Invalid username/password", Toast.LENGTH_SHORT).show();
                         etUsername.setText("");
                         etPassword.setText("");
+                    }
+                    else{
+                        System.out.println(gottenPass);
                     }
                     //Log.d(TAG, response.toString());
                 }
@@ -181,6 +211,20 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    OrderDbHelper helper = new OrderDbHelper(c);
+                    Cursor cursor = helper.getAESInfo(helper.getReadableDatabase());
+                    cursor.moveToFirst();
+                    String AESKey = cursor.getString(cursor.getColumnIndex(KeyContract.KeyEntry.AES_KEY));
+                    System.out.println("unencrypted"+AESKey.toString());
+                    int version = cursor.getInt(cursor.getColumnIndex(KeyContract.KeyEntry.VERSION));
+                    cursor = helper.getRSAInfo(helper.getReadableDatabase());
+                    cursor.moveToFirst();
+                    String RSAKEY = cursor.getString(cursor.getColumnIndex(KeyContract.KeyEntry.SESSION_KEY_VALUE));
+                    String exponent = cursor.getString(cursor.getColumnIndex(KeyContract.KeyEntry.ENCRYPTION_EXPONENT));
+
+                    BigInteger encryptedKey =  EncryptMessage_Big_Integer(new BigInteger(AESKey),new BigInteger(RSAKEY),new BigInteger(exponent));
+                    System.out.println("encrypted "+encryptedKey.toString());
+                    HttpPost("postAESKEY?VersionNumber="+version+"&EncryptedCode="+encryptedKey.toString()+"&User_ID="+id,login.handler);
 
                     //context, username, firstname, lastname, birthday, address, id, type
                     SaveSharedPreference.login(c, username, firstname, lastname, birthday, address, id, type);

@@ -76,10 +76,14 @@ public class GlobalConstants {
      * Response for updating a Food POST Request
      */
     public static final int UPDATE_FOOD = 147;
+
     public static final int DELETE_FOOD = 148;
 
     public static final int EDIT_FOOD = 149;
     public static final int UPDATE_REST = 151;
     public static final int REFRESH_REST = 152;
     public static final int DELETE_REST = 153;
+
+    public static final int RSA_KEY= 999;
+
 }
