@@ -8,10 +8,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+
+import static food.instant.instant.HttpRequests.HttpGET;
 
 
 /**
@@ -28,6 +34,9 @@ public class vendor_pending_restaurant extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "vendor_pending_rest";
+    private PendingRestHandler handler;
+    private ArrayList<Restaurant> these_restaurants = new ArrayList<Restaurant>();
+    private ListView rest_list;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -70,7 +79,11 @@ public class vendor_pending_restaurant extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_vendor_pending_restaurant, container, false);
+        View view = inflater.inflate(R.layout.fragment_vendor_pending_restaurant, container, false);
+        rest_list = view.findViewById(R.id.lv_pending_restaurants);
+        handler = new PendingRestHandler(vendor_pending_restaurant.this);
+        HttpGET("getAllRestaurantsWPendingOrderForOwner?User_ID=" + SaveSharedPreference.getId(getContext()), handler);
+        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -112,7 +125,7 @@ public class vendor_pending_restaurant extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private static class PendingRestHandler extends Handler {
+    private class PendingRestHandler extends Handler {
         /***************************************************************************************
          *    Title: Stack Overflow Answer to Question about static handlers
          *    Author: Tomasz Niedabylski
@@ -128,10 +141,25 @@ public class vendor_pending_restaurant extends Fragment {
         public void handleMessage(android.os.Message msg) {
             vendor_pending_restaurant pendingRest = pendingRestActivity.get();
             if (pendingRest != null) {
-                JSONObject response = null;
-                response = (JSONObject) msg.obj;
-                Log.d(TAG, "Request made.........................");
-                Log.d(TAG, response.toString());
+                JSONArray response = null;
+                try {
+                    response = ((JSONObject) msg.obj).getJSONArray("Order_Status");
+                    for(int i = 0; i < response.length(); i++)
+                    {
+                        String name = (String) ((JSONObject) response.get(i)).get("Rest_Name");
+                        int Rest_ID = (int) ((JSONObject) response.get(i)).get("Rest_ID");
+                        these_restaurants.add(new Restaurant(Rest_ID, name, (double)0, (double)0, "", (double)0, "", ""));
+                    }
+                    Restaurant[] temp = new Restaurant[these_restaurants.size()];
+                    for(int i = 0; i < these_restaurants.size(); i++)
+                    {
+                        temp[i] = these_restaurants.get(i);
+                    }
+                    pending_rest_adapter adapter = new pending_rest_adapter(getContext(), temp);
+                    rest_list.setAdapter(adapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
