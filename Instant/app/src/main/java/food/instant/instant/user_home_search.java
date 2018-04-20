@@ -132,6 +132,7 @@ public class user_home_search extends Fragment {
                         String Rest_Name, Rest_Address;
                         double Rest_Coordinate_X, Rest_Coordinate_Y;
                         for (int i = 0; i < response.length(); i++) {
+                            System.out.println(response.get(i).toString());
                             Rest_ID =  Integer.parseInt((String)((JSONObject)response.get(i)).get("Rest_ID"));
                             Rest_Name = (String) ((JSONObject) response.get(i)).get("Rest_Name");
                             Rest_Address = (String)((JSONObject)response.get(i)).get("Rest_Address");
@@ -158,6 +159,7 @@ public class user_home_search extends Fragment {
                     }else if(msg.what == GlobalConstants.GOOGLE_MAPS_DISTANCES){
                         JSONArray elements = ((JSONObject)msg.obj).getJSONArray("rows").getJSONObject(0).getJSONArray("elements");
                         for(int i=0;i<elements.length();i++){
+                            System.out.println(elements.get(i).toString());
                             search.searchResults.get(i).getRestaurant().setDistance(((Integer)((JSONObject)((JSONObject)elements.get(i)).get("distance")).get("value"))*0.000621371);
                         }
                         search.sortSearchResults();

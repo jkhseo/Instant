@@ -24,10 +24,12 @@ import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
 
+import java.math.BigInteger;
 import java.security.interfaces.RSAKey;
 import java.util.Collections;
 import java.util.List;
 
+import static food.instant.instant.EncryptionHelper.generateAESKEY;
 import static food.instant.instant.HttpRequests.HttpGET;
 
 
@@ -167,7 +169,9 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
     protected void onStart() {
         super.onStart();
         handler = new MainActivityHandler(this);
-        HttpGET("getRSAPublicKey",handler);
+        if(!SaveSharedPreference.isLoggedIn(this)) {
+            HttpGET("getRSAPublicKey", handler);
+        }
     }
     @Override
     protected void onDestroy() {
@@ -419,8 +423,9 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                     RSA_KEY = ((String)((JSONObject)object.get(0)).get("Public_Key"));
                     Version = Integer.parseInt((String)((JSONObject)object.get(0)).get("Version"));
                     EncryptionExponent = ((String) ((JSONObject)object.get(0)).get("Encyption_Exponet"));
+                    BigInteger integer = generateAESKEY();
                     OrderDbHelper dbHelper = new OrderDbHelper(activity);
-                    dbHelper.insertRSAInfo(dbHelper.getWritableDatabase(),RSA_KEY,EncryptionExponent,Version);
+                    dbHelper.insertRSAInfo(dbHelper.getWritableDatabase(),RSA_KEY,EncryptionExponent,Version,integer.toString());
                     dbHelper.close();
 
                 } catch (JSONException e) {
@@ -429,30 +434,39 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
             }
             else {
                 Message temp = (Message) msg.obj;
+                OrderDbHelper dbHelper = new OrderDbHelper(activity);
+                SQLiteDatabase database = dbHelper.getWritableDatabase();
+                dbHelper.addMessage(temp, database);
+                dbHelper.close();
                 System.out.println("Received" + list.size());
                 if (list != null) {
                     list.removeAll(Collections.singleton(null));
                     int index = list.size()-1;
                     if (list.get(index).getClass().getSimpleName().equals("user_home_chat")) {
                         user_home_chat chat = (user_home_chat) list.get(index);
-                        if (chat.getRestID()==temp.getRest_ID())
-                            chat.addMessage((Message) msg.obj);
+                        if (chat.getRestID()==temp.getRest_ID()) {
+                            temp.setRead(1);
+                            chat.addMessage(temp);
+                        }
 
                     } else if (list.get(index).getClass().getSimpleName().equals("user_home_messages")) {
                         user_home_messages messages = (user_home_messages) list.get(index);
+                        temp.setRead(0);
                         messages.addMessage(temp);
                     }
                     else if(list.get(index).getClass().getSimpleName().equals("vendor_message")){
                         vendor_message message = (vendor_message)list.get(index);
                         if(message.getRest_ID()==temp.getRest_ID()){
+                            temp.setRead(0);
                             message.addMessage(temp);
                         }
                     }
+                    else if(list.get(index).getClass().getSimpleName().equals("vendor_messages")){
+                        vendor_messages messages = (vendor_messages) list.get(index);
+                        messages.notifyAdapter();
+                    }
                 }
-                OrderDbHelper dbHelper = new OrderDbHelper(activity);
-                SQLiteDatabase database = dbHelper.getWritableDatabase();
-                dbHelper.addMessage(temp, database);
-                dbHelper.close();
+
             }
 
         }

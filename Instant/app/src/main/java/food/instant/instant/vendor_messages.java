@@ -41,6 +41,7 @@ public class vendor_messages extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private ArrayList<String> rest_names;
     private ArrayList<Integer> rest_IDs;
+    private vendor_messages_adapter adapter;
     private static class VendorMessageHandler extends Handler {
         /***************************************************************************************
          *    Title: Stack Overflow Answer to Question about static handlers
@@ -67,8 +68,8 @@ public class vendor_messages extends Fragment {
                     messages.rest_IDs.add(Rest_ID);
                 }
                 ListView listView = messages.getView().findViewById(R.id.vendor_messages);
-                ArrayAdapter adapter = new ArrayAdapter(messages.getContext(),R.layout.vendor_messages_listelement,messages.rest_names);
-                listView.setAdapter(adapter);
+                messages.adapter = new vendor_messages_adapter(messages.getContext(),messages.rest_names,messages.rest_IDs);
+                listView.setAdapter(messages.adapter);
                 listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -107,7 +108,9 @@ public class vendor_messages extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    public void notifyAdapter(){
+        adapter.notifyDataSetChanged();
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

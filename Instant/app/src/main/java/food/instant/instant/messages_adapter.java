@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.ser.Serializers;
@@ -44,6 +45,23 @@ public class messages_adapter extends BaseAdapter {
         contact.setText(conversations.get(i).getType()+conversations.get(i).getRest_ID());
         TextView lastMessage = view.findViewById(R.id.contact_last_message);
         lastMessage.setText(conversations.get(i).getLastMessage());
+        ImageView read = view.findViewById(R.id.read_status);
+        OrderDbHelper helper = new OrderDbHelper(context);
+        if(SaveSharedPreference.getType(context).equals("Vendor")) {
+            if (helper.isAllReadV(helper.getReadableDatabase(),conversations.get(i).getType(),conversations.get(i).getId())) {
+                read.setVisibility(View.INVISIBLE);
+            } else {
+                read.setVisibility(View.VISIBLE);
+            }
+        }
+        else{
+            if (helper.isAllRead(helper.getReadableDatabase(),conversations.get(i).getRest_ID())) {
+                read.setVisibility(View.INVISIBLE);
+            } else {
+                read.setVisibility(View.VISIBLE);
+            }
+        }
+        helper.close();
         return view;
     }
 }

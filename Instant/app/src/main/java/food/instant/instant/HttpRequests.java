@@ -71,10 +71,11 @@ public class HttpRequests {
      * @param path - path on the server of the SpringBoot GET method
      * @param handler - reference to a handler where the results of the GET method will be sent
      */
+    //postAESKEY?VersionNumber=&EncryptedCode=&User_ID=
     public static void HttpGET(String path, final Handler handler) {
 
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
-        String localurl = "http://10.29.206.9:8080/demo/"+path;
+        String localurl = "http://10.26.176.141:8080/demo/"+path;
         //AES_EncryptionHelper(path);
         OkHttpClient client = new OkHttpClient();
         com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).build();
@@ -139,7 +140,7 @@ public class HttpRequests {
      */
     public static void HttpPost(String path, final Handler handler){
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
-        //String url = "http://10.26.12.74:8080/demo/"+path;
+        String localurl = "http://10.26.176.141:8080/demo/"+path;
         OkHttpClient client = new OkHttpClient();
         //success tag, true or false value
 

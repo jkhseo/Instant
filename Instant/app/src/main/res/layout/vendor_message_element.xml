@@ -6,16 +6,18 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/vendor_names"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="26sp"
         android:layout_weight="5"
          />
 
     <ImageView
+        android:id="@+id/vendor_read"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        app:srcCompat="@android:drawable/radiobutton_off_background"
-        android:tint="@color/colorPrimary" />
+        android:tint="@color/colorPrimary"
+        app:srcCompat="@android:drawable/radiobutton_off_background" />
 </LinearLayout>

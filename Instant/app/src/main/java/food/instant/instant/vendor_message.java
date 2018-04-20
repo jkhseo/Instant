@@ -119,7 +119,7 @@ public class vendor_message extends Fragment {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor cursor = dbHelper.getRestMessages(database,Rest_ID);
         String Message,SenderType,RecieverType;
-        int SenderID,RecieverID,Rest_ID;
+        int SenderID,RecieverID,Rest_ID,Read;
         Message temp;
         HashMap<String,Integer> conversationMap = new HashMap<String,Integer>();
         cursor.moveToFirst();
@@ -130,7 +130,8 @@ public class vendor_message extends Fragment {
             SenderID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.SENDER_ID));
             RecieverID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.RECIEVER_ID));
             Rest_ID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.REST_ID));
-            temp = new Message(RecieverID,RecieverType,Message,SenderType,SenderID,Rest_ID);
+            Read = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.READ));
+            temp = new Message(RecieverID,RecieverType,Message,SenderType,SenderID,Rest_ID,Read);
             if(conversationMap.containsKey(RecieverType+RecieverID)){
                 conversations.get(conversationMap.get(RecieverType+RecieverID)).addMessage(temp);
             }

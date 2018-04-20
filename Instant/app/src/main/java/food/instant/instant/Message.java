@@ -33,6 +33,8 @@ public class Message {
 
 
     private int Rest_ID;
+
+    private int Read;
     /**
      * Constructor for Message Object containing all fields.
      * @param recieverID ID of the reciever of the message
@@ -41,13 +43,14 @@ public class Message {
      * @param senderType Type of the sender of the message, either Vendor or Customer
      * @param senderID ID of the sender of the message
      */
-    public Message(int recieverID,String recieverType, String message,String senderType,int senderID, int Rest_ID){
+    public Message(int recieverID,String recieverType, String message,String senderType,int senderID, int Rest_ID, int read){
         this.recieverID=recieverID;
         this.recieverType=recieverType;
         this.message=message;
         this.senderType = senderType;
         this.senderID = senderID;
         this.Rest_ID = Rest_ID;
+        this.Read=read;
     }
     //custo7::message$^$7$^$::vendo:10
     /**
@@ -122,4 +125,11 @@ public class Message {
     }
 
 
+    public int getRead() {
+        return this.Read;
+    }
+
+    public void setRead(int read){
+        this.Read=read;
+    }
 }

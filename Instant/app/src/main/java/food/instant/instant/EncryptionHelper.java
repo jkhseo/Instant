@@ -2,14 +2,27 @@ package food.instant.instant;
 
 import android.content.Context;
 
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Random;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Created by mpauk on 4/10/2018.
  */
 
 public class EncryptionHelper {
+    static String IV = "AAAAAAAAAAAAAAAA";
     /**
      *
      * @param message The decrypted message
@@ -37,10 +50,82 @@ public class EncryptionHelper {
         }
         return path;
     }
-    public static BigInteger AES_Encrypt_Message(BigInteger message, int AESKEY){
+    public static byte[] AES_Encrypt(byte[] encryptionKey, String Message)
+    {
+        Cipher cipher;
+        try
+        {
+            cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            SecretKeySpec key = new SecretKeySpec(encryptionKey, "AES");
+
+            cipher.init(Cipher.ENCRYPT_MODE, key,new IvParameterSpec(IV.getBytes("UTF-8")));
+
+            return cipher.doFinal(Message.getBytes("UTF-8"));
+        }
+        catch (NoSuchAlgorithmException | NoSuchPaddingException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (IllegalBlockSizeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return null;
+
     }
 
+    public static String AES_Decrypt(byte[] encryptionKey, byte[] message)
+    {
+        Cipher cipher;
+        try
+        {
+            cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            SecretKeySpec key = new SecretKeySpec(encryptionKey, "AES");
+            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(IV.getBytes("UTF-8")));
+
+            byte[] plainByte = cipher.doFinal(message);
+
+            String plainText = new String(plainByte);
+
+            return plainText;
+        }
+        catch (NoSuchAlgorithmException | NoSuchPaddingException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        catch (IllegalBlockSizeException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+
+    }
     public static String stringToInt(String text){
         return new BigInteger(text.getBytes()).toString();
     }
@@ -54,10 +139,12 @@ public class EncryptionHelper {
     //integer
     //encrypted integer
 
-    public static int generateAESKEY(){
-        Random random = new Random();
-        return random.nextInt(10000)+10000;
-
+    public static BigInteger generateAESKEY(){
+        SecureRandom random = new SecureRandom();
+        byte[] key = new byte[16];
+        random.nextBytes(key);
+        BigInteger n = new BigInteger(key);
+        return n;
     }
 
 }

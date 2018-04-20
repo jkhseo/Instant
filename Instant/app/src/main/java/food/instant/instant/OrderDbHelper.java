@@ -38,7 +38,7 @@ public class OrderDbHelper extends SQLiteOpenHelper{
     /**
      * Key Table Creation
      */
-    public static final String CREATE_KEY_TABLE = "create table "+ KeyContract.KeyEntry.TABLE_NAME+"("+ KeyContract.KeyEntry.SESSION_KEY_VALUE+" text,"+ KeyContract.KeyEntry.ENCRYPTION_EXPONENT +" text,"+ KeyContract.KeyEntry.VERSION+" number,"+ KeyContract.KeyEntry.AES_KEY+" number);";
+    public static final String CREATE_KEY_TABLE = "create table "+ KeyContract.KeyEntry.TABLE_NAME+"("+ KeyContract.KeyEntry.SESSION_KEY_VALUE+" text,"+ KeyContract.KeyEntry.ENCRYPTION_EXPONENT +" text,"+ KeyContract.KeyEntry.VERSION+" number,"+ KeyContract.KeyEntry.AES_KEY+" text);";
     /**
      * Drop Message Table
      */
@@ -117,11 +117,12 @@ public class OrderDbHelper extends SQLiteOpenHelper{
 
     /**
      * Remove an order from the order table
-     * @param row_id row id of the order to be removed
+     * @param Rest_ID row id of the order to be removed
      * @param database instance of the database to be used to update table information
      */
-    public void removeOrder(int row_id,SQLiteDatabase database){
-        database.delete(OrderContract.OrderEntry.TABLE_NAME,"_rowid_="+row_id,null);
+    public void removeOrder(int Rest_ID,SQLiteDatabase database){
+        database.delete(OrderContract.OrderEntry.TABLE_NAME, OrderContract.OrderEntry.RESTAURANT_ID+"=?",new String[]{""+Rest_ID});
+        System.out.println(Rest_ID);
         Log.d(TAG,"One row removed");
     }
 
@@ -193,6 +194,7 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         values.put(MessageContract.MessageEntry.SENDER_TYPE,message.getSenderType());
         values.put(MessageContract.MessageEntry.SENDER_ID,message.getSenderID());
         values.put(MessageContract.MessageEntry.REST_ID,message.getRest_ID());
+        values.put(MessageContract.MessageEntry.READ,message.getRead());
         database.insert(MessageContract.MessageEntry.TABLE_NAME,null,values);
     }
 
@@ -203,7 +205,7 @@ public class OrderDbHelper extends SQLiteOpenHelper{
      */
     public Cursor readMessages(SQLiteDatabase database){
         String[] columns = {MessageContract.MessageEntry.MESSAGE, MessageContract.MessageEntry.RECIEVER_TYPE, MessageContract.MessageEntry.RECIEVER_ID,
-                MessageContract.MessageEntry.SENDER_TYPE, MessageContract.MessageEntry.SENDER_ID, MessageContract.MessageEntry.REST_ID};
+                MessageContract.MessageEntry.SENDER_TYPE, MessageContract.MessageEntry.SENDER_ID, MessageContract.MessageEntry.REST_ID, MessageContract.MessageEntry.READ};
         Cursor cursor = database.query(MessageContract.MessageEntry.TABLE_NAME,columns,null,null,null,null,null);
         return cursor;
 
@@ -216,17 +218,12 @@ public class OrderDbHelper extends SQLiteOpenHelper{
     public void deleteMessages(SQLiteDatabase database){
         database.delete(MessageContract.MessageEntry.TABLE_NAME,null,null);
     }
-    public void insertRSAInfo(SQLiteDatabase database, String RSA_KEY,String EncyptionExponent, int Version){
+    public void insertRSAInfo(SQLiteDatabase database, String RSA_KEY,String EncyptionExponent, int Version,String AESKey){
         ContentValues contentValues = new ContentValues();
         contentValues.put(KeyContract.KeyEntry.SESSION_KEY_VALUE, RSA_KEY);
         contentValues.put(KeyContract.KeyEntry.ENCRYPTION_EXPONENT, EncyptionExponent);
         contentValues.put(KeyContract.KeyEntry.VERSION, Version);
-        database.insert(KeyContract.KeyEntry.TABLE_NAME, null, contentValues);
-        Log.d(TAG, "One row inserted");
-    }
-    public void insertAESKey(SQLiteDatabase database,int AESKEY){
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(KeyContract.KeyEntry.AES_KEY, AESKEY);
+        contentValues.put(KeyContract.KeyEntry.AES_KEY,AESKey);
         database.insert(KeyContract.KeyEntry.TABLE_NAME, null, contentValues);
         Log.d(TAG, "One row inserted");
     }
@@ -235,9 +232,44 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         Cursor cursor = database.query(KeyContract.KeyEntry.TABLE_NAME,columns,null,null,null,null,null);
         return cursor;
     }
-    public void updateReadStatus(SQLiteDatabase database,int Rest_ID){
-        String query = "UPDATE " + MessageContract.MessageEntry.TABLE_NAME + " SET "+ MessageContract.MessageEntry.READ+"="+1;
+    public Cursor getAESInfo(SQLiteDatabase database){
+        String[] columns = {KeyContract.KeyEntry.VERSION, KeyContract.KeyEntry.AES_KEY};
+        Cursor cursor = database.query(KeyContract.KeyEntry.TABLE_NAME,columns,null,null,null,null,null);
+        return cursor;
+    }
+    public void updateReadStatusUser(SQLiteDatabase database,int Rest_ID){
+        ContentValues values = new ContentValues();
+        values.put(MessageContract.MessageEntry.READ,1);
+        database.update(MessageContract.MessageEntry.TABLE_NAME,values, MessageContract.MessageEntry.REST_ID+"=?",new String[]{""+Rest_ID});
+       // String query = "UPDATE " + MessageContract.MessageEntry.TABLE_NAME + " SET "+ MessageContract.MessageEntry.READ+" = "+1+ " WHERE "+ MessageContract.MessageEntry.REST_ID+" = "+Rest_ID+";";
+        //System.out.println(query);
+        //database.rawQuery(query,null);
+    }
+    public void updateReadStatusRestaurant(SQLiteDatabase database, int ID,String type){
+        ContentValues values = new ContentValues();
+        values.put(MessageContract.MessageEntry.READ,1);
+        database.update(MessageContract.MessageEntry.TABLE_NAME,values, "("+MessageContract.MessageEntry.SENDER_ID+"=? AND "+ MessageContract.MessageEntry.SENDER_TYPE+"=?) OR ("+ MessageContract.MessageEntry.RECIEVER_ID+"=? AND "+ MessageContract.MessageEntry.RECIEVER_TYPE+"=?)",new String[]{""+ID,type,""+ID,type});
+        //String query = "UPDATE " + MessageContract.MessageEntry.TABLE_NAME + " SET "+ MessageContract.MessageEntry.READ+"='"+1+ "' WHERE (("+ MessageContract.MessageEntry.SENDER_ID+"='"+ID+"' AND " +MessageContract.MessageEntry.SENDER_TYPE +"='"+type+"') " +
+          //      "OR ("+MessageContract.MessageEntry.RECIEVER_ID+"='"+ID+"' AND " +MessageContract.MessageEntry.RECIEVER_TYPE +"='"+type+"'));";
+        //System.out.println(query);
+        //database.rawQuery(query,null);
+    }
+    public boolean isAllRead(SQLiteDatabase database, int Rest_ID){
+        String query = "SELECT * FROM " + MessageContract.MessageEntry.TABLE_NAME +" WHERE ("+ MessageContract.MessageEntry.REST_ID+"="+ Rest_ID+" AND "+ MessageContract.MessageEntry.READ+"=0)";
         System.out.println(query);
-        database.rawQuery(query,null);
+        Cursor c = database.rawQuery(query,null);
+        if(c.getCount()>0){
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+    public boolean isAllReadV(SQLiteDatabase database, String type, int id){
+        String query = "SELECT * FROM " + MessageContract.MessageEntry.TABLE_NAME + " WHERE (("+ MessageContract.MessageEntry.SENDER_ID+"="+id+" AND " +MessageContract.MessageEntry.SENDER_TYPE +"="+type+" AND "+ MessageContract.MessageEntry.READ+"=0) " +
+                "OR ("+MessageContract.MessageEntry.RECIEVER_ID+"="+id+" AND " +MessageContract.MessageEntry.RECIEVER_TYPE +"="+type+" AND "+ MessageContract.MessageEntry.READ+"=0))";
+        System.out.println(query);
+        Cursor c = database.rawQuery(query,null);
+        return c.getCount()<=0;
     }
 }

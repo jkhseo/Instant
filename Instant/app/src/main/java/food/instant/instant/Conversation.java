@@ -59,4 +59,12 @@ public class Conversation {
     public int getRest_ID() {
         return Rest_ID;
     }
+    public boolean isAllRead(){
+        if(messages!=null&&messages.size()!=0){
+            if(messages.get(messages.size()-1).getRead()==0){
+                return false;
+            }
+        }
+        return true;
+    }
 }

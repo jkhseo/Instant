@@ -29,11 +29,13 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.math.BigInteger;
+import java.security.interfaces.RSAKey;
 
 import static food.instant.instant.EncryptionHelper.EncryptMessage_Big_Integer;
 import static food.instant.instant.EncryptionHelper.intToString;
 import static food.instant.instant.EncryptionHelper.stringToInt;
 import static food.instant.instant.HttpRequests.HttpGET;
+import static food.instant.instant.HttpRequests.HttpPost;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -169,6 +171,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     //check if login credentials were correct
                     if (gottenPass.equals("True")) {
+
+                        //postAESKEY?VersionNumber=&EncryptedCode=&User_ID=
                         HttpGET("getAllUserInfo?User_Email=" + username, login.handler);
                     }
                     else if(gottenPass.equals("Wrong_Password")) {
@@ -207,6 +211,20 @@ public class LoginActivity extends AppCompatActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    OrderDbHelper helper = new OrderDbHelper(c);
+                    Cursor cursor = helper.getAESInfo(helper.getReadableDatabase());
+                    cursor.moveToFirst();
+                    String AESKey = cursor.getString(cursor.getColumnIndex(KeyContract.KeyEntry.AES_KEY));
+                    System.out.println("unencrypted"+AESKey.toString());
+                    int version = cursor.getInt(cursor.getColumnIndex(KeyContract.KeyEntry.VERSION));
+                    cursor = helper.getRSAInfo(helper.getReadableDatabase());
+                    cursor.moveToFirst();
+                    String RSAKEY = cursor.getString(cursor.getColumnIndex(KeyContract.KeyEntry.SESSION_KEY_VALUE));
+                    String exponent = cursor.getString(cursor.getColumnIndex(KeyContract.KeyEntry.ENCRYPTION_EXPONENT));
+
+                    BigInteger encryptedKey =  EncryptMessage_Big_Integer(new BigInteger(AESKey),new BigInteger(RSAKEY),new BigInteger(exponent));
+                    System.out.println("encrypted "+encryptedKey.toString());
+                    HttpPost("postAESKEY?VersionNumber="+version+"&EncryptedCode="+encryptedKey.toString()+"&User_ID="+id,login.handler);
 
                     //context, username, firstname, lastname, birthday, address, id, type
                     SaveSharedPreference.login(c, username, firstname, lastname, birthday, address, id, type);
