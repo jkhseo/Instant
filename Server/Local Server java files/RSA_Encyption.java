@@ -1,18 +1,33 @@
 package hello;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-
-import org.hibernate.boot.model.relational.Database;
-
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class RSA_Encyption 
 {
-	public static final int SIZE = 1000;
+	public static final int SIZE = 5000; //backup version
+	public static final int SPREAD = 1000; //Max difference maximum prime 
+	boolean pullLargePrime = true;
+	
 	KeySet keys = null;	
 	static ArrayList<Integer> primes = new ArrayList<Integer>();
 
+	String[] largePrime = {
+			"671998030559713968361666935769",
+			"282174488599599500573849980909",
+			"521419622856657689423872613771",
+			"362736035870515331128527330659",
+			"115756986668303657898962467957",
+			"590872612825179551336102196593",
+			"564819669946735512444543556507",
+			"513821217024129243948411056803",
+			"416064700201658306196320137931",
+			"280829369862134719390036617067"
+	};
+	
+	
+	
 	/**
 	 *  Generates new RSA Encryption keys and posts them to the database
 	 */
@@ -45,6 +60,20 @@ public class RSA_Encyption
 	
 	/**
 	 * 
+	 * @param message Encrypted Message
+	 * @return The decrypted message
+	 */
+	public BigInteger DecryptMessage_BigInteger(BigInteger message)
+	{
+		message = message.modPow(keys.DecryptionExponet, keys.n);
+		return message;	
+	}
+	
+	
+	
+	
+	/**
+	 * 
 	 * @param The decrypted message
 	 * @return Encrypted Message
 	 */
@@ -66,6 +95,28 @@ public class RSA_Encyption
 	}
 	
 	/**
+	 * 
+	 * @param The decrypted message
+	 * @return Encrypted Message
+	 */
+	public BigInteger EncryptMessage_Big_Integer(BigInteger message)
+	{
+		String strN = ""+ keys.n;
+		String strEncryptionExponet = "" + keys.EncryptionExponet;
+		
+
+		message = message.modPow(keys.EncryptionExponet, keys.n);
+		
+		return message;
+		
+	}
+	
+	
+	
+	
+	
+	
+	/**
 	 * Generate Keys
 	 */
 	public void GenerateKeys()
@@ -73,27 +124,77 @@ public class RSA_Encyption
 		System.out.println("Generating RSA KEYS ... Size = " + SIZE);
 		long StartTime = System.currentTimeMillis();
 		
-		addPrimes(SIZE);
-		primes.remove(0);
-		removePrimes(.95); //Remove the first 95% of primes. 
+
 		
-		int firstPrime = (int) (Math.random() * primes.size());
-		BigInteger p = new BigInteger("" + primes.get(firstPrime));
-		primes.remove(firstPrime);
+		int random1 = (int) (Math.random() * SPREAD);
+		int random2 = (int) (Math.random() * SPREAD);
 		
-		BigInteger q = new BigInteger("" + primes.get((int) (Math.random() * primes.size())));
-		BigInteger n = p.multiply(q);
-	
+		while(random1 == random2)
+			random2 = (int) (Math.random() * SPREAD);
+		
+		String prime1 = DATABASE_GET.getPrime(random1);
+		String prime2 = DATABASE_GET.getPrime(random2);
+		
+		BigInteger p;
+		BigInteger q;
+		
+		
+		if(pullLargePrime)
+		{
+			 random1 = (int) (Math.random() * 10);
+			 random2 = (int) (Math.random() * 10);
+			
+			while(random1 == random2)
+				random2 = (int) (Math.random() * 10);
+			
+			p = new BigInteger(largePrime[random1]);
+			q = new BigInteger(largePrime[random2]);
+		}
+		else
+		{
+			//if the database is down, do it the old way.
+			if(prime1.equalsIgnoreCase("Null") || prime2.equalsIgnoreCase("Null"))
+			{
+				//Old Way
+				addPrimes(SIZE);
+				primes.remove(0);
+				removePrimes(.95); //Remove the first 95% of primes. 
+				
+				int firstPrime = (int) (Math.random() * primes.size());
+				p = new BigInteger("" + primes.get(firstPrime));
+				primes.remove(firstPrime);
+				
+				q = new BigInteger("" + primes.get((int) (Math.random() * primes.size())));
+			
+			}
+			else
+			{
+				p = new BigInteger(prime1);
+				q = new BigInteger(prime2);
+			}
+		}
+		
+		BigInteger n = p.multiply(q);	
 		BigInteger m = p.subtract(new BigInteger("1")).multiply(q.subtract(new BigInteger("1")));
 		
-		int intN = Integer.parseInt(n.toString());
+		//int intN = Integer.parseInt(n.toString());
 		
 		//S is the encryption exponet 
 		BigInteger s = new BigInteger("2");
 		while(!gcd_Big_Integer(s,m).equals(new BigInteger("1")))
 		{
 			//System.out.println(gcd_Big_Integer(s,m));
-			s = new BigInteger("" + ((int) (Math.random() * (intN-4))) + 3);
+			
+			BigInteger log = n.subtract(new BigInteger("4"));
+			
+			Random rand = new Random();
+		    BigInteger result = new BigInteger(n.bitLength(), rand);
+		    while( result.compareTo(n) >= 0 ) 
+		    {
+		        result = new BigInteger(n.bitLength(), rand);
+		    }
+		    
+		    s = result.add(new BigInteger("3"));
 		}
 		//T is the decryption exponent
 		//T*S - 1 % M == 0 //Equation for T. 
@@ -119,9 +220,9 @@ public class RSA_Encyption
 				
 		
 		keys = new KeySet();
-		keys.EncryptionExponet = Integer.parseInt(s.toString());
-		keys.DecryptionExponet = Integer.parseInt(t.toString());
-		keys.n = Integer.parseInt(n.toString());
+		keys.EncryptionExponet = s;
+		keys.DecryptionExponet = t;
+		keys.n = n;
 	}
 	
 	

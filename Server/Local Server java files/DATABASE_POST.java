@@ -1,8 +1,8 @@
 package hello;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -412,7 +412,7 @@ public class DATABASE_POST
 			 * 
 			 * @return True if success, false otherwise
 			 */
-			public static boolean Add_New_RSA_Key(int n, int encryptionExponet)
+			public static boolean Add_New_RSA_Key(BigInteger n, BigInteger encryptionExponet)
 			{ 
 				 try
 				 {  		
@@ -424,8 +424,8 @@ public class DATABASE_POST
 
 			            String query = "INSERT INTO Server_Keys ( Public_Key ,  Encyption_Exponet)";
 			            query += " VALUES ( ";
-			            query += "'" + n + "', ";
-			            query += "'" + encryptionExponet + "'); ";
+			            query += "'" + n.toString() + "', ";
+			            query += "'" + encryptionExponet.toString() + "'); ";
 			            
 			           
 			            System.out.println(query);

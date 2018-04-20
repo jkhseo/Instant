@@ -58,7 +58,7 @@ echo <<<_HTML
 					<p class="button">  <a href=OrderStatus.php> Order Status </a> </p>
 				</div>
 				<div class="three columns center">
-					<p class="button">  <a href=lounge2.html> Order Food </a> </p>
+					<p class="button">  <a href=Map.php> Order Food </a> </p>
 				</div>
 				<div class="three columns center">
 					<p class="button">  <a href=LogInPage.php> Logout </a> </p>

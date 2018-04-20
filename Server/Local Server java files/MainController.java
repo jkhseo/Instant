@@ -18,6 +18,66 @@ public class MainController {
 	RSA_Encyption RSA = null;
 	public static final int QRCODE_SIZE = 10000;
 	
+	public String StringToInt(String message)
+	{
+		String integer = new BigInteger(message.getBytes()).toString();
+		return integer;
+	}
+	
+	public String IntToString(String integer)
+	{
+		String message = new String(new BigInteger(integer).toByteArray());
+		return message;
+	}
+	
+	/**
+	 * 
+	 * @return All Restaurants
+	 */
+	@GetMapping(path="/verifyLogin")
+	public @ResponseBody String getAllRestaurants(@RequestParam String VersionNumber, @RequestParam String User_Email, @RequestParam String User_Password_Encrypted) 
+	{
+		// This returns a JSON or XML with the users
+		try
+		{
+		System.out.println("Trying to verify Login... ");
+		String JSONreturned = DATABASE_GET.getRSAKEY();
+		int Version = Integer.parseInt(JSONreturned.substring(JSONreturned.indexOf("Version") + 12, JSONreturned.indexOf("Encyption_Exponet")-4));
+		
+		if(Version != Integer.parseInt(VersionNumber))
+			return "{ \"Login_Success\" : \"Version_Number_Wrong\"}";
+				
+		//Simulated Encyrpyion 
+		System.out.println("Simualtion of Ecyption");
+		String passwordz = "gocyclones";
+		String passTest = DATABASE_UTILS.StringToInt(passwordz);
+		System.out.println("Password " + passwordz + " int rep " + passTest);
+		BigInteger encyrpted = RSA.EncryptMessage_Big_Integer(new BigInteger(passTest));
+		System.out.println("Encyrpted " + encyrpted);
+		System.out.println("Decrypted " + RSA.DecryptMessage_BigInteger(encyrpted));
+		
+		//Test for system
+		System.out.println("Actual data");
+		System.out.println("Encyrpted Number Recieved is " + User_Password_Encrypted);
+		BigInteger decrypted = RSA.DecryptMessage_BigInteger(new BigInteger(User_Password_Encrypted));
+		System.out.println("Decyrpyed Number is " + decrypted);
+		String password = DATABASE_UTILS.IntToString(decrypted);
+		System.out.println("Number to String yeilds " + password);
+		
+		
+		if(DATABASE_UTILS.Verfiy_Login(User_Email, password))
+			return "{ \"Login_Success\" : \"True\"}";
+		else
+			return "{ \"Login_Success\" : \"Wrong_Password\"}";
+		}
+		catch(Exception e)
+		{
+			System.out.println("GASP! Something went wrong. " + e.getMessage());
+			return "{ \"Login_Success\" : \""+  e.getMessage() +"\"}";
+		}
+	
+	}
+	
 	/**
 	 * 
 	 * @return All Restaurants
@@ -29,6 +89,54 @@ public class MainController {
 		return DATABASE_GET.getAllRestaurant();
 	}
 	
+	@GetMapping(path="/getFullName")
+	public @ResponseBody String getFullName(@RequestParam String User_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getFullName(User_ID);
+	}
+	
+	@GetMapping(path="/getOwnerUserID")
+	public @ResponseBody String getOwnerUserID(@RequestParam String Rest_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getOwnerUserID(Rest_ID);
+	}
+
+	@GetMapping(path="/getImageURL")
+	public @ResponseBody String getImageURL(@RequestParam String Rest_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getImageURL(Rest_ID);
+	}
+
+	@GetMapping(path="/getAllRestaurantsWCompletedOrderForOwner")
+	public @ResponseBody String getAllRestaurantsWCompletedOrderForOwner(@RequestParam String User_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getAllRestaurantsWCompletedOrderForOwner(User_ID);
+	}
+	
+	@GetMapping(path="/getAllRestaurantsWConfirmedOrderForOwner")
+	public @ResponseBody String getAllRestaurantsWConfirmedOrderForOwner(@RequestParam String User_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getAllRestaurantsWConfirmedOrderForOwner(User_ID);
+	}
+
+	@GetMapping(path="/getAllRestaurantsWCancelledOrderForOwner")
+	public @ResponseBody String getAllRestaurantsWCancelledOrderForOwner(@RequestParam String User_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getAllRestaurantsWCancelledOrderForOwner(User_ID);
+	}
+	@GetMapping(path="/getAllRestaurantsWPendingOrderForOwner")
+	public @ResponseBody String getAllRestaurantsWPendingOrderForOwner(@RequestParam String User_ID)
+	{
+		// This returns a JSON or XML with the users
+		return DATABASE_GET.getAllRestaurantsWPendingOrderForOwner(User_ID);
+	}
+
 
 	@GetMapping(path="/getPassword")
 	public @ResponseBody String getPassword(@RequestParam String User_Email) 
@@ -207,6 +315,7 @@ public class MainController {
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
 	
+		System.out.println("Getting RSA Keys");
 		if(RSA == null)
 			RSA = new RSA_Encyption();
 		
@@ -231,7 +340,7 @@ public class MainController {
 		int Version = Integer.parseInt(JSONreturned.substring(JSONreturned.indexOf("Version") + 12, JSONreturned.indexOf("Encyption_Exponet")-4));
 		
 		if(Version != Integer.parseInt(VersionNumber))
-			return "{ \"Success\" : \"False\"}";
+			return "{ \"Success\" : \"Version_Number_Wrong\"}";
 		
 		BigInteger deycrptedCode = RSA.DecryptMessage(Integer.parseInt(EncryptedCode));
 		boolean added = DATABASE_POST.Add_New_AES_Key(User_ID, deycrptedCode.toString());

@@ -73,7 +73,200 @@ public class DATABASE_GET
 	 * @param Rest_ID The ID of the restaurant that the order is being ordered. 
 	 * @return Returns the status of the order: cancelled, confirmed, pending, complete. 
 	 */
+	public static String getAllRestaurantsWPendingOrderForOwner(String User_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID), db309sd4.`Restaurant`.Rest_Name FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
+	            		+ " db309sd4.`Restaurant`.Rest_ID AND db309sd4.`Order`.Order_Status = \"Pending\" AND db309sd4.`Restaurant`.User_ID = " + User_ID;
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"Order_Status\":" + json.toString() +  "}";
+
+
+	}
+	public static String getAllRestaurantsWCancelledOrderForOwner(String User_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID), db309sd4.`Restaurant`.Rest_Name FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
+	            		+ " db309sd4.`Restaurant`.Rest_ID AND db309sd4.`Order`.Order_Status = \"Cancelled\" AND db309sd4.`Restaurant`.User_ID = " + User_ID;
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"Order_Status\":" + json.toString() +  "}";
+
+
+	}
 	
+	public static String getAllRestaurantsWConfirmedOrderForOwner(String User_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID), db309sd4.`Restaurant`.Rest_Name FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
+	            		+ " db309sd4.`Restaurant`.Rest_ID AND db309sd4.`Order`.Order_Status = \"Confirmed\" AND db309sd4.`Restaurant`.User_ID = " + User_ID;
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"Order_Status\":" + json.toString() +  "}";
+
+
+	}
+	
+	public static String getAllRestaurantsWCompletedOrderForOwner(String User_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID), db309sd4.`Restaurant`.Rest_Name FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
+	            		+ " db309sd4.`Restaurant`.Rest_ID AND db309sd4.`Order`.Order_Status = \"Completed\" AND db309sd4.`Restaurant`.User_ID = " + User_ID;
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"Order_Status\":" + json.toString() +  "}";
+
+
+	}
+	
+	public static String getFullName(String User_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	            String query = "SELECT First_Name, Last_Name FROM db309sd4.User WHERE User_ID = " + User_ID;
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"Order_Status\":" + json.toString() +  "}";
+
+
+	}
+	
+	public static String getOwnerUserID(String Rest_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	            String query = "SELECT User_ID FROM db309sd4.Restaurant WHERE Rest_ID = " + Rest_ID;
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"Order_Status\":" + json.toString() +  "}";
+
+
+	}
+	
+	
+	public static String getImageURL(String Rest_ID)
+	{
+		 JSONArray json = null;
+		 try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+	            String query = "SELECT User_ID FROM db309sd4.Restaurant WHERE Rest_ID = " + Rest_ID;
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	    
+	            ResultSet rs = stmt.executeQuery(query);
+	            json = convertToJSON(rs);
+	            con.close(); 
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	      }
+		 
+		  return " {\"Order_Status\":" + json.toString() +  "}";
+
+
+	}
+	
+		
 	public static String getOrderStatus(String Order_ID, String Rest_ID)
 	{
 		 JSONArray json = null;
@@ -579,6 +772,41 @@ public class DATABASE_GET
 		  return " {\"Nearest_Restaurants\":" + json.toString() + "}";
 
 	}
+	
+	public static String getPrime(int downList)
+	{
+
+		try
+		 {  		
+		        Class.forName("com.mysql.jdbc.Driver");
+		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+		        
+		        
+	            String query = "SELECT Prime from db309sd4.Prime_Numbers order by Number DESC";
+	           
+	            System.out.println(query);
+	            Statement stmt=con.createStatement();
+	            ResultSet rs = stmt.executeQuery(query);
+	            
+
+	            while(rs.next() && downList > 0)
+	            {
+	            		downList--;
+	            }
+	            if(rs.next())
+	            		return rs.getString("Prime");
+	            else
+	            		return "Null";
+	         
+	          
+	        }
+	      catch(Exception e)
+	      {
+	           e.printStackTrace();
+	           return "Null";
+	      }
+	
+	}
 
 	/**
 	 * A non JSON returning function that gets the next food number for a restaurant
@@ -690,9 +918,9 @@ public class DATABASE_GET
 		            		String version = rs.getString("Version");
 		            		String Encyption_Exponet = rs.getString("Encyption_Exponet");
 		            		
-		            		result = "{ \"Public_Key\" : \"" + publicKey + "\",";
+		            		result = "{ \"Keys\" : [ { \"Public_Key\" : \"" + publicKey + "\",";
 		            		result += " \"Version\" : \"" + version + "\",";
-		            		result += " \"Encyption_Exponet\" : \"" + Encyption_Exponet + "\"}";
+		            		result += " \"Encyption_Exponet\" : \"" + Encyption_Exponet + "\"  } ] }";
 		            		
 		            		
 		            }

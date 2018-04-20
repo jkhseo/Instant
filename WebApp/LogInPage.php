@@ -70,10 +70,11 @@ echo <<<_HTML
 			<div class = twleve columns>
 				<form method="post" action="LogInPage.php">
 				  Username:
-				  <input type="text" name="Username" <br>
+				  <input type="text" name="Username"> <br>
 				  Password:
-				  <input type="password" name="Password" <br>
+				  <input type="password" name="Password"> <br>
 				  <input type="submit" value="Log in!"> 
+				  <button> <a href=SignUp.php> Sign Up Here! </a> </button> 
  
 			</div>
 		</div>
@@ -86,7 +87,7 @@ _HTML
 ?>
  <!-- footer -->
 <div class="container">
-  <div class="row">
+  <div class="row" align='center'>
       <p>© Instant</p>
   </div>
 </div>
