@@ -193,8 +193,8 @@ public class VendorConfirmedOrdersFragment extends Fragment {
                         for (int i = 0; i < response.length(); i++) {
                             int orderID = (int) ((JSONObject) response.get(i)).get("Order_ID");
                             char status = 'q';
-                            if (((String) ((JSONObject) response.get(i)).get("Order_Status")).equals("Pending")) {
-                                status = 'p';
+                            if (((String) ((JSONObject) response.get(i)).get("Order_Status")).equals("Confirmed")) {
+                                status = 'c';
                             }
                             int Dummy_PK = (int) ((JSONObject) response.get(i)).get("DummyPK");
                             double foodPrice = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Food_Price"));

@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 
+import static food.instant.instant.HttpRequests.HttpGET;
 import static food.instant.instant.HttpRequests.HttpPost;
 
 
@@ -64,21 +65,22 @@ public class vendor_home_order extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             vendor_home_order order = orderFragment.get();
-            try {
-                if (msg.what == GlobalConstants.ORDER_SUBMISSION_RESPONSE) {
-                    JSONObject success = (JSONObject) msg.obj;
-                    if (success.get("Success").equals("True")) {
-                        OrderDbHelper dbHelper = new OrderDbHelper(order.getContext());
-                        dbHelper.removePendingOrders(dbHelper.getWritableDatabase());
-                        dbHelper.close();
-                        Toast.makeText(getContext(), "Order Confirmation Success!", Toast.LENGTH_SHORT).show();
-                        ((MainActivity)order.getActivity()).swapFragments(new user_home());
-                    } else {
-                        Toast.makeText(getContext(), "Order Confirmation Failed!", Toast.LENGTH_SHORT).show();
+            if (msg.what == GlobalConstants.ORDER_SUBMISSION_RESPONSE) {
+                JSONObject response = null;
+                response = ((JSONObject) msg.obj);
+                try {
+                    String isSuccess = (String)response.get("Update_Order_Status_Success");
+                    Log.d(TAG, "Request made.........................");
+                    if(isSuccess.equals("True")){
+                        Toast.makeText(getContext(), "Order Update Success!", Toast.LENGTH_SHORT).show();
+                        getFragmentManager().popBackStackImmediate();
                     }
+                    else{
+                        Toast.makeText(getContext(), "Order Update Failed!", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
     }
@@ -197,6 +199,15 @@ public class vendor_home_order extends Fragment {
         ArrayAdapter<String> dropDownAdapter = new ArrayAdapter<String>(getContext(),R.layout.support_simple_spinner_dropdown_item,dropDown);
         Button cancel = view.findViewById(R.id.b_cancel_order);
         Button confirm = view.findViewById(R.id.b_confirm_order);
+        if(order.get(0).getStatus() == 'f')
+        {
+            cancel.setVisibility(View.GONE);
+            confirm.setVisibility(View.GONE);
+        }
+        else if(order.get(0).getStatus() == 'c')
+        {
+            confirm.setText("Complete Order");
+        }
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -207,14 +218,18 @@ public class vendor_home_order extends Fragment {
         confirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentIntegrator integrator = new IntentIntegrator(getActivity());
-                integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
-                integrator.setPrompt("Scan Code");
-                integrator.setCameraId(0);
-                integrator.setBeepEnabled(true);
-                integrator.setBarcodeImageEnabled(false);
-                integrator.initiateScan();
-
+                if(order.get(0).getStatus() == 'p'){
+                    //updateOrderStatus?Order_ID=" + order.get(0).getOrder_ID() + "&Rest_ID=" + order.get(0).getRest_ID() + "&Order_Status=Confirmed
+                    HttpPost("updateOrderStatus?Order_ID=22&Rest_ID=7&Order_Status=Confirmed", handler);
+                }else {
+                    IntentIntegrator integrator = new IntentIntegrator(getActivity());
+                    integrator.setDesiredBarcodeFormats(IntentIntegrator.ALL_CODE_TYPES);
+                    integrator.setPrompt("Scan Code");
+                    integrator.setCameraId(0);
+                    integrator.setBeepEnabled(true);
+                    integrator.setBarcodeImageEnabled(false);
+                    integrator.initiateScan();
+                }
             }
         });
         return view;
@@ -233,7 +248,7 @@ public class vendor_home_order extends Fragment {
                 int code = Integer.parseInt(intentResult.getContents());
                 if(code == order.get(0).getOrder_Confirmation_Code()) {
                     Toast.makeText(getContext(), "Order Confirmation Success!", Toast.LENGTH_SHORT).show();
-                    HttpPost("updateOrderStatus?Order_ID=" + order.get(0).getOrder_ID() + "&Rest_ID=" + order.get(0).getRest_ID() + "&Order_Status=Confirmed", handler);
+                    HttpPost("updateOrderStatus?Order_ID=" + order.get(0).getOrder_ID() + "&Rest_ID=" + order.get(0).getRest_ID() + "&Order_Status=Completed", handler);
                 }
                 else{
                     Toast.makeText(getContext(), "Invalid Code!", Toast.LENGTH_SHORT).show();

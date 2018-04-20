@@ -195,7 +195,7 @@ public class VendorCompletedOrdersFragment extends Fragment {
                             int orderID = (int) ((JSONObject) response.get(i)).get("Order_ID");
                             char status = 'q';
                             if (((String) ((JSONObject) response.get(i)).get("Order_Status")).equals("Completed")) {
-                                status = 'p';
+                                status = 'f';
                             }
                             int Dummy_PK = (int) ((JSONObject) response.get(i)).get("DummyPK");
                             double foodPrice = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Food_Price"));

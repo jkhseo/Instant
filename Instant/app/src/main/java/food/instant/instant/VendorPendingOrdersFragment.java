@@ -221,7 +221,6 @@ public class VendorPendingOrdersFragment extends Fragment {
                             String userEmail = (String) ((JSONObject) response.get(i)).get("User_Email");
                             Food food = new Food(restID, foodName, foodPrice, foodDesc, menuID, foodTagsMain, foodTagsSecondary, foodID);
                             Order tmpOrder = new Order(orderID, userID, food, comments, foodQuantity, restName, status, Dummy_PK, orderConfCode, orderDateSubmitted, orderDatePickup, userFirstName, userLastName, userEmail, restID);
-                            addOrderToDatabase(comments, food, foodQuantity, restName);
                             tmpOrders.add(tmpOrder);
                         }
                         Log.d(TAG, "" + tmpOrders.size());
