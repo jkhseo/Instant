@@ -82,7 +82,7 @@ public class vendor_completed_restaurant extends Fragment {
         these_restaurants.clear();
         rest_list = view.findViewById(R.id.lv_completed_restaurant);
         handler = new CompletedRestHandler(vendor_completed_restaurant.this);
-        HttpGET("getAllRestaurantsWConfirmedOrderForOwner?User_ID=" + SaveSharedPreference.getId(getContext()), handler);
+        HttpGET("getAllRestaurantsWCompletedOrderForOwner?User_ID=" + SaveSharedPreference.getId(getContext()), handler);
         return view;
     }
 
