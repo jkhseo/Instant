@@ -126,15 +126,9 @@ public class RSA_Encyption
 		
 
 		
-		int random1 = (int) (Math.random() * SPREAD);
-		int random2 = (int) (Math.random() * SPREAD);
-		
-		while(random1 == random2)
-			random2 = (int) (Math.random() * SPREAD);
-		
-		String prime1 = DATABASE_GET.getPrime(random1);
-		String prime2 = DATABASE_GET.getPrime(random2);
-		
+		int random1;
+		int random2;
+
 		BigInteger p;
 		BigInteger q;
 		
@@ -152,6 +146,17 @@ public class RSA_Encyption
 		}
 		else
 		{
+			
+
+			 random1 = (int) (Math.random() * SPREAD);
+			 random2 = (int) (Math.random() * SPREAD);
+			
+			while(random1 == random2)
+				random2 = (int) (Math.random() * SPREAD);
+			
+			String prime1 = DATABASE_GET.getPrime(random1);
+			String prime2 = DATABASE_GET.getPrime(random2);
+			
 			//if the database is down, do it the old way.
 			if(prime1.equalsIgnoreCase("Null") || prime2.equalsIgnoreCase("Null"))
 			{

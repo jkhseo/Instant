@@ -894,7 +894,45 @@ public class DATABASE_GET
 
 		}
 	
-	
+			/**
+		 * 
+		 * A non JSON returning function
+		 * Gets AES Encryption Key for User
+		 *  
+		 * @return AES Key
+		 */
+		public static String getAESKEY(String User_ID)
+		{			
+			String result = "";
+			try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");			  
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+
+			        String query = "SELECT * from db309sd4.User_Keys where USER_ID  = '"+ User_ID +"'";
+			           
+			        System.out.println(query);
+			        
+			        Statement stmt=con.createStatement();
+			        ResultSet rs = stmt.executeQuery(query);
+			            
+		            if(rs.next())
+		            {
+		            		return rs.getString("KEY");		
+		            }
+
+		            		return null;	          
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		           
+		      }
+			  System.out.println(result);
+			  return result;
+
+		}	
+
 		//A non JSON returning function that gets the next order number for a restaurant
 		//Written by Adam de Gala. 
 		public static String getRSAKEY()

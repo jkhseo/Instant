@@ -511,12 +511,12 @@ public class DATABASE_POST
 			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
 		           
 			        //Delete the old ESA Key if it exist
-			        String query = "DELETE FROM USER_KEYS WHERE USER_ID = \"" + User_ID + "\"";
+			        String query = "DELETE FROM db309sd4.User_Keys WHERE USER_ID = \"" + User_ID + "\"";
 		            Statement stmt=con.createStatement();
 		            stmt.executeUpdate(query);
 			        
 
-		            query = "INSERT INTO User_Keys ";
+		            query = "INSERT INTO db309sd4.User_Keys ";
 		            query += " VALUES ( ";
 		            query += "'" + User_ID + "', ";
 		            query += "'" + AES_Key + "'); ";
