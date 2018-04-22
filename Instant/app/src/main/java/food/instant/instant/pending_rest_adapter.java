@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -18,9 +19,11 @@ import java.util.ArrayList;
 
 public class pending_rest_adapter extends ArrayAdapter<Restaurant> {
     private Context context;
-    public pending_rest_adapter(@NonNull Context context, Restaurant[] restaurants) {
+    private String whatType;
+    public pending_rest_adapter(@NonNull Context context, Restaurant[] restaurants, String rest) {
         super(context, 0, restaurants);
         this.context=context;
+        this.whatType = rest;
     }
 
     @NonNull
@@ -29,7 +32,24 @@ public class pending_rest_adapter extends ArrayAdapter<Restaurant> {
         final Restaurant restaurant = getItem(position);
         view = LayoutInflater.from(context).inflate(R.layout.pending_rest_child,parent,false);
         TextView name = view.findViewById(R.id.tv_pend_rest_name);
+        Button viewOrders = view.findViewById(R.id.bn_pending_orders);
         name.setText(restaurant.getName());
+
+        viewOrders.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(whatType == "pending") {
+                    ((MainActivity) context).swapFragments(new VendorPendingOrdersFragment(restaurant.getRest_ID()));
+                }
+                else if(whatType == "confirmed"){
+                    ((MainActivity) context).swapFragments(new VendorConfirmedOrdersFragment(restaurant.getRest_ID()));
+                }
+                else if(whatType == "completed"){
+                    ((MainActivity) context).swapFragments(new VendorCompletedOrdersFragment(restaurant.getRest_ID()));
+                }
+            }
+        });
+
         return view;
     }
 }

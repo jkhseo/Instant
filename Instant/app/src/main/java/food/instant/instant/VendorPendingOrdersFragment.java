@@ -1,5 +1,6 @@
 package food.instant.instant;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -46,10 +47,17 @@ public class VendorPendingOrdersFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private int RESTID;
+
     private OnFragmentInteractionListener mListener;
 
     public VendorPendingOrdersFragment() {
         // Required empty public constructor
+    }
+
+    @SuppressLint("ValidFragment")
+    public VendorPendingOrdersFragment(int rest_id){
+        this.RESTID = rest_id;
     }
 
     /**
@@ -179,7 +187,7 @@ public class VendorPendingOrdersFragment extends Fragment {
                             these_restaurants.add(new Restaurant(Rest_ID, name, latitude, longitude, address, rating));
                         }
                         // + these_restaurants.get(0).getRest_ID()
-                        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=7", handler);
+                        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=" + RESTID, handler);
                         //Log.d(TAG, "Request made.........................");
                         //Log.d(TAG, response.toString());
                     } catch (JSONException e) {

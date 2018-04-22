@@ -2,9 +2,9 @@ package food.instant.instant;
 
 import android.content.Context;
 import android.net.Uri;
-import android.os.*;
+import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,18 +23,17 @@ import static food.instant.instant.HttpRequests.HttpGET;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link vendor_pending_restaurant.OnFragmentInteractionListener} interface
+ * {@link vendor_confirmed_restaurant.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link vendor_pending_restaurant#newInstance} factory method to
+ * Use the {@link vendor_confirmed_restaurant#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class vendor_pending_restaurant extends Fragment {
+public class vendor_confirmed_restaurant extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final String TAG = "vendor_pending_rest";
-    private PendingRestHandler handler;
+    private ConfirmedRestHandler handler;
     private ArrayList<Restaurant> these_restaurants = new ArrayList<Restaurant>();
     private ListView rest_list;
 
@@ -44,7 +43,7 @@ public class vendor_pending_restaurant extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public vendor_pending_restaurant() {
+    public vendor_confirmed_restaurant() {
         // Required empty public constructor
     }
 
@@ -54,11 +53,11 @@ public class vendor_pending_restaurant extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment vendor_pending_restaurant.
+     * @return A new instance of fragment vendor_confirmed_restaurant.
      */
     // TODO: Rename and change types and number of parameters
-    public static vendor_pending_restaurant newInstance(String param1, String param2) {
-        vendor_pending_restaurant fragment = new vendor_pending_restaurant();
+    public static vendor_confirmed_restaurant newInstance(String param1, String param2) {
+        vendor_confirmed_restaurant fragment = new vendor_confirmed_restaurant();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -79,11 +78,11 @@ public class vendor_pending_restaurant extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_vendor_pending_restaurant, container, false);
+        View view = inflater.inflate(R.layout.fragment_vendor_confirmed_restaurant, container, false);
         these_restaurants.clear();
-        rest_list = view.findViewById(R.id.lv_pending_restaurants);
-        handler = new PendingRestHandler(vendor_pending_restaurant.this);
-        HttpGET("getAllRestaurantsWPendingOrderForOwner?User_ID=" + SaveSharedPreference.getId(getContext()), handler);
+        rest_list = view.findViewById(R.id.lv_confirmed_restaurant);
+        handler = new ConfirmedRestHandler(vendor_confirmed_restaurant.this);
+        HttpGET("getAllRestaurantsWConfirmedOrderForOwner?User_ID=" + SaveSharedPreference.getId(getContext()), handler);
         return view;
     }
 
@@ -126,22 +125,22 @@ public class vendor_pending_restaurant extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    private class PendingRestHandler extends Handler {
+    private class ConfirmedRestHandler extends Handler {
         /***************************************************************************************
          *    Title: Stack Overflow Answer to Question about static handlers
          *    Author: Tomasz Niedabylski
          *    Date: July 10, 2012
          *    Availability: https://stackoverflow.com/questions/11407943/this-handler-class-should-be-static-or-leaks-might-occur-incominghandler
          ***************************************************************************************/
-        private final WeakReference<vendor_pending_restaurant> pendingRestActivity;
-        public PendingRestHandler(vendor_pending_restaurant pendingRestActivity) {
-            this.pendingRestActivity = new WeakReference<vendor_pending_restaurant>(pendingRestActivity);
+        private final WeakReference<vendor_confirmed_restaurant> confirmedRestActivity;
+        public ConfirmedRestHandler(vendor_confirmed_restaurant confirmedRestActivity) {
+            this.confirmedRestActivity = new WeakReference<vendor_confirmed_restaurant>(confirmedRestActivity);
         }
         /*** End Code***/
         @Override
         public void handleMessage(android.os.Message msg) {
-            vendor_pending_restaurant pendingRest = pendingRestActivity.get();
-            if (pendingRest != null) {
+            vendor_confirmed_restaurant confirmedRest = confirmedRestActivity.get();
+            if (confirmedRest != null) {
                 JSONArray response = null;
                 try {
                     response = ((JSONObject) msg.obj).getJSONArray("Order_Status");
@@ -156,7 +155,7 @@ public class vendor_pending_restaurant extends Fragment {
                     {
                         temp[i] = these_restaurants.get(i);
                     }
-                    pending_rest_adapter adapter = new pending_rest_adapter(getContext(), temp, "pending");
+                    pending_rest_adapter adapter = new pending_rest_adapter(getContext(), temp, "confirmed");
                     rest_list.setAdapter(adapter);
                 } catch (JSONException e) {
                     e.printStackTrace();

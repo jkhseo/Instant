@@ -1,5 +1,6 @@
 package food.instant.instant;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.*;
@@ -43,10 +44,17 @@ public class VendorConfirmedOrdersFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private int RESTID;
+
     private OnFragmentInteractionListener mListener;
 
     public VendorConfirmedOrdersFragment() {
         // Required empty public constructor
+    }
+
+    @SuppressLint("ValidFragment")
+    public VendorConfirmedOrdersFragment(int rest_id){
+        this.RESTID = rest_id;
     }
 
     /**
@@ -175,7 +183,7 @@ public class VendorConfirmedOrdersFragment extends Fragment {
                             these_restaurants.add(new Restaurant(Rest_ID, name, latitude, longitude, address, rating));
                         }
                         // + these_restaurants.get(0).getRest_ID()
-                        HttpGET("getConfirmedOrderForRestaurant?Restaurant_ID=7", handler);
+                        HttpGET("getConfirmedOrderForRestaurant?Restaurant_ID=" + RESTID, handler);
                         //Log.d(TAG, "Request made.........................");
                         //Log.d(TAG, response.toString());
                     } catch (JSONException e) {
