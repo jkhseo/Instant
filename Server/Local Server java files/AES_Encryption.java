@@ -23,18 +23,19 @@ public class AES_Encryption
 	 * @param Message   The message to Encrypt.
 	 * @return The Encrypted String
 	 */
-	public static byte[] AES_Encrypt(String encryptionKey, String Message)
+	public static byte[] AES_Encrypt(byte[] encryptionKey, String Message)
 	{
 		 Cipher cipher;
 		try 
 		{
-			cipher = Cipher.getInstance("AES/CBC/NoPadding", "SunJCE");
-			SecretKeySpec key = new SecretKeySpec(encryptionKey.getBytes("UTF-8"), "AES");
+			cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+			SecretKeySpec key = new SecretKeySpec(encryptionKey, "AES");
+			
 			cipher.init(Cipher.ENCRYPT_MODE, key,new IvParameterSpec(IV.getBytes("UTF-8")));
 			    
-			 return cipher.doFinal(Message.getBytes("UTF-8"));
+			return cipher.doFinal(Message.getBytes("UTF-8"));
 		}
-		catch (NoSuchAlgorithmException | NoSuchProviderException | NoSuchPaddingException e) 
+		catch (NoSuchAlgorithmException | NoSuchPaddingException e) 
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -65,8 +66,43 @@ public class AES_Encryption
 	 * @param Message   The message to Encrypt.
 	 * @return The Decrypted String
 	 */
-	public static String AES_Decrypt(int key, int Message)
+	public static String AES_Decrypt(byte[] encryptionKey, byte[] message)
 	{
+		Cipher cipher;
+		try 
+		{
+			cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+			SecretKeySpec key = new SecretKeySpec(encryptionKey, "AES");
+			cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(IV.getBytes("UTF-8")));
+
+		    byte[] plainByte = cipher.doFinal(message);
+
+		        String plainText = new String(plainByte);
+
+		        return plainText;
+		}
+		catch (NoSuchAlgorithmException | NoSuchPaddingException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+		catch (IllegalBlockSizeException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (BadPaddingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidAlgorithmParameterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
+
 	}
 }

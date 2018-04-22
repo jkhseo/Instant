@@ -6,6 +6,17 @@ import java.util.HashMap;
 
 public class Restaurant_Search_Utils 
 {
+	private static String Scrubber(String str)
+	{
+		//System.out.println(str);
+		str.replaceAll("'", "\\\'");
+		str.replaceAll("\n", "");
+		//System.out.println(str);
+		return str;
+	}
+	
+	
+	
 	private class Bucket
 	{
 		ArrayList<Restaurant> list = new ArrayList<Restaurant>();
@@ -38,6 +49,22 @@ public class Restaurant_Search_Utils
 				catergorizedHashmap.put(e.name.toLowerCase(), new Bucket());
 			if(e.name != null)
 				catergorizedHashmap.get(e.name.toLowerCase()).list.add(e);
+			
+			//Split name into keywords. 
+			if(e.name != null)
+			{
+				String[] name_Split = e.name.split("\\s+|,+\\s*|_+\\s*");
+				for(String s : name_Split)
+				{
+					if(s!= null && s.length() >= 1 && !s.equalsIgnoreCase("and"))
+					{
+						if(e.name != null && !catergorizedHashmap.containsKey(s.toLowerCase()))
+							catergorizedHashmap.put(s.toLowerCase(), new Bucket());
+						if(e.name != null)
+							catergorizedHashmap.get(s.toLowerCase()).list.add(e);
+					}
+				}
+			}
 			
 			//Add Cuisine Tag
 			if(e.cuisine_main != null && !catergorizedHashmap.containsKey(e.cuisine_main.toLowerCase()))
@@ -180,7 +207,7 @@ public class Restaurant_Search_Utils
 				results += " \"Rank\" : \"" + e.rank + "\",";
 				results += " \"Rest_Type_Cuisine_Main\" : \"" + e.cuisine_main + "\",";
 				results += " \"Rest_Type_Cuisine_Secondary\" : \"" + e.cuisine_secondary + "\",";
-				results += " \"Rest_Address\" : \"" + e.Rest_Address + "\",";
+				results += " \"Rest_Address\" : \"" + Scrubber(e.Rest_Address) + "\",";
 				results += " \"Rest_Coordinate_Lat\" : \"" + e.Rest_Coordinate_Lat + "\",";
 				results += " \"Rest_Coordinate_Long\" : \"" + e.Rest_Coordinate_Long + "\",";
 				results += " \"Rest_Keywords\" : \"" + e.keywords + "\"} ,";
