@@ -80,7 +80,7 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID), db309sd4.`Restaurant`.Rest_Name FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
+	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID) FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
 	            		+ " db309sd4.`Restaurant`.Rest_ID AND db309sd4.`Order`.Order_Status = \"Pending\" AND db309sd4.`Restaurant`.User_ID = " + User_ID;
 	           
 	            System.out.println(query);
@@ -107,7 +107,7 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID), db309sd4.`Restaurant`.Rest_Name FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
+	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID) FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
 	            		+ " db309sd4.`Restaurant`.Rest_ID AND db309sd4.`Order`.Order_Status = \"Cancelled\" AND db309sd4.`Restaurant`.User_ID = " + User_ID;
 	           
 	            System.out.println(query);
@@ -135,7 +135,7 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID), db309sd4.`Restaurant`.Rest_Name FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
+	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID) FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
 	            		+ " db309sd4.`Restaurant`.Rest_ID AND db309sd4.`Order`.Order_Status = \"Confirmed\" AND db309sd4.`Restaurant`.User_ID = " + User_ID;
 	           
 	            System.out.println(query);
@@ -163,7 +163,7 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID), db309sd4.`Restaurant`.Rest_Name FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
+	            String query = "SELECT DISTINCT( db309sd4.`Restaurant`.Rest_ID) FROM (db309sd4.`Order` JOIN db309sd4.`Restaurant`) WHERE  db309sd4.`Order`.Rest_ID = "
 	            		+ " db309sd4.`Restaurant`.Rest_ID AND db309sd4.`Order`.Order_Status = \"Completed\" AND db309sd4.`Restaurant`.User_ID = " + User_ID;
 	           
 	            System.out.println(query);
@@ -482,7 +482,7 @@ public class DATABASE_GET
 		        		+ "  db309sd4.User.First_Name,  db309sd4.User.Last_Name, db309sd4.User.User_ID\n" + 
 		        		" FROM (((db309sd4.Order JOIN db309sd4.Food) JOIN db309sd4.Restaurant) JOIN db309sd4.User) WHERE db309sd4.Order.Order_Status ="
 		        		+ " \"Pending\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
-		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
+		        		" AND db309sd4.Food.Rest_ID = " + '"' + Restaurant_ID + '"' + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
 
 
 	            System.out.println(query);
@@ -523,7 +523,7 @@ public class DATABASE_GET
 		        		+ "  db309sd4.User.First_Name,  db309sd4.User.Last_Name, db309sd4.User.User_ID\n" + 
 		        		" FROM (((db309sd4.Order JOIN db309sd4.Food) JOIN db309sd4.Restaurant) JOIN db309sd4.User) WHERE db309sd4.Order.Order_Status ="
 		        		+ " \"Confirmed\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
-		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
+		        		" AND db309sd4.Food.Rest_ID = " + '"' + Restaurant_ID + '"' + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
 
 
 	            System.out.println(query);
@@ -563,7 +563,7 @@ public class DATABASE_GET
 		        		+ "  db309sd4.User.First_Name,  db309sd4.User.Last_Name, db309sd4.User.User_ID\n" + 
 		        		" FROM (((db309sd4.Order JOIN db309sd4.Food) JOIN db309sd4.Restaurant) JOIN db309sd4.User) WHERE db309sd4.Order.Order_Status ="
 		        		+ " \"Cancelled\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
-		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
+		        		" AND db309sd4.Food.Rest_ID = " + '"' + Restaurant_ID + '"' + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
@@ -601,7 +601,7 @@ public class DATABASE_GET
 		        		+ "  db309sd4.User.First_Name,  db309sd4.User.Last_Name, db309sd4.User.User_ID\n" + 
 		        		" FROM (((db309sd4.Order JOIN db309sd4.Food) JOIN db309sd4.Restaurant) JOIN db309sd4.User) WHERE db309sd4.Order.Order_Status ="
 		        		+ " \"Completed\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
-		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
+		        		" AND db309sd4.Food.Rest_ID = " + '"' + Restaurant_ID + '"' + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
 	    
