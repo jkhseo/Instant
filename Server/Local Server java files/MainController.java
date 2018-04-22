@@ -274,10 +274,10 @@ public class MainController {
 	 * @return JSON Return
 	 */
 	@GetMapping(path="/getConfirmationCode")		
-	public @ResponseBody String getConfirmationCode(@RequestParam String Order_ID)		
+	public @ResponseBody String getConfirmationCode(@RequestParam String Order_ID, @RequestParam String Rest_ID)		
 	{		
 		// This returns a JSON or XML with the users		
-		return DATABASE_GET.getConfirmationCode(Order_ID);		
+		return DATABASE_GET.getConfirmationCode(Order_ID, Rest_ID);		
 	}		
 				
 	/**

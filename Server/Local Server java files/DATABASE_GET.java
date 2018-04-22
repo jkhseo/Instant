@@ -300,14 +300,14 @@ public class DATABASE_GET
 	 * @return Returns the QR/confirmation code of the order. 
 	 */
 	
-	public static String getConfirmationCode(String Order_ID)
+	public static String getConfirmationCode(String Order_ID, String Rest_ID)
 	{
 		 JSONArray json = null;
 		 try
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-	            String query = "SELECT Order_Confirmation_Code FROM db309sd4.Order WHERE Order_ID= " + Order_ID; 
+	            String query = "SELECT Order_Confirmation_Code FROM db309sd4.Order WHERE Order_ID = " + Order_ID + "Rest_ID = " + Rest_ID; 
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
