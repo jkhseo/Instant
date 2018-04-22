@@ -17,6 +17,7 @@
             android:value="AIzaSyDrvQ_A2kpSvu_smP-TnzMLvoCQFoZx5_0" />
 
         <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

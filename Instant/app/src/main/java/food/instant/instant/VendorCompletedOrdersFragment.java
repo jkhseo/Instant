@@ -1,5 +1,6 @@
 package food.instant.instant;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,10 +45,17 @@ public class VendorCompletedOrdersFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private int RESTID;
+
     private OnFragmentInteractionListener mListener;
 
     public VendorCompletedOrdersFragment() {
         // Required empty public constructor
+    }
+
+    @SuppressLint("ValidFragment")
+    public VendorCompletedOrdersFragment(int rest_id){
+        this.RESTID = rest_id;
     }
 
     /**
@@ -176,7 +184,7 @@ public class VendorCompletedOrdersFragment extends Fragment {
                             these_restaurants.add(new Restaurant(Rest_ID, name, latitude, longitude, address, rating));
                         }
                         // + these_restaurants.get(0).getRest_ID()
-                        HttpGET("getCompletedOrderForRestaurant?Restaurant_ID=7", handler);
+                        HttpGET("getCompletedOrderForRestaurant?Restaurant_ID=" + RESTID, handler);
                         Log.d(TAG, "Request made.........................");
                         Log.d(TAG, response.toString());
                     } catch (JSONException e) {
@@ -195,12 +203,17 @@ public class VendorCompletedOrdersFragment extends Fragment {
                             int orderID = (int) ((JSONObject) response.get(i)).get("Order_ID");
                             char status = 'q';
                             if (((String) ((JSONObject) response.get(i)).get("Order_Status")).equals("Completed")) {
-                                status = 'p';
+                                status = 'f';
                             }
                             int Dummy_PK = (int) ((JSONObject) response.get(i)).get("DummyPK");
                             double foodPrice = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Food_Price"));
                             int restID = (int) ((JSONObject) response.get(i)).get("Rest_ID");
-                            String comments = (String) ((JSONObject) response.get(i)).get("Comments");
+                            String comments = "";
+                            try {
+                                comments = (String) ((JSONObject) response.get(i)).get("Comments");
+                            }catch(JSONException e){
+                                comments = "";
+                            }
                             int orderConfCode = (int) ((JSONObject) response.get(i)).get("Order_Confirmation_Code");
                             int menuID = Integer.parseInt((String) ((JSONObject) response.get(i)).get("Menu_ID"));
                             int foodQuantity = (int) ((JSONObject) response.get(i)).get("Quantity");

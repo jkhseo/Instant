@@ -50,8 +50,8 @@ public class user_home_chat extends Fragment {
         // Required empty public constructor
     }
     @SuppressLint("ValidFragment")
-    public user_home_chat(String sendAddress, int sendID){
-        this.conversation = new Conversation(sendAddress,sendID);
+    public user_home_chat(String sendAddress, int sendID,int Rest_ID){
+        this.conversation = new Conversation(sendAddress,sendID,Rest_ID);
     }
     @SuppressLint("ValidFragment")
     public user_home_chat(Conversation conversation){
@@ -78,6 +78,9 @@ public class user_home_chat extends Fragment {
         conversation.addMessage(message);
         adapter.notifyDataSetChanged();
     }
+    public int getRestID(){
+        return conversation.getRest_ID();
+    }
     public String getSenderInfo(){
         return conversation.getType()+conversation.getId();
     }
@@ -96,6 +99,14 @@ public class user_home_chat extends Fragment {
         if(conversation.getMessages()==null){
             getMessages();
         }
+        OrderDbHelper dbHelper = new OrderDbHelper(getContext());
+        if(SaveSharedPreference.getType(getContext()).equals("Vendor")){
+            dbHelper.updateReadStatusRestaurant(dbHelper.getWritableDatabase(),conversation.getId(),conversation.getType());
+        }
+        else{
+            dbHelper.updateReadStatusUser(dbHelper.getWritableDatabase(),conversation.getRest_ID());
+        }
+        dbHelper.close();
         View view = inflater.inflate(R.layout.fragment_user_home_chat, container, false);
         Button sendMessage = view.findViewById(R.id.sendButton);
         adapter = new chat_adapter(getContext(),conversation.getMessages());
@@ -117,7 +128,7 @@ public class user_home_chat extends Fragment {
             @Override
             public void onClick(View view) {
                 user_home_chat ref = (user_home_chat) view.getTag();
-                Message temp = new Message(conversation.getId(),conversation.getType(),messageBox.getText().toString(),SaveSharedPreference.getType(ref.getContext()).substring(0,5),Integer.parseInt(SaveSharedPreference.getId(ref.getContext())));
+                Message temp = new Message(conversation.getId(),conversation.getType(),messageBox.getText().toString(),SaveSharedPreference.getType(ref.getContext()).substring(0,5),Integer.parseInt(SaveSharedPreference.getId(ref.getContext())),conversation.getRest_ID(),1);
                 new ChatSocket().execute(temp);
                 (ref).addMessage(temp);
                 OrderDbHelper dbHelper = new OrderDbHelper(ref.getContext());
@@ -131,10 +142,10 @@ public class user_home_chat extends Fragment {
 
     private void getMessages() {
         OrderDbHelper dbHelper = new OrderDbHelper(getContext());
-        Cursor cursor = dbHelper.getRestMessages(dbHelper.getReadableDatabase(),conversation.getId(),conversation.getType());
+        Cursor cursor = dbHelper.getRestMessages(dbHelper.getReadableDatabase(),conversation.getRest_ID());
         cursor.moveToFirst();
         String Message,SenderType,RecieverType;
-        int SenderID,RecieverID;
+        int SenderID,RecieverID,Rest_ID,Read;
         conversation.setMessages(new ArrayList<Message>());
         while(!cursor.isAfterLast()){
             Message = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.MESSAGE));
@@ -142,7 +153,9 @@ public class user_home_chat extends Fragment {
             RecieverType = cursor.getString(cursor.getColumnIndex(MessageContract.MessageEntry.RECIEVER_TYPE));
             SenderID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.SENDER_ID));
             RecieverID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.RECIEVER_ID));
-            conversation.addMessage(new Message(RecieverID,RecieverType,Message,SenderType,SenderID));
+            Rest_ID = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.REST_ID));
+            Read = cursor.getInt(cursor.getColumnIndex(MessageContract.MessageEntry.READ));
+            conversation.addMessage(new Message(RecieverID,RecieverType,Message,SenderType,SenderID,Rest_ID,Read));
             cursor.moveToNext();
         }
     }

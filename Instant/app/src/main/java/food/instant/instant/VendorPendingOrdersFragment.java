@@ -1,5 +1,6 @@
 package food.instant.instant;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
@@ -46,10 +47,17 @@ public class VendorPendingOrdersFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
+    private int RESTID;
+
     private OnFragmentInteractionListener mListener;
 
     public VendorPendingOrdersFragment() {
         // Required empty public constructor
+    }
+
+    @SuppressLint("ValidFragment")
+    public VendorPendingOrdersFragment(int rest_id){
+        this.RESTID = rest_id;
     }
 
     /**
@@ -179,7 +187,7 @@ public class VendorPendingOrdersFragment extends Fragment {
                             these_restaurants.add(new Restaurant(Rest_ID, name, latitude, longitude, address, rating));
                         }
                         // + these_restaurants.get(0).getRest_ID()
-                        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=7", handler);
+                        HttpGET("getPendingOrderForRestaurant?Restaurant_ID=" + RESTID, handler);
                         //Log.d(TAG, "Request made.........................");
                         //Log.d(TAG, response.toString());
                     } catch (JSONException e) {
@@ -203,7 +211,12 @@ public class VendorPendingOrdersFragment extends Fragment {
                             int Dummy_PK = (int) ((JSONObject) response.get(i)).get("DummyPK");
                             double foodPrice = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Food_Price"));
                             int restID = (int) ((JSONObject) response.get(i)).get("Rest_ID");
-                            String comments = (String) ((JSONObject) response.get(i)).get("Comments");
+                            String comments = "";
+                            try {
+                                comments = (String) ((JSONObject) response.get(i)).get("Comments");
+                            }catch(JSONException e){
+                                comments = "";
+                            }
                             int orderConfCode = (int) ((JSONObject) response.get(i)).get("Order_Confirmation_Code");
                             int menuID = Integer.parseInt((String) ((JSONObject) response.get(i)).get("Menu_ID"));
                             int foodQuantity = (int) ((JSONObject) response.get(i)).get("Quantity");
@@ -221,7 +234,6 @@ public class VendorPendingOrdersFragment extends Fragment {
                             String userEmail = (String) ((JSONObject) response.get(i)).get("User_Email");
                             Food food = new Food(restID, foodName, foodPrice, foodDesc, menuID, foodTagsMain, foodTagsSecondary, foodID);
                             Order tmpOrder = new Order(orderID, userID, food, comments, foodQuantity, restName, status, Dummy_PK, orderConfCode, orderDateSubmitted, orderDatePickup, userFirstName, userLastName, userEmail, restID);
-                            addOrderToDatabase(comments, food, foodQuantity, restName);
                             tmpOrders.add(tmpOrder);
                         }
                         Log.d(TAG, "" + tmpOrders.size());

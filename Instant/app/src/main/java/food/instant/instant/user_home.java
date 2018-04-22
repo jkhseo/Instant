@@ -69,6 +69,7 @@ public class user_home extends Fragment {
         View mainView = inflater.inflate(R.layout.fragment_user_home, container, false);
         Button searchButton = mainView.findViewById(R.id.search_button);
         Button mapButton = mainView.findViewById(R.id.map_button);
+        Button ordersButton = mainView.findViewById(R.id.OrdersButton);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,6 +80,12 @@ public class user_home extends Fragment {
             @Override
             public void onClick(View view) {
                 ((MainActivity)getActivity()).swapFragments(new user_home_maps());
+            }
+        });
+        ordersButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity)getActivity()).swapFragments(new user_home_orders());
             }
         });
         return mainView;
