@@ -1,5 +1,6 @@
 package food.instant.instant;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
@@ -73,10 +74,8 @@ public class HttpRequests {
      */
     //postAESKEY?VersionNumber=&EncryptedCode=&User_ID=
     public static void HttpGET(String path, final Handler handler) {
-
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
-        String localurl = "http://10.26.176.141:8080/demo/"+path;
-        //AES_EncryptionHelper(path);
+        String localurl = "http://10.26.7.176:8080/demo/"+path;
         OkHttpClient client = new OkHttpClient();
         com.squareup.okhttp.Request request = new com.squareup.okhttp.Request.Builder().url(url).build();
         client.newCall(request).enqueue(new Callback() {
@@ -142,7 +141,8 @@ public class HttpRequests {
      */
     public static void HttpPost(String path, final Handler handler){
         String url = "http://proj-309-sd-4.cs.iastate.edu:8080/demo/"+path;
-        String localurl = "http://10.26.176.141:8080/demo/"+path;
+        String localurl = "http://10.26.7.176:8080/demo/"+path;
+        System.out.println(localurl);
         OkHttpClient client = new OkHttpClient();
         //success tag, true or false value
 
