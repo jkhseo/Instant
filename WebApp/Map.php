@@ -2,6 +2,7 @@
 <html>
 <head>
 <script type="text/javascript" src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTHLxyrImyn45wgP5aqzUKg7NxO732NiM"></script>
 <script src='googlemap.js'> </script>
 	<title> Map </title> 
    <meta charset="utf-8">
@@ -94,6 +95,9 @@ echo <<<_HTML
 <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTHLxyrImyn45wgP5aqzUKg7NxO732NiM&callback=initMap">
 </script>
+
+
+
 <script>
 
 $.getJSON("http://proj-309-sd-4.cs.iastate.edu:8080/demo/getRestaurantsInView?max_Lat=42.0597&max_Long=-93.399&min_Lat=41.8919&min_Long=-93.88", function(data){
@@ -101,9 +105,10 @@ $.getJSON("http://proj-309-sd-4.cs.iastate.edu:8080/demo/getRestaurantsInView?ma
 		var length = data[key].length;
 		for(var i = 0; i < length; i++){
 		//alert(JSON.stringify(data[key][0]["Rest_Coordinate_Long"]));
+		var Rest_Name = JSON.stringify(data[key][i]["Rest_Name"]);
 		var long = parseFloat(JSON.stringify(data[key][i]["Rest_Coordinate_Long"]));
 		var lat = parseFloat(JSON.stringify(data[key][i]["Rest_Coordinate_Lat"]));
-		addMarkertoMap({lat: lat, lng: long}); 
+		addMarkertoMap({lat: lat, lng: long}, data, key, i, Rest_Name); 
 		}
 	} 
 	console.log(data);
