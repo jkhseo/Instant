@@ -10,18 +10,30 @@ public class Conversation {
 
     private ArrayList<Message> messages;
     private String type;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    private String name;
     private int id;
     private int Rest_ID;
     public Conversation(String type,int id, int Rest_ID){
         this.type = type;
         this.id = id;
         this.Rest_ID = Rest_ID;
+        this.name = null;
     }
     public Conversation(ArrayList<Message> messages,String type, int id,int Rest_ID){
         this.messages=messages;
         this.type=type;
         this.id=id;
         this.Rest_ID= Rest_ID;
+        this.name = null;
 
     }
 

@@ -87,17 +87,21 @@ public class user_home_orders extends Fragment{
                             status = 'P';
                         else if(orderStatus.equals("Canceled"))
                             status = 'X';
-                        else
+                        else if(orderStatus.equals("Confirmed"))
                             status = 'C';
-                        tempOrder = new Order(Order_Group_ID, Integer.parseInt(SaveSharedPreference.getId(orders.getContext())), tempFood, Comments, Food_Quantity, Rest_Name, status,PickupDate);
+                        else
+                            status = 'D';
+                        if(status!='D') {
+                            tempOrder = new Order(Order_Group_ID, Integer.parseInt(SaveSharedPreference.getId(orders.getContext())), tempFood, Comments, Food_Quantity, Rest_Name, status, PickupDate);
 
-                        if (categories.containsKey(Rest_Name+Order_Group_ID)) {
-                            ordersByRes.get(categories.get(Rest_Name+Order_Group_ID)).add(tempOrder);
-                        } else {
-                            ordersByRes.add(new ArrayList<Order>());
-                            ordersByRes.get(counter).add(tempOrder);
-                            categories.put(Rest_Name+Order_Group_ID, counter);
-                            counter++;
+                            if (categories.containsKey(Rest_Name + Order_Group_ID)) {
+                                ordersByRes.get(categories.get(Rest_Name + Order_Group_ID)).add(tempOrder);
+                            } else {
+                                ordersByRes.add(new ArrayList<Order>());
+                                ordersByRes.get(counter).add(tempOrder);
+                                categories.put(Rest_Name + Order_Group_ID, counter);
+                                counter++;
+                            }
                         }
                     }
                     orders.updateHistoricalOrders(ordersByRes);

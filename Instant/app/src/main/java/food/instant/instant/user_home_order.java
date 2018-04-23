@@ -39,12 +39,16 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.math.BigInteger;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
+import static food.instant.instant.EncryptionHelper.AES_EncryptionHelper;
+import static food.instant.instant.EncryptionHelper.EncryptMessage_Big_Integer;
+import static food.instant.instant.EncryptionHelper.intToString;
 import static food.instant.instant.HttpRequests.HttpGET;
 import static food.instant.instant.HttpRequests.HttpPost;
 
@@ -96,7 +100,9 @@ public class user_home_order extends Fragment {
                 }
                 if(msg.what==GlobalConstants.QRCODE){
                     JSONArray code = ((JSONObject)msg.obj).getJSONArray("Confirmation_Code");
-                    order.generateQRCode((Integer)((JSONObject)code.get(0)).get("Order_Confirmation_Code"));
+                    int qrCode = (Integer)((JSONObject)code.get(0)).get("Order_Confirmation_Code");
+                    order.generateQRCode(qrCode);
+                    System.out.println("QRCODE= "+qrCode);
                 }
                 if(msg.what==GlobalConstants.RESTAURANT_INFO) {
                     JSONArray Rest_Info = ((JSONObject) msg.obj).getJSONArray("Restaurant_Name");
@@ -282,9 +288,21 @@ public class user_home_order extends Fragment {
                                 "&Comments="+orderInfo[1].substring(0,orderInfo[1].length()-15)+
                                 "&Quantity="+orderInfo[2].substring(0,orderInfo[2].length()-1)+
                                 "&Order_Date_Pick_Up="+orderDT.get(Calendar.YEAR)+"/"+String.format("%02d",orderDT.get(Calendar.MONTH)+1)+"/"+String.format("%02d",orderDT.get(Calendar.DAY_OF_MONTH))+" "+String.format("%02d",orderDT.get(Calendar.HOUR_OF_DAY))+":"+String.format("%02d",orderDT.get(Calendar.MINUTE))+":00";
+                        String path = AES_EncryptionHelper(url,getContext());
+                        int begin = path.indexOf("User_ID=");
+                        String user = path.substring(begin,path.indexOf("&",begin));
+                        OrderDbHelper dbHelper = new OrderDbHelper(getContext());
+                        Cursor c = dbHelper.getRSAInfo(dbHelper.getReadableDatabase());
+                        c.moveToFirst();
+                        BigInteger RSAKEY = new BigInteger(c.getString(c.getColumnIndex(KeyContract.KeyEntry.SESSION_KEY_VALUE)));
+                        BigInteger Exponent = new BigInteger(c.getString(c.getColumnIndex(KeyContract.KeyEntry.ENCRYPTION_EXPONENT)));
+                        int version = c.getInt(c.getColumnIndex(KeyContract.KeyEntry.VERSION));
+                        BigInteger encryptedID = EncryptMessage_Big_Integer(new BigInteger(""+order.get(0).getUser_ID()),RSAKEY,Exponent);
+                        path = path.replace(user,"User_ID="+encryptedID.toString());
+                        path=path+"VersionNumber="+version;
+                        System.out.println("path"+path);
                         System.out.println(url);
-                        System.out.println(url);
-                        HttpPost(url,handler);
+                        HttpPost(path,handler);
                     }
                 });
             }
@@ -335,7 +353,7 @@ public class user_home_order extends Fragment {
                     @Override
                     public void onClick(View view) {
                             System.out.println(order.get(0).getOrder_ID());
-                            HttpGET("getConfirmationCode?Order_ID="+order.get(0).getOrder_ID(),handler);
+                            HttpGET("getConfirmationCode?Order_ID="+order.get(0).getOrder_ID()+"&Rest_ID="+order.get(0).getFood().getRest_ID(),handler);
                     }
                 });
             }

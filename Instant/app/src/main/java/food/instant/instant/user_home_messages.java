@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -13,8 +14,19 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+
+import static food.instant.instant.EncryptionHelper.generateAESKEY;
+import static food.instant.instant.HttpRequests.HttpGET;
 
 
 /**
@@ -36,14 +48,42 @@ public class user_home_messages extends Fragment {
     private String mParam2;
     private messages_adapter adapter;
     private ArrayList<Conversation> conversations;
-
     private OnFragmentInteractionListener mListener;
 
     public user_home_messages() {
         // Required empty public constructor
         conversations = new ArrayList<>();
     }
+    private static class MessagesHandler extends Handler {
+        private final WeakReference<user_home_messages> messages;
 
+        public MessagesHandler(user_home_messages messages) {
+            this.messages = new WeakReference<user_home_messages>(messages);
+        }
+
+        /*** End Code***/
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            user_home_messages user_messages = messages.get();
+            JSONArray Rest_Info = null;
+            try {
+                Rest_Info = ((JSONObject) msg.obj).getJSONArray("Restaurant_Name");
+                JSONObject Rest = (JSONObject) Rest_Info.get(0);
+                String rest_name = (String)Rest.get("Rest_Name");
+                int  rest_id = (Integer)Rest.get("Rest_ID");
+                for(int i=0;i<user_messages.conversations.size();i++){
+                    if(user_messages.conversations.get(i).getRest_ID()==rest_id){
+                        user_messages.conversations.get(i).setName(rest_name);
+                    }
+                }
+                user_messages.adapter.notifyDataSetChanged();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    }
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -127,6 +167,7 @@ public class user_home_messages extends Fragment {
                 ArrayList<Message> list = new ArrayList<>();
                 list.add(temp);
                 conversationMap.put(Rest_ID,conversations.size());
+                HttpGET("getRestaurantFromID?Rest_ID="+Rest_ID,new MessagesHandler(this));
                 if(SenderType.equals(SaveSharedPreference.getType(getContext()).substring(0,5))) {
                     conversations.add(new Conversation(list, RecieverType,RecieverID, Rest_ID));
                 }

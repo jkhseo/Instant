@@ -438,7 +438,10 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                     RSA_KEY = ((String)((JSONObject)object.get(0)).get("Public_Key"));
                     Version = Integer.parseInt((String)((JSONObject)object.get(0)).get("Version"));
                     EncryptionExponent = ((String) ((JSONObject)object.get(0)).get("Encyption_Exponet"));
-                    BigInteger integer = generateAESKEY();
+                    BigInteger integer = new BigInteger(""+-1);
+                    while(integer.signum()!=1) {
+                        integer = generateAESKEY();
+                    }
                     OrderDbHelper dbHelper = new OrderDbHelper(activity);
                     dbHelper.insertRSAInfo(dbHelper.getWritableDatabase(),RSA_KEY,EncryptionExponent,Version,integer.toString());
                     dbHelper.close();
@@ -451,37 +454,48 @@ public class MainActivity extends AppCompatActivity implements user_home_maps.On
                 Message temp = (Message) msg.obj;
                 OrderDbHelper dbHelper = new OrderDbHelper(activity);
                 SQLiteDatabase database = dbHelper.getWritableDatabase();
-                dbHelper.addMessage(temp, database);
-                dbHelper.close();
                 System.out.println("Received" + list.size());
                 if (list != null) {
                     list.removeAll(Collections.singleton(null));
                     int index = list.size()-1;
                     if (list.get(index).getClass().getSimpleName().equals("user_home_chat")) {
                         user_home_chat chat = (user_home_chat) list.get(index);
-                        if (chat.getRestID()==temp.getRest_ID()) {
+                        if (chat.getRestID()==temp.getRest_ID()&&chat.getSenderInfo().equals(temp.getSenderType()+temp.getSenderID())) {
                             temp.setRead(1);
+                            dbHelper.addMessage(temp, database);
                             chat.addMessage(temp);
+                        }
+                        else{
+                            dbHelper.addMessage(temp, database);
                         }
 
                     } else if (list.get(index).getClass().getSimpleName().equals("user_home_messages")) {
                         user_home_messages messages = (user_home_messages) list.get(index);
                         temp.setRead(0);
+                        dbHelper.addMessage(temp, database);
                         messages.addMessage(temp);
                     }
                     else if(list.get(index).getClass().getSimpleName().equals("vendor_message")){
                         vendor_message message = (vendor_message)list.get(index);
                         if(message.getRest_ID()==temp.getRest_ID()){
                             temp.setRead(0);
+                            dbHelper.addMessage(temp, database);
                             message.addMessage(temp);
+                        }
+                        else{
+                            dbHelper.addMessage(temp, database);
                         }
                     }
                     else if(list.get(index).getClass().getSimpleName().equals("vendor_messages")){
                         vendor_messages messages = (vendor_messages) list.get(index);
+                        dbHelper.addMessage(temp, database);
                         messages.notifyAdapter();
                     }
+                    else{
+                        dbHelper.addMessage(temp, database);
+                    }
                 }
-
+                dbHelper.close();
             }
 
         }
