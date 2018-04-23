@@ -307,7 +307,7 @@ public class DATABASE_GET
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-	            String query = "SELECT Order_Confirmation_Code FROM db309sd4.Order WHERE Order_ID = " + Order_ID + "Rest_ID = " + Rest_ID; 
+	            String query = "SELECT Order_Confirmation_Code FROM db309sd4.Order WHERE Order_ID = " + Order_ID + " AND Rest_ID = " + Rest_ID; 
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
