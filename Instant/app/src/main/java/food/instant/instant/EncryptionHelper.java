@@ -1,6 +1,10 @@
 package food.instant.instant;
 
 import android.content.Context;
+import android.database.Cursor;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
@@ -8,6 +12,8 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import javax.crypto.BadPaddingException;
@@ -39,16 +45,40 @@ public class EncryptionHelper {
         message = message.modPow(encryptionExponetBIG, nBIG);
         return message;
     }
-    public static String AES_EncryptionHelper(String path){
-        String[] unencryptedData = path.replaceAll("&","=").split("=");
-        BigInteger[] numberRepresentation = new BigInteger[unencryptedData.length];
-        for(int i=0;i<unencryptedData.length;i++){
-            numberRepresentation[i] = new BigInteger(stringToInt(unencryptedData[i]));
+    public static String AES_EncryptionHelper(String path,Context context){
+        String[] unencryptedData = (path.replaceAll("&","=")).split("=");
+        ArrayList<String> encryptedArguments = new ArrayList<>();
+        ArrayList<String> unencryptedArguments = new ArrayList<>();
+        OrderDbHelper dbHelper = new OrderDbHelper(context);
+        Cursor c = dbHelper.getAESInfo(dbHelper.getReadableDatabase());
+        c.moveToFirst();
+        byte[] arr = new BigInteger(c.getString(c.getColumnIndex(KeyContract.KeyEntry.AES_KEY))).toByteArray();
+        for(int i=1;i<unencryptedData.length;i+=2){
+            unencryptedArguments.add(unencryptedData[i]);
+            byte[] encryptedData = AES_Encrypt(arr,unencryptedData[i]);
+            encryptedArguments.add(new BigInteger(encryptedData).toString());
         }
-        for(int i=0;i<unencryptedData.length;i++){
-            path = path.replace(unencryptedData[i],numberRepresentation[i].toString());
+        int counter=0;
+        String newpath="";
+        for(int i=0;i<unencryptedData.length;i+=2){
+            newpath+= unencryptedData[i]+"="+encryptedArguments.get(counter)+"&";
+            counter++;
         }
-        return path;
+        return newpath;
+    }
+    public static JSONObject AES_DecryptionHelper(JSONObject object,Context context){
+        OrderDbHelper dbHelper = new OrderDbHelper(context);
+        Cursor c = dbHelper.getAESInfo(dbHelper.getReadableDatabase());
+        c.moveToFirst();
+        String AES_Key = c.getString(c.getColumnIndex(KeyContract.KeyEntry.AES_KEY));
+        String s = AES_Decrypt(AES_Key.getBytes(),object.toString().getBytes());
+        JSONObject response=null;
+        try {
+            response = new JSONObject(s);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return response;
     }
     public static byte[] AES_Encrypt(byte[] encryptionKey, String Message)
     {
@@ -144,6 +174,7 @@ public class EncryptionHelper {
         byte[] key = new byte[16];
         random.nextBytes(key);
         BigInteger n = new BigInteger(key);
+        System.out.println(n);
         return n;
     }
 

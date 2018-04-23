@@ -236,8 +236,15 @@ public class user_home_restaurant extends Fragment {
             }
         });
         ViewPager pager = view.findViewById(R.id.viewPager);
-
-        new GetServerImages(pager,getContext()).execute("http://proj-309-sd-4.cs.iastate.edu/Images/UDCC1.jpg","http://proj-309-sd-4.cs.iastate.edu/Images/UDCC2.jpg");
+        if(restaurant.getRest_ID()==1) {
+            new GetServerImages(pager, getContext()).execute("http://proj-309-sd-4.cs.iastate.edu/Images/UDCC1.jpg", "http://proj-309-sd-4.cs.iastate.edu/Images/UDCC2.jpg");
+        }
+        else if(restaurant.getRest_ID()==7){
+            new GetServerImages(pager, getContext()).execute("http://proj-309-sd-4.cs.iastate.edu/Images/HMGC.jpg");
+        }
+        else{
+            new GetServerImages(pager, getContext()).execute("http://proj-309-sd-4.cs.iastate.edu/Images/NoImage.png", "http://proj-309-sd-4.cs.iastate.edu/Images/UDCC2.jpg");
+        }
         RestaurantHandler handler = new RestaurantHandler(this);
         HttpGET("getMenu?Restaurant_ID="+restaurant.getRest_ID(),handler);
         //HttpGET("get",handler);
