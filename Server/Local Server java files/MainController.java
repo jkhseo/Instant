@@ -278,7 +278,8 @@ public class MainController {
 	{		
 		// This returns a JSON or XML with the users		
 		return DATABASE_GET.getConfirmationCode(Order_ID, Rest_ID);		
-	}		
+	}	
+
 				
 	/**
 	 * 
@@ -368,7 +369,57 @@ public class MainController {
 		    return "{ \"Update_Order_Status_Success\" : \"False\"}";
 		}
 
-	
+		/**
+		 * 
+		 * @param Rest_ID
+		 * @param User_ID
+		 * @param Food
+		 * @param Comments
+		 * @param Quantity
+		 * @param Order_Date_Pick_Up
+		 * 
+		 * @return JSON Return
+		 */
+	@GetMapping(path="/addOrder_Unencrypted") // Map ONLY Post Requests
+	public @ResponseBody String addNewOrder_Unencrypted(@RequestParam String Rest_ID, @RequestParam String User_ID,
+			@RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity,
+			@RequestParam String Order_Date_Pick_Up, @RequestParam String VersionNumber)
+	{ 
+		// @ResponseBody means the returned String is the response, not a view name
+		// @RequestParam means it is a parameter from the GET or POST request
+		
+		String[] FoodItems = Food.split(",+\\s*");
+		String[] QuanityItems = Quantity.split(",+\\s*");
+		String[] CommentsItems = Comments.split("NEWCOMMENTBLOCK"); //Imperfect Solution for an imperfect world. 
+		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+
+		if(FoodItems.length != QuanityItems.length && FoodItems.length != CommentsItems.length)
+			 return "{ \"Success\" : \"False\"}";
+		else
+		{
+			int orderID = DATABASE_GET.getNextOrderID(Rest_ID);	
+			String QR_CODE = "" +  ((int) (Math.random() * QRCODE_SIZE));
+			System.out.println(Comments);
+			System.out.println(FoodItems.length + " " + QuanityItems.length + " " + CommentsItems.length);
+			
+			
+			boolean added = true;
+			for(int i=0; i<FoodItems.length; i++)
+			{
+				if(!DATABASE_POST.Add_Order(orderID, Rest_ID,   User_ID,  FoodItems[i], dtf.format(now), Order_Date_Pick_Up ,null, CommentsItems[i], QuanityItems[i],QR_CODE))
+				   added = false;
+			}
+		
+		    if(added)
+		    		return "{ \"Add_New_Order_Success\" : \"True\"}";
+		    return "{ \"Add_New_Order_Success\" : \"False\"}";
+		}
+	}
+		
+		
+		
 		/**
 		 * 
 		 * @param Rest_ID
