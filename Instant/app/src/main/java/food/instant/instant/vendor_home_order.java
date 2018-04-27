@@ -251,7 +251,7 @@ public class vendor_home_order extends Fragment {
                     HttpPost("updateOrderStatus?Order_ID=" + order.get(0).getOrder_ID() + "&Rest_ID=" + order.get(0).getRest_ID() + "&Order_Status=Completed", handler);
                 }
                 else{
-                    Toast.makeText(getContext(), "Invalid Code!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Invalid Code!" + code, Toast.LENGTH_SHORT).show();
                 }
             }
         }
