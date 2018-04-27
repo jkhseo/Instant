@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +15,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import static food.instant.instant.HttpRequests.HttpGET;
 
 
 /**
@@ -34,21 +42,55 @@ public class vendor_message extends Fragment {
 
     private ArrayList<Conversation> conversations;
     private int Rest_ID;
+    private ArrayList<Integer> User_ID;
     private messages_adapter adapter;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private static class MessagesHandler extends Handler {
+        private final WeakReference<vendor_message> messages;
+
+        public MessagesHandler(vendor_message messages) {
+            this.messages = new WeakReference<vendor_message>(messages);
+        }
+
+        /*** End Code***/
+        @Override
+        public void handleMessage(android.os.Message msg) {
+            vendor_message user_messages = messages.get();
+            JSONArray Rest_Info = null;
+            try {
+                Rest_Info = ((JSONObject) msg.obj).getJSONArray("Order_Status");
+                JSONObject Rest = (JSONObject) Rest_Info.get(0);
+                String first_name = (String)Rest.get("First_Name");
+                String last_name = (String)Rest.get("Last_Name");
+                for(int i=0;i<user_messages.conversations.size();i++){
+                    if(user_messages.conversations.get(i).getId()==user_messages.User_ID.get(0)){
+                        user_messages.User_ID.remove(0);
+                        user_messages.conversations.get(i).setName(first_name+" "+last_name);
+                        break;
+                    }
+                }
+                user_messages.adapter.notifyDataSetChanged();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    }
 
     public vendor_message() {
         conversations = new ArrayList<>();
-
+        this.User_ID = new ArrayList<>();
     }
     @SuppressLint("ValidFragment")
     public vendor_message(int Rest_ID){
         this.Rest_ID=Rest_ID;
         conversations = new ArrayList<>();
+        this.User_ID = new ArrayList<>();
     }
 
     /**
@@ -144,10 +186,14 @@ public class vendor_message extends Fragment {
                 if(RecieverType.equals(SaveSharedPreference.getType(getContext()).substring(0,5))){
                     conversationMap.put(SenderType+SenderID,conversations.size());
                     conversations.add(new Conversation(list,SenderType,SenderID,Rest_ID));
+                    HttpGET("getFullName?User_ID="+SenderID,new MessagesHandler(this));
+                    User_ID.add(SenderID);
                 }
                 else {
                     conversationMap.put(RecieverType+RecieverID,conversations.size());
                     conversations.add(new Conversation(list, RecieverType, RecieverID,Rest_ID));
+                    HttpGET("getFullName?User_ID="+RecieverID,new MessagesHandler(this));
+                    User_ID.add(RecieverID);
 
                 }
             }

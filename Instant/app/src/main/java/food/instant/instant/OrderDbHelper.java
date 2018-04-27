@@ -244,10 +244,10 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         //System.out.println(query);
         //database.rawQuery(query,null);
     }
-    public void updateReadStatusRestaurant(SQLiteDatabase database, int ID,String type){
+    public void updateReadStatusRestaurant(SQLiteDatabase database, int ID,String type, int Rest_ID){
         ContentValues values = new ContentValues();
         values.put(MessageContract.MessageEntry.READ,1);
-        database.update(MessageContract.MessageEntry.TABLE_NAME,values, "("+MessageContract.MessageEntry.SENDER_ID+"=? AND "+ MessageContract.MessageEntry.SENDER_TYPE+"=?) OR ("+ MessageContract.MessageEntry.RECIEVER_ID+"=? AND "+ MessageContract.MessageEntry.RECIEVER_TYPE+"=?)",new String[]{""+ID,type,""+ID,type});
+        database.update(MessageContract.MessageEntry.TABLE_NAME,values, "("+MessageContract.MessageEntry.SENDER_ID+"=? AND "+ MessageContract.MessageEntry.SENDER_TYPE+"=? AND "+ MessageContract.MessageEntry.REST_ID+"=?) OR ("+ MessageContract.MessageEntry.RECIEVER_ID+"=? AND "+ MessageContract.MessageEntry.RECIEVER_TYPE+"=? AND "+ MessageContract.MessageEntry.REST_ID+"=?)",new String[]{""+ID,type,""+Rest_ID,""+ID,type,""+Rest_ID});
         //String query = "UPDATE " + MessageContract.MessageEntry.TABLE_NAME + " SET "+ MessageContract.MessageEntry.READ+"='"+1+ "' WHERE (("+ MessageContract.MessageEntry.SENDER_ID+"='"+ID+"' AND " +MessageContract.MessageEntry.SENDER_TYPE +"='"+type+"') " +
           //      "OR ("+MessageContract.MessageEntry.RECIEVER_ID+"='"+ID+"' AND " +MessageContract.MessageEntry.RECIEVER_TYPE +"='"+type+"'));";
         //System.out.println(query);
@@ -265,8 +265,8 @@ public class OrderDbHelper extends SQLiteOpenHelper{
         }
     }
     public boolean isAllReadV(SQLiteDatabase database, String type, int id){
-        String query = "SELECT * FROM " + MessageContract.MessageEntry.TABLE_NAME + " WHERE (("+ MessageContract.MessageEntry.SENDER_ID+"="+id+" AND " +MessageContract.MessageEntry.SENDER_TYPE +"="+type+" AND "+ MessageContract.MessageEntry.READ+"=0) " +
-                "OR ("+MessageContract.MessageEntry.RECIEVER_ID+"="+id+" AND " +MessageContract.MessageEntry.RECIEVER_TYPE +"="+type+" AND "+ MessageContract.MessageEntry.READ+"=0))";
+        String query = "SELECT * FROM " + MessageContract.MessageEntry.TABLE_NAME + " WHERE (("+ MessageContract.MessageEntry.SENDER_ID+"="+id+" AND " +MessageContract.MessageEntry.SENDER_TYPE +"='"+type+"' AND "+ MessageContract.MessageEntry.READ+"=0) " +
+                "OR ("+MessageContract.MessageEntry.RECIEVER_ID+"="+id+" AND " +MessageContract.MessageEntry.RECIEVER_TYPE +"='"+type+"' AND "+ MessageContract.MessageEntry.READ+"=0))";
         System.out.println(query);
         Cursor c = database.rawQuery(query,null);
         return c.getCount()<=0;

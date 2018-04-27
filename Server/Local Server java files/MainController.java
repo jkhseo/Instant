@@ -18,18 +18,6 @@ public class MainController {
 	RSA_Encyption RSA = null;
 	public static final int QRCODE_SIZE = 10000;
 	
-	public String StringToInt(String message)
-	{
-		String integer = new BigInteger(message.getBytes()).toString();
-		return integer;
-	}
-	
-	public String IntToString(String integer)
-	{
-		String message = new String(new BigInteger(integer).toByteArray());
-		return message;
-	}
-	
 	/**
 	 * 
 	 * @return All Restaurants
@@ -48,21 +36,21 @@ public class MainController {
 			return "{ \"Login_Success\" : \"Version_Number_Wrong\"}";
 				
 		//Simulated Encyrpyion 
-		System.out.println("Simualtion of Ecyption");
-		String passwordz = "gocyclones";
-		String passTest = DATABASE_UTILS.StringToInt(passwordz);
-		System.out.println("Password " + passwordz + " int rep " + passTest);
-		BigInteger encyrpted = RSA.EncryptMessage_Big_Integer(new BigInteger(passTest));
-		System.out.println("Encyrpted " + encyrpted);
-		System.out.println("Decrypted " + RSA.DecryptMessage_BigInteger(encyrpted));
-		
-		//Test for system
-		System.out.println("Actual data");
-		System.out.println("Encyrpted Number Recieved is " + User_Password_Encrypted);
+//		System.out.println("Simualtion of Ecyption");
+//		String passwordz = "gocyclones";
+//		String passTest = DATABASE_UTILS.StringToInt(passwordz);
+//		System.out.println("Password " + passwordz + " int rep " + passTest);
+//		BigInteger encyrpted = RSA.EncryptMessage_Big_Integer(new BigInteger(passTest));
+//		System.out.println("Encyrpted " + encyrpted);
+//		System.out.println("Decrypted " + RSA.DecryptMessage_BigInteger(encyrpted));
+//		
+//		//Test for system
+//		System.out.println("Actual data");
+//		System.out.println("Encyrpted Number Recieved is " + User_Password_Encrypted);
 		BigInteger decrypted = RSA.DecryptMessage_BigInteger(new BigInteger(User_Password_Encrypted));
-		System.out.println("Decyrpyed Number is " + decrypted);
+		//System.out.println("Decyrpyed Number is " + decrypted);
 		String password = DATABASE_UTILS.IntToString(decrypted);
-		System.out.println("Number to String yeilds " + password);
+		//System.out.println("Number to String yeilds " + password);
 		
 		
 		if(DATABASE_UTILS.Verfiy_Login(User_Email, password))
@@ -286,11 +274,12 @@ public class MainController {
 	 * @return JSON Return
 	 */
 	@GetMapping(path="/getConfirmationCode")		
-	public @ResponseBody String getConfirmationCode(@RequestParam String Order_ID)		
+	public @ResponseBody String getConfirmationCode(@RequestParam String Order_ID, @RequestParam String Rest_ID)		
 	{		
 		// This returns a JSON or XML with the users		
-		return DATABASE_GET.getConfirmationCode(Order_ID);		
-	}		
+		return DATABASE_GET.getConfirmationCode(Order_ID, Rest_ID);		
+	}	
+
 				
 	/**
 	 * 
@@ -336,13 +325,22 @@ public class MainController {
 	{ 
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
+		if(RSA == null)
+			RSA = new RSA_Encyption();
 		String JSONreturned = DATABASE_GET.getRSAKEY();
 		int Version = Integer.parseInt(JSONreturned.substring(JSONreturned.indexOf("Version") + 12, JSONreturned.indexOf("Encyption_Exponet")-4));
 		
+		
+		System.out.println("Posting AES key");
+		
+	
 		if(Version != Integer.parseInt(VersionNumber))
 			return "{ \"Success\" : \"Version_Number_Wrong\"}";
-		
-		BigInteger deycrptedCode = RSA.DecryptMessage(Integer.parseInt(EncryptedCode));
+
+		System.out.println("Recived Enc = " +  EncryptedCode );
+		BigInteger deycrptedCode = RSA.DecryptMessage_BigInteger(new BigInteger(EncryptedCode));
+		System.out.println("Decypt  = " +  deycrptedCode );
+		 
 		boolean added = DATABASE_POST.Add_New_AES_Key(User_ID, deycrptedCode.toString());
 		
 	    if(added)
@@ -371,7 +369,6 @@ public class MainController {
 		    return "{ \"Update_Order_Status_Success\" : \"False\"}";
 		}
 
-	
 		/**
 		 * 
 		 * @param Rest_ID
@@ -380,15 +377,129 @@ public class MainController {
 		 * @param Comments
 		 * @param Quantity
 		 * @param Order_Date_Pick_Up
+		 * 
 		 * @return JSON Return
 		 */
-	@GetMapping(path="/addOrder") // Map ONLY Post Requests
-	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity, @RequestParam String Order_Date_Pick_Up)
+	@GetMapping(path="/addOrder_Unencrypted") // Map ONLY Post Requests
+	public @ResponseBody String addNewOrder_Unencrypted(@RequestParam String Rest_ID, @RequestParam String User_ID,
+			@RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity,
+			@RequestParam String Order_Date_Pick_Up, @RequestParam String VersionNumber)
 	{ 
 		// @ResponseBody means the returned String is the response, not a view name
 		// @RequestParam means it is a parameter from the GET or POST request
-	
 		
+		String[] FoodItems = Food.split(",+\\s*");
+		String[] QuanityItems = Quantity.split(",+\\s*");
+		String[] CommentsItems = Comments.split("NEWCOMMENTBLOCK"); //Imperfect Solution for an imperfect world. 
+		
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+		LocalDateTime now = LocalDateTime.now();
+
+		if(FoodItems.length != QuanityItems.length && FoodItems.length != CommentsItems.length)
+			 return "{ \"Success\" : \"False\"}";
+		else
+		{
+			int orderID = DATABASE_GET.getNextOrderID(Rest_ID);	
+			String QR_CODE = "" +  ((int) (Math.random() * QRCODE_SIZE));
+			System.out.println(Comments);
+			System.out.println(FoodItems.length + " " + QuanityItems.length + " " + CommentsItems.length);
+			
+			
+			boolean added = true;
+			for(int i=0; i<FoodItems.length; i++)
+			{
+				if(!DATABASE_POST.Add_Order(orderID, Rest_ID,   User_ID,  FoodItems[i], dtf.format(now), Order_Date_Pick_Up ,null, CommentsItems[i], QuanityItems[i],QR_CODE))
+				   added = false;
+			}
+		
+		    if(added)
+		    		return "{ \"Add_New_Order_Success\" : \"True\"}";
+		    return "{ \"Add_New_Order_Success\" : \"False\"}";
+		}
+	}
+		
+		
+		
+		/**
+		 * 
+		 * @param Rest_ID
+		 * @param User_ID
+		 * @param Food
+		 * @param Comments
+		 * @param Quantity
+		 * @param Order_Date_Pick_Up
+		 * 
+		 * @return JSON Return
+		 */
+	@GetMapping(path="/addOrder") // Map ONLY Post Requests
+	public @ResponseBody String addNewOrder(@RequestParam String Rest_ID, @RequestParam String User_ID, @RequestParam String Food, @RequestParam String Comments,  @RequestParam String Quantity, @RequestParam String Order_Date_Pick_Up, @RequestParam String VersionNumber)
+	{ 
+		// @ResponseBody means the returned String is the response, not a view name
+		// @RequestParam means it is a parameter from the GET or POST request
+		
+		//Decryption Stuff
+		if(RSA == null)
+			RSA = new RSA_Encyption();
+		String JSONreturned = DATABASE_GET.getRSAKEY();
+		int Version = Integer.parseInt(JSONreturned.substring(JSONreturned.indexOf("Version") + 12, JSONreturned.indexOf("Encyption_Exponet")-4));
+	
+		if(Version != Integer.parseInt(VersionNumber))
+			return "{ \"Success\" : \"Version_Number_Wrong\"}";
+		else
+		{
+			System.out.println("RECEIVING VALUES");
+			System.out.println("RSA ENCYRPTED");
+			System.out.println("USER_ID = " + User_ID);
+			System.out.println("AES ENCYRPTED");
+			System.out.println("USER_ID = " + User_ID);
+			System.out.println("Rest_ID = " + Rest_ID);
+			System.out.println("Food = " + Food);
+			System.out.println("Comments = " + Comments);
+			System.out.println("Quantity = " + Quantity);
+			System.out.println("Order_Date_Pick_Up = " + Order_Date_Pick_Up);
+			System.out.println("VersionNumber = " + VersionNumber);
+			
+			
+			BigInteger User_ID_Decrypt = RSA.DecryptMessage_BigInteger(new BigInteger(User_ID));
+			User_ID = User_ID_Decrypt.toString();
+			BigInteger User_Key = new BigInteger(DATABASE_GET.getAESKEY(User_ID));
+			
+			System.out.println();
+			System.out.println("RSA DECYRPTED VALUES");
+			System.out.println("User_ID_Decrypt = " + User_ID_Decrypt);
+			System.out.println("User_Key = " + User_Key);
+			
+			
+			BigInteger Rest_ID_Byte_Array = new BigInteger(Rest_ID);
+			Rest_ID = AES_Encryption.AES_Decrypt(User_Key.toByteArray(), Rest_ID_Byte_Array.toByteArray());
+			
+			BigInteger Food_Byte_Array = new BigInteger(Food);
+			Food = AES_Encryption.AES_Decrypt(User_Key.toByteArray(), Food_Byte_Array.toByteArray());
+			
+			BigInteger Comments_Byte_Array = new BigInteger(Comments);
+			Comments = AES_Encryption.AES_Decrypt(User_Key.toByteArray(), Comments_Byte_Array.toByteArray());
+			
+			BigInteger Quantity_Byte_Array = new BigInteger(Quantity);
+			Quantity = AES_Encryption.AES_Decrypt(User_Key.toByteArray(), Quantity_Byte_Array.toByteArray());
+			
+			BigInteger Order_Date_Pick_Up_Byte_Array = new BigInteger(Order_Date_Pick_Up);
+			Order_Date_Pick_Up = AES_Encryption.AES_Decrypt(User_Key.toByteArray(), Order_Date_Pick_Up_Byte_Array.toByteArray());
+
+
+			System.out.println();
+			System.out.println("DECRYPTED");
+			System.out.println("AES ENCYRPTED VALUES");
+			System.out.println("USER_ID = " + User_ID);
+			System.out.println("Rest_ID = " + Rest_ID);
+			System.out.println("Food = " + Food);
+			System.out.println("Comments = " + Comments);
+			System.out.println("Quantity = " + Quantity);
+			System.out.println("Order_Date_Pick_Up = " + Order_Date_Pick_Up);
+			System.out.println("VersionNumber = " + VersionNumber);
+			
+			
+		}
+		//End of Decrpytion stuff.
 		
 		String[] FoodItems = Food.split(",+\\s*");
 		String[] QuanityItems = Quantity.split(",+\\s*");

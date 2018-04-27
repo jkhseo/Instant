@@ -211,7 +211,12 @@ public class VendorPendingOrdersFragment extends Fragment {
                             int Dummy_PK = (int) ((JSONObject) response.get(i)).get("DummyPK");
                             double foodPrice = Double.parseDouble((String) ((JSONObject) response.get(i)).get("Food_Price"));
                             int restID = (int) ((JSONObject) response.get(i)).get("Rest_ID");
-                            String comments = (String) ((JSONObject) response.get(i)).get("Comments");
+                            String comments = "";
+                            try {
+                                comments = (String) ((JSONObject) response.get(i)).get("Comments");
+                            }catch(JSONException e){
+                                comments = "";
+                            }
                             int orderConfCode = (int) ((JSONObject) response.get(i)).get("Order_Confirmation_Code");
                             int menuID = Integer.parseInt((String) ((JSONObject) response.get(i)).get("Menu_ID"));
                             int foodQuantity = (int) ((JSONObject) response.get(i)).get("Quantity");

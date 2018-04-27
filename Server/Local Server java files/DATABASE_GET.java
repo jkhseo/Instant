@@ -300,14 +300,14 @@ public class DATABASE_GET
 	 * @return Returns the QR/confirmation code of the order. 
 	 */
 	
-	public static String getConfirmationCode(String Order_ID)
+	public static String getConfirmationCode(String Order_ID, String Rest_ID)
 	{
 		 JSONArray json = null;
 		 try
 		 {  		
 		        Class.forName("com.mysql.jdbc.Driver");
 		        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
-	            String query = "SELECT Order_Confirmation_Code FROM db309sd4.Order WHERE Order_ID= " + Order_ID; 
+	            String query = "SELECT Order_Confirmation_Code FROM db309sd4.Order WHERE Order_ID = " + Order_ID + " AND Rest_ID = " + Rest_ID; 
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
@@ -482,7 +482,7 @@ public class DATABASE_GET
 		        		+ "  db309sd4.User.First_Name,  db309sd4.User.Last_Name, db309sd4.User.User_ID\n" + 
 		        		" FROM (((db309sd4.Order JOIN db309sd4.Food) JOIN db309sd4.Restaurant) JOIN db309sd4.User) WHERE db309sd4.Order.Order_Status ="
 		        		+ " \"Pending\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
-		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
+		        		" AND db309sd4.Food.Rest_ID = " + '"' + Restaurant_ID + '"' + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
 
 
 	            System.out.println(query);
@@ -523,7 +523,7 @@ public class DATABASE_GET
 		        		+ "  db309sd4.User.First_Name,  db309sd4.User.Last_Name, db309sd4.User.User_ID\n" + 
 		        		" FROM (((db309sd4.Order JOIN db309sd4.Food) JOIN db309sd4.Restaurant) JOIN db309sd4.User) WHERE db309sd4.Order.Order_Status ="
 		        		+ " \"Confirmed\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
-		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
+		        		" AND db309sd4.Food.Rest_ID = " + '"' + Restaurant_ID + '"' + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
 
 
 	            System.out.println(query);
@@ -563,7 +563,7 @@ public class DATABASE_GET
 		        		+ "  db309sd4.User.First_Name,  db309sd4.User.Last_Name, db309sd4.User.User_ID\n" + 
 		        		" FROM (((db309sd4.Order JOIN db309sd4.Food) JOIN db309sd4.Restaurant) JOIN db309sd4.User) WHERE db309sd4.Order.Order_Status ="
 		        		+ " \"Cancelled\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
-		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
+		        		" AND db309sd4.Food.Rest_ID = " + '"' + Restaurant_ID + '"' + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
 	           
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
@@ -601,7 +601,7 @@ public class DATABASE_GET
 		        		+ "  db309sd4.User.First_Name,  db309sd4.User.Last_Name, db309sd4.User.User_ID\n" + 
 		        		" FROM (((db309sd4.Order JOIN db309sd4.Food) JOIN db309sd4.Restaurant) JOIN db309sd4.User) WHERE db309sd4.Order.Order_Status ="
 		        		+ " \"Completed\" AND db309sd4.Order.Rest_ID = "+ '"' + Restaurant_ID + '"' + 
-		        		"AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
+		        		" AND db309sd4.Food.Rest_ID = " + '"' + Restaurant_ID + '"' + " AND db309sd4.Order.Food_ID = db309sd4.Food.Food_ID AND db309sd4.Restaurant.Rest_ID = db309sd4.Food.Rest_ID AND db309sd4.Order.User_ID = db309sd4.User.User_ID";
 	            System.out.println(query);
 	            Statement stmt=con.createStatement();
 	    
@@ -894,7 +894,45 @@ public class DATABASE_GET
 
 		}
 	
-	
+			/**
+		 * 
+		 * A non JSON returning function
+		 * Gets AES Encryption Key for User
+		 *  
+		 * @return AES Key
+		 */
+		public static String getAESKEY(String User_ID)
+		{			
+			String result = "";
+			try
+			 {  		
+			        Class.forName("com.mysql.jdbc.Driver");			  
+			        Connection con= DriverManager.getConnection(URL,USERNAME, PASSWORD);
+
+			        String query = "SELECT * from db309sd4.User_Keys where USER_ID  = '"+ User_ID +"'";
+			           
+			        System.out.println(query);
+			        
+			        Statement stmt=con.createStatement();
+			        ResultSet rs = stmt.executeQuery(query);
+			            
+		            if(rs.next())
+		            {
+		            		return rs.getString("KEY");		
+		            }
+
+		            		return null;	          
+		        }
+		      catch(Exception e)
+		      {
+		           e.printStackTrace();
+		           
+		      }
+			  System.out.println(result);
+			  return result;
+
+		}	
+
 		//A non JSON returning function that gets the next order number for a restaurant
 		//Written by Adam de Gala. 
 		public static String getRSAKEY()

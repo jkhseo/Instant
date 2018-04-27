@@ -101,7 +101,7 @@ public class user_home_chat extends Fragment {
         }
         OrderDbHelper dbHelper = new OrderDbHelper(getContext());
         if(SaveSharedPreference.getType(getContext()).equals("Vendor")){
-            dbHelper.updateReadStatusRestaurant(dbHelper.getWritableDatabase(),conversation.getId(),conversation.getType());
+            dbHelper.updateReadStatusRestaurant(dbHelper.getWritableDatabase(),conversation.getId(),conversation.getType(),conversation.getRest_ID());
         }
         else{
             dbHelper.updateReadStatusUser(dbHelper.getWritableDatabase(),conversation.getRest_ID());
@@ -158,6 +158,7 @@ public class user_home_chat extends Fragment {
             conversation.addMessage(new Message(RecieverID,RecieverType,Message,SenderType,SenderID,Rest_ID,Read));
             cursor.moveToNext();
         }
+        dbHelper.close();
     }
 
     // TODO: Rename method, update argument and hook method into UI event
